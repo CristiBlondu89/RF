@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,45 +46,6 @@
       padding: 20px;
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      background: #2b2b2b;
-      margin: 10px 0;
-      padding: 15px;
-      border-left: 4px solid #00b3ff;
-      border-radius: 4px;
-      transition: filter 0.3s ease;
-    }
-
-    li:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
-    }
-
-    .file-link {
-      color: #00b3ff;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    .file-meta {
-      font-size: 12px;
-      color: #aaa;
-    }
-
-    .latest-badge {
-      background: #00b3ff;
-      color: #111;
-      font-size: 12px;
-      margin-left: 8px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-weight: bold;
-    }
-
     .vip-banner {
       text-align: center;
       margin: 40px auto;
@@ -97,6 +59,12 @@
     .vip-banner img:hover {
       transform: scale(1.1);
       filter: drop-shadow(0 0 8px #00b3ff);
+    }
+
+    .vip-banner p {
+      color: #ccc;
+      font-size: 14px;
+      margin-top: 10px;
     }
 
     .connect-box {
@@ -129,72 +97,32 @@
       filter: drop-shadow(0 0 6px #00b3ff);
     }
 
-    .dropdown {
-      margin: 30px auto;
-      max-width: 900px;
+    .command-section {
+      margin: 30px 0;
     }
 
-    .dropdown h3 {
-      background-color: #2b2b2b;
-      padding: 12px 20px;
-      margin: 0;
-      cursor: pointer;
-      font-size: 18px;
-      border-radius: 6px;
+    .command-section h3 {
+      margin-bottom: 10px;
+    }
+
+    .command-list {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background-color 0.3s ease;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .dropdown h3:hover {
-      background-color: #333;
-    }
-
-    .dropdown .arrow {
-      transition: transform 0.3s ease;
-    }
-
-    .dropdown.open .arrow {
-      transform: rotate(90deg);
-    }
-
-    .dropdown-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease, padding 0.4s ease;
-      background-color: #1e1e1e;
-      padding: 0 20px;
-      border-left: 4px solid #00b3ff;
-      border-radius: 0 0 6px 6px;
-    }
-
-    .dropdown.open .dropdown-content {
-      max-height: 800px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-
-    .dropdown-content pre {
-      white-space: pre-wrap;
-      color: #ddd;
+    .command {
+      background: #2b2b2b;
+      padding: 8px 12px;
+      border-radius: 20px;
       font-size: 14px;
-      line-height: 1.5;
+      transition: background 0.3s ease, filter 0.3s ease;
     }
 
-    .toggle-all {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .toggle-all button {
-      background-color: #00b3ff;
-      border: none;
+    .command:hover {
+      background: #00b3ff;
       color: #111;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
+      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     .tiktok-section {
@@ -242,105 +170,122 @@
       color: #777;
       border-top: 1px solid #333;
     }
+
+    #radio-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: #111;
+      border-top: 1px solid #00b3ff;
+      box-shadow: 0 -2px 10px rgba(0, 179, 255, 0.3);
+      z-index: 1000;
+    }
+
+    #radio-bar iframe {
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
-
+  <!-- HEADER -->
   <header></header>
 
   <div class="container">
 
+    <!-- VIP -->
     <div class="vip-banner">
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">
         <img src="https://i.imgur.com/j69bomM.png" alt="VIP Package">
       </a>
+      <p>🎁 <strong>Get VIP</strong> and support the server!</p>
     </div>
 
+    <!-- CONNECT -->
     <div class="connect-box">
       <h3>Join our Rust server</h3>
-      <p>Press <strong>F1</strong> in-game and paste:</p>
+      <p>Press <strong>F1</strong> and type:</p>
       <code>connect play.rusticflight.com:28017</code><br><br>
       <button class="copy-button" onclick="copyConnect()">
         <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy">
       </button>
     </div>
 
-    <!-- Toggle All Dropdowns -->
-    <div class="toggle-all">
-      <button onclick="toggleAllDropdowns()">Toggle All Commands</button>
-    </div>
-
-    <!-- Server Commands -->
-    <div class="dropdown" onclick="toggleDropdown(this)">
-      <h3>📜 Server Commands <span class="arrow">▶</span></h3>
-      <div class="dropdown-content">
-        <pre>
-*/lobby          - Teleports you back to lobby
-*/mini, /mymini
-*/nomini         - Despawns any type of helicopter
-*/seats          - Adds seats to the mini
-*/heli, /myheli
-*/hab            - Hot Air Balloon
-*/attackheli
-*/fix            - Repairs your mini
-*/nodamage       - Mini takes no damage
-*/nocollision    - Vehicle can't be rammed
-*/radio          - Spawns radio on mini
-*/piano          - Spawns piano on mini
-*/tpsave         - Save teleport position
-*/tp             - Teleport to saved position
-*/keyui          - Key/mouse tracker UI
-
-Press R - Repair vehicle
-Press E - Show tracker
-        </pre>
+    <!-- SERVER COMMANDS -->
+    <div class="command-section">
+      <h3>📜 Server Commands</h3>
+      <div class="command-list">
+        <div class="command">/lobby</div>
+        <div class="command">/mini</div>
+        <div class="command">/mymini</div>
+        <div class="command">/nomini</div>
+        <div class="command">/seats</div>
+        <div class="command">/heli</div>
+        <div class="command">/myheli</div>
+        <div class="command">/hab</div>
+        <div class="command">/attackheli</div>
+        <div class="command">/fix</div>
+        <div class="command">/nodamage</div>
+        <div class="command">/nocollision</div>
+        <div class="command">/radio</div>
+        <div class="command">/piano</div>
+        <div class="command">/tpsave</div>
+        <div class="command">/tp</div>
+        <div class="command">/keyui</div>
+        <div class="command">Press R</div>
+        <div class="command">Press E</div>
       </div>
     </div>
 
-    <!-- VIP Commands -->
-    <div class="dropdown" onclick="toggleDropdown(this)">
-      <h3>👑 VIP Commands <span class="arrow">▶</span></h3>
-      <div class="dropdown-content">
-        <pre>
-*/ch47                   - Chinook
-*/spawn fighterbus       - Custom plane
-*/skins or /sb           - Modify skins
-*/trail pink/fire/etc    - Trails 1, 2, 3
-*/pe 0–3                 - Player effects
-*/car /nocar             - Sedan
-*/mycar 2–4              - Modular car
-*/sm /nosm               - Snowmobile
-*/horse /nohorse
-*/f15 /nof15             - F15 Jet
-*/pb /nopb               - Pedalbike
-*/bike /nobike           - Motorbike
-*/trains /notrains
-*/workcart /noworkcart
-*/rhib /rowboat
-        </pre>
+    <!-- VIP COMMANDS -->
+    <div class="command-section">
+      <h3>👑 VIP Commands</h3>
+      <div class="command-list">
+        <div class="command">/ch47</div>
+        <div class="command">/spawn fighter</div>
+        <div class="command">/spawn fighterbus</div>
+        <div class="command">/skins</div>
+        <div class="command">/sb</div>
+        <div class="command">/trail pink</div>
+        <div class="command">/trail fire</div>
+        <div class="command">/trail firework</div>
+        <div class="command">/pe 1</div>
+        <div class="command">/pe 2</div>
+        <div class="command">/pe 3</div>
+        <div class="command">/pe disable</div>
+        <div class="command">/car</div>
+        <div class="command">/nocar</div>
+        <div class="command">/mycar 2</div>
+        <div class="command">/mycar 3</div>
+        <div class="command">/mycar 4</div>
+        <div class="command">/sm</div>
+        <div class="command">/nosm</div>
+        <div class="command">/horse</div>
+        <div class="command">/nohorse</div>
+        <div class="command">/f15</div>
+        <div class="command">/nof15</div>
+        <div class="command">/pb</div>
+        <div class="command">/nopb</div>
+        <div class="command">/bike</div>
+        <div class="command">/nobike</div>
+        <div class="command">/trains</div>
+        <div class="command">/notrains</div>
+        <div class="command">/workcart</div>
+        <div class="command">/noworkcart</div>
+        <div class="command">/rhib</div>
+        <div class="command">/rowboat</div>
       </div>
     </div>
+  </div>
 
-    <h2>Available Map Downloads</h2>
-    <ul id="file-list">Loading maps...</ul>
-
-    <div class="tiktok-section">
-      <h3>Watch Rustic Flight</h3>
-      <div>
-        <button onclick="prevTikTok()">⏮ Prev</button>
-        <button onclick="nextTikTok()">Next ⏭</button>
-      </div>
-      <div id="tiktok-container" style="margin-top: 20px;"></div>
-    </div>
-
-    <div class="social-icons">
-      <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
-      <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
-      <a href="https://www.tiktok.com/@rustic.flight" target="_blank"><img src="https://i.imgur.com/qgP33oz.png" alt="TikTok"></a>
-      <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/5KTeOdy.png" alt="Twitter"></a>
-      <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
-    </div>
-
+  <!-- RADIO PLAYER -->
+  <div id="radio-bar">
+    <iframe src="http://p.onlineradiobox.com/ro/untold/player/?cs=ro.untold&played=1"
+            frameborder="0"
+            allow="autoplay"
+            allowtransparency="true"></iframe>
   </div>
 
   <footer>
@@ -352,72 +297,6 @@ Press E - Show tracker
       navigator.clipboard.writeText("connect play.rusticflight.com:28017");
       alert("Copied to clipboard!");
     }
-
-    function toggleDropdown(el) {
-      el.classList.toggle("open");
-    }
-
-    function toggleAllDropdowns() {
-      document.querySelectorAll('.dropdown').forEach(drop => {
-        drop.classList.toggle('open');
-      });
-    }
-
-    const tiktokVideos = [
-      "7504757782004944150",
-      "7504757112753442070",
-      "7497339945888058646",
-      "7490649013289569558",
-      "7492591418259655958"
-    ];
-    let currentIndex = 0;
-
-    function loadTikTok(index) {
-      const container = document.getElementById("tiktok-container");
-      container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
-          <section>Loading…</section>
-        </blockquote>
-      `;
-      const script = document.createElement("script");
-      script.src = "https://www.tiktok.com/embed.js";
-      script.async = true;
-      container.appendChild(script);
-    }
-
-    function nextTikTok() {
-      currentIndex = (currentIndex + 1) % tiktokVideos.length;
-      loadTikTok(currentIndex);
-    }
-
-    function prevTikTok() {
-      currentIndex = (currentIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
-      loadTikTok(currentIndex);
-    }
-
-    loadTikTok(currentIndex);
-
-    fetch("files.json")
-      .then(res => res.json())
-      .then(files => {
-        const list = document.getElementById("file-list");
-        list.innerHTML = '';
-        files.sort().reverse();
-        const latest = files[0];
-        files.forEach((file) => {
-          fetch(file).then(resp => {
-            const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
-            const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
-            const li = document.createElement('li');
-            li.innerHTML = `
-              <a class="file-link" href="${file}" download>${file}</a>
-              ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
-              <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
-            `;
-            list.appendChild(li);
-          });
-        });
-      });
   </script>
 </body>
 </html>
