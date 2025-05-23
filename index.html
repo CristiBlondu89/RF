@@ -140,37 +140,6 @@
       margin-left: 10px;
     }
 
-    .social-section {
-      text-align: center;
-      padding: 40px 20px 20px;
-    }
-
-    .social-section h3 {
-      margin-bottom: 20px;
-      font-size: 20px;
-      color: #ccc;
-    }
-
-    .social-icons {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 30px;
-    }
-
-    .social-icons a img {
-      width: 80px;
-      height: 80px;
-      transition: transform 0.3s ease, filter 0.3s ease;
-      opacity: 0.85;
-    }
-
-    .social-icons a img:hover {
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 10px #00b3ff);
-      opacity: 1;
-    }
-
     .tiktok-section {
       text-align: center;
       padding: 40px 20px 20px;
@@ -182,11 +151,19 @@
       color: #ccc;
     }
 
-    .tiktok-embeds {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 30px;
+    .tiktok-section button {
+      background-color: #00b3ff;
+      color: #111;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .tiktok-section button:hover {
+      background-color: #0090cc;
     }
 
     footer {
@@ -206,17 +183,9 @@
     footer a:hover {
       color: #ccc;
     }
-
-    @media (max-width: 600px) {
-      .social-icons a img {
-        width: 60px;
-        height: 60px;
-      }
-    }
   </style>
 </head>
 <body>
-
   <header>
     <img src="https://i.imgur.com/AMXXDyR.png" alt="Rustic Banner" class="banner">
     <div class="overlay"></div>
@@ -230,27 +199,12 @@
   </div>
 
   <div class="tiktok-section">
-    <h3>Latest TikToks</h3>
-    <div class="tiktok-embeds">
-      <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/7504757782004944150" data-video-id="7504757782004944150" style="max-width: 325px; min-width: 300px;">
-        <section>Loading…</section>
-      </blockquote>
-      <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/7504757112753442070" data-video-id="7504757112753442070" style="max-width: 325px; min-width: 300px;">
-        <section>Loading…</section>
-      </blockquote>
+    <h3>Watch Rustic Flight</h3>
+    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+      <button onclick="prevTikTok()">⏮ Prev</button>
+      <button onclick="nextTikTok()" style="margin-left: 10px;">Next ⏭</button>
     </div>
-  </div>
-
-  <div class="social-section">
-    <h3>Social Media</h3>
-    <div class="social-icons">
-      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank"><img src="https://i.imgur.com/j69bomM.png" alt="Tebex"></a>
-      <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
-      <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
-      <a href="https://www.tiktok.com/@rustic.flight" target="_blank"><img src="https://i.imgur.com/qgP33oz.png" alt="TikTok"></a>
-      <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/5KTeOdy.png" alt="Twitter"></a>
-      <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
-    </div>
+    <div id="tiktok-container" style="display: flex; justify-content: center;"></div>
   </div>
 
   <footer>
@@ -258,6 +212,54 @@
   </footer>
 
   <script async src="https://www.tiktok.com/embed.js"></script>
+  <script>
+    const tiktokVideos = [
+      "7504757782004944150",
+      "7504757112753442070",
+      "7497339945888058646",
+      "7490649013289569558",
+      "7492591418259655958"
+    ];
+
+    let currentIndex = 0;
+    let autoAdvanceInterval;
+
+    function loadTikTok(index) {
+      const container = document.getElementById("tiktok-container");
+      container.innerHTML = `
+        <blockquote class="tiktok-embed"
+          cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}"
+          data-video-id="${tiktokVideos[index]}"
+          style="max-width: 325px; min-width: 300px;">
+          <section>Loading…</section>
+        </blockquote>
+      `;
+      const script = document.createElement('script');
+      script.src = "https://www.tiktok.com/embed.js";
+      script.async = true;
+      container.appendChild(script);
+    }
+
+    function nextTikTok() {
+      currentIndex = (currentIndex + 1) % tiktokVideos.length;
+      loadTikTok(currentIndex);
+    }
+
+    function prevTikTok() {
+      currentIndex = (currentIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
+      loadTikTok(currentIndex);
+    }
+
+    function startAutoAdvance() {
+      clearInterval(autoAdvanceInterval);
+      autoAdvanceInterval = setInterval(() => {
+        nextTikTok();
+      }, 15000); // Change TikTok every 15 seconds
+    }
+
+    loadTikTok(currentIndex);
+    startAutoAdvance();
+  </script>
 
   <script>
     fetch('files.json')
@@ -292,6 +294,5 @@
         console.error(err);
       });
   </script>
-
 </body>
 </html>
