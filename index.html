@@ -171,6 +171,24 @@
       opacity: 1;
     }
 
+    .tiktok-section {
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+
+    .tiktok-section h3 {
+      margin-bottom: 20px;
+      font-size: 20px;
+      color: #ccc;
+    }
+
+    .tiktok-embeds {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
     footer {
       flex-shrink: 0;
       text-align: center;
@@ -211,6 +229,18 @@
     <ul id="file-list">Loading maps...</ul>
   </div>
 
+  <div class="tiktok-section">
+    <h3>Latest TikToks</h3>
+    <div class="tiktok-embeds">
+      <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/7504757782004944150" data-video-id="7504757782004944150" style="max-width: 325px; min-width: 300px;">
+        <section>Loading…</section>
+      </blockquote>
+      <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/7504757112753442070" data-video-id="7504757112753442070" style="max-width: 325px; min-width: 300px;">
+        <section>Loading…</section>
+      </blockquote>
+    </div>
+  </div>
+
   <div class="social-section">
     <h3>Social Media</h3>
     <div class="social-icons">
@@ -226,6 +256,8 @@
   <footer>
     © 2025 Rustic Flight. All rights reserved. · Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
   </footer>
+
+  <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
     fetch('files.json')
