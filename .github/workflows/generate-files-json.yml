@@ -1,0 +1,27 @@
+name: Generate files.json for map files
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Generate files.json
+      run: |
+        echo "[" > files.json
+        find . -maxdepth 1 -name "*.map" -printf '  "%f",\n' | sed '$ s/,$//' >> files.json
+        echo "]" >> files.json
+
+    - name: Commit and push if changed
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add files.json
+        git diff --cached --quiet || git commit -m "Auto-update files.json"
+        git push
