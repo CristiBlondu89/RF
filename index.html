@@ -18,7 +18,7 @@
     header {
       position: relative;
       width: 100%;
-      height: 250px;
+      height: 350px; /* Increased banner height */
       overflow: hidden;
       background-color: #000;
       display: flex;
@@ -41,7 +41,7 @@
 
     header .overlay {
       position: absolute;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.4);
       width: 100%;
       height: 100%;
       top: 0;
@@ -158,32 +158,33 @@
       color: #ccc;
     }
 
-    .float-img {
+    .float-link {
       position: fixed;
-      width: 120px;
-      z-index: 0;
-      opacity: 0.5;
-      animation: fadeIn 2s ease-in forwards;
+      width: 100px;
+      z-index: 3;
+      opacity: 0.75;
+      transition: transform 0.3s ease, filter 0.3s ease;
     }
 
-    .float-img.left {
-      left: 0;
+    .float-link:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 10px #00b3ff);
+      opacity: 1;
     }
 
-    .float-img.right {
-      right: 0;
-    }
+    .left { left: 10px; }
+    .right { right: 10px; }
 
-    /* Position all 6 images manually for balance */
-    .float-img.img1 { top: 180px; }
-    .float-img.img2 { top: 340px; }
-    .float-img.img3 { top: 500px; }
-    .float-img.img4 { top: 180px; }
-    .float-img.img5 { top: 340px; }
-    .float-img.img6 { top: 500px; }
+    /* Positioning each image lower */
+    .link1 { top: 300px; }
+    .link2 { top: 440px; }
+    .link3 { top: 580px; }
+    .link4 { top: 300px; }
+    .link5 { top: 440px; }
+    .link6 { top: 580px; }
 
     @media (max-width: 768px) {
-      .float-img { display: none; }
+      .float-link { display: none; }
     }
   </style>
 </head>
@@ -196,15 +197,13 @@
     <h1>Rustic Flight Maps</h1>
   </header>
 
-  <!-- Floating left images -->
-  <img src="https://i.imgur.com/XokcbuR.png" class="float-img left img1" />
-  <img src="https://i.imgur.com/eXqWq9J.png" class="float-img left img2" />
-  <img src="https://i.imgur.com/6hAh2aK.png" class="float-img left img3" />
-
-  <!-- Floating right images -->
-  <img src="https://i.imgur.com/h3Cz2ZF.png" class="float-img right img4" />
-  <img src="https://i.imgur.com/Gy4qc98.png" class="float-img right img5" />
-  <img src="https://i.imgur.com/3O1xQOx.png" class="float-img right img6" />
+  <!-- Floating clickable image links -->
+  <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank"><img src="https://i.imgur.com/XokcbuR.png" class="float-link left link1"></a>
+  <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/eXqWq9J.png" class="float-link left link2"></a>
+  <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/6hAh2aK.png" class="float-link left link3"></a>
+  <a href="https://www.tiktok.com/@rustic.flight" target="_blank"><img src="https://i.imgur.com/h3Cz2ZF.png" class="float-link right link4"></a>
+  <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/Gy4qc98.png" class="float-link right link5"></a>
+  <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/3O1xQOx.png" class="float-link right link6"></a>
 
   <div class="container">
     <h2>Available Map Downloads</h2>
