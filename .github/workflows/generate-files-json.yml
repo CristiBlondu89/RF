@@ -23,8 +23,9 @@ jobs:
 
     - name: Commit and push if changed
       run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
         git add files.json
         git diff --cached --quiet || git commit -m "Auto-update files.json"
         git push
