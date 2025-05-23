@@ -49,7 +49,7 @@
     }
 
     main {
-      max-width: 800px;
+      max-width: 900px;
       margin: 40px auto;
       padding: 0 20px;
     }
@@ -73,16 +73,23 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
 
-    a {
+    .file-link {
       color: #00b3ff;
       font-weight: bold;
       text-decoration: none;
+      margin-right: 10px;
     }
 
-    a:hover {
+    .file-link:hover {
       text-decoration: underline;
+    }
+
+    .file-meta {
+      font-size: 13px;
+      color: #aaa;
     }
 
     .latest-badge {
@@ -92,6 +99,16 @@
       padding: 3px 8px;
       border-radius: 3px;
       font-weight: bold;
+      margin-left: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      margin-top: 60px;
+      font-size: 13px;
+      color: #777;
+      border-top: 1px solid #333;
     }
   </style>
 </head>
@@ -108,18 +125,38 @@
     <ul id="file-list">Loading maps...</ul>
   </main>
 
+  <footer>
+    © 2025 Rustic Flight. All rights reserved. · Contact: <a href="mailto:you@example.com">you@example.com</a>
+  </footer>
+
   <script>
     fetch('files.json')
       .then(res => res.json())
       .then(files => {
         const list = document.getElementById('file-list');
         list.innerHTML = '';
-        const latest = files.sort().slice(-1)[0]; // get last file alphabetically
+
+        // Sort newest first based on name (assuming versioned)
+        files.sort().reverse();
+
+        const latest = files[0];
+
         files.forEach(file => {
-          const li = document.createElement('li');
-          li.innerHTML = `<a href="${file}" download>${file}</a>` +
-                         (file === latest ? `<span class="latest-badge">Latest</span>` : '');
-          list.appendChild(li);
+          fetch(file)
+            .then(resp => {
+              const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
+              const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
+
+              const li = document.createElement('li');
+              li.innerHTML = `
+                <div>
+                  <a class="file-link" href="${file}" download>${file}</a>
+                  ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
+                  <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
+                </div>
+              `;
+              list.appendChild(li);
+            });
         });
       })
       .catch(err => {
