@@ -1,12 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Rustic Flight Maps</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      color: #333;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: white;
+      padding: 10px 15px;
+      margin: 10px 0;
+      border-left: 4px solid #0080ff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    a {
+      text-decoration: none;
+      color: #0080ff;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <h1>Available Map Downloads</h1>
-  <ul id="file-list">Loading files...</ul>
+  <ul id="file-list">Loading maps...</ul>
 
   <script>
     fetch('files.json')
