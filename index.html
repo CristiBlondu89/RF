@@ -1,34 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rustic Flight</title>
+  <meta charset="UTF-8"> <!-- Sets the character encoding -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive scaling on mobile -->
+  <title>Rustic Flight</title> <!-- Title shown in browser tab -->
   <style>
+    /* General body styling */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: #1e1e1e;
       color: #f0f0f0;
     }
+
+    /* Banner header styling */
     header {
       position: relative;
       height: 220px;
-      background: url('https://i.imgur.com/AMXXDyR.png') no-repeat center center/cover;
+      background: url('https://i.imgur.com/AMXXDyR.png') no-repeat center center/cover; /* Main banner image */
     }
+
+    /* Server logo in top left with fade-in glow */
+    header::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 64px;
+      height: 64px;
+      background: url('https://i.imgur.com/ffOqs3B.png') no-repeat center center/contain;
+      box-shadow: 0 0 25px 8px #ff6f00;
+      border-radius: 50%;
+      opacity: 0;
+      animation: fadeInLogo 1.5s ease-in-out forwards; /* Animation fade in */
+    }
+
+    /* Container for page content */
     .container {
       max-width: 900px;
       margin: auto;
       padding: 20px;
     }
+
+    /* Section headings */
     h2 {
       color: #fff;
       margin-bottom: 15px;
     }
+
+    /* List layout for file items */
     ul {
       list-style: none;
       padding: 0;
     }
+
+    /* Individual file item */
     li {
       background: #2b2b2b;
       margin: 10px 0;
@@ -37,19 +63,32 @@
       border-radius: 4px;
       display: flex;
       flex-direction: column;
+      transition: box-shadow 0.3s ease;
     }
+
+    /* Hover effect for file items */
+    li:hover {
+      box-shadow: 0 0 10px 2px #00b3ff;
+    }
+
+    /* File name link */
     .file-link {
       color: #00b3ff;
       font-weight: bold;
       text-decoration: none;
     }
+
     .file-link:hover {
       text-decoration: underline;
     }
+
+    /* File metadata info */
     .file-meta {
       font-size: 12px;
       color: #aaa;
     }
+
+    /* Label for newest file */
     .latest-badge {
       background: #00b3ff;
       color: #111;
@@ -59,10 +98,14 @@
       border-radius: 3px;
       font-weight: bold;
     }
+
+    /* Section for TikTok video switcher */
     .tiktok-section {
       text-align: center;
       margin-top: 40px;
     }
+
+    /* TikTok navigation buttons */
     .tiktok-section button {
       margin: 0 5px;
       background: #00b3ff;
@@ -71,38 +114,72 @@
       padding: 6px 10px;
       font-weight: bold;
       border-radius: 4px;
+      transition: box-shadow 0.3s ease;
     }
+
+    .tiktok-section button:hover {
+      box-shadow: 0 0 10px 2px #00b3ff;
+    }
+
+    /* Fix TikTok watch link visibility */
+    .tiktok-embed [data-e2e="browse-link"] {
+      color: #00b3ff !important;
+    }
+
+    /* VIP section image */
     .vip-banner {
       text-align: center;
       margin: 40px auto;
     }
+
     .vip-banner img {
       max-width: 200px;
-      transition: transform 0.2s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
     .vip-banner img:hover {
       transform: scale(1.1);
+      box-shadow: 0 0 15px 3px #ff6f00;
     }
+
+    /* Rust server connection instructions */
     .connect-box {
       background: #2b2b2b;
       padding: 20px;
       text-align: center;
       border-radius: 8px;
       margin-bottom: 40px;
+      transition: box-shadow 0.3s ease;
     }
+
+    .connect-box:hover {
+      box-shadow: 0 0 10px 2px #00b3ff;
+    }
+
     .connect-box h3 {
       margin: 0 0 10px;
     }
+
+    /* Copy button icon styling */
     .copy-button {
       background: none;
       border: none;
       cursor: pointer;
       vertical-align: middle;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
     .copy-button img {
       width: 24px;
       height: 24px;
     }
+
+    .copy-button:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 8px 2px #00b3ff;
+    }
+
+    /* Social media icons section */
     .social-icons {
       display: flex;
       justify-content: center;
@@ -110,13 +187,18 @@
       gap: 20px;
       margin: 30px 0;
     }
+
     .social-icons a img {
       height: 40px;
-      transition: transform 0.2s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
     .social-icons a img:hover {
       transform: scale(1.1);
+      box-shadow: 0 0 10px 2px #00b3ff;
     }
+
+    /* Footer section */
     footer {
       text-align: center;
       font-size: 12px;
@@ -124,111 +206,11 @@
       color: #777;
       border-top: 1px solid #333;
     }
+
+    /* Fade in animation for the logo */
+    @keyframes fadeInLogo {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
   </style>
 </head>
-<body>
-  <header></header>
-  <div class="container">
-    <h2>Available Map Downloads</h2>
-    <ul id="file-list">Loading...</ul>
-
-    <div class="vip-banner">
-      <h2>Get VIP Access</h2>
-      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">
-        <img src="https://i.imgur.com/j69bomM.png" alt="VIP Package">
-      </a>
-    </div>
-
-    <div class="connect-box">
-      <h3>Join our Rust server</h3>
-      <p>Open the F1 console in Rust and paste the following command:</p>
-      <code id="connect-text">connect play.rusticflight.com:28017</code>
-      <br><br>
-      <button class="copy-button" onclick="copyConnect()" title="Copy to Clipboard">
-        <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy">
-      </button>
-    </div>
-
-    <div class="tiktok-section">
-      <h2>Watch Rustic Flight</h2>
-      <div>
-        <button onclick="prevTikTok()">⏮ Prev</button>
-        <button onclick="nextTikTok()">Next ⏭</button>
-      </div>
-      <div id="tiktok-container" style="margin-top: 20px;"></div>
-    </div>
-
-    <div class="social-icons">
-      <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png"></a>
-      <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png"></a>
-      <a href="https://www.tiktok.com/@rustic.flight" target="_blank"><img src="https://i.imgur.com/qgP33oz.png"></a>
-      <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/5KTeOdy.png"></a>
-      <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png"></a>
-    </div>
-  </div>
-
-  <footer>
-    © 2025 Rustic Flight. All rights reserved. · Contact: rusticflight@gmail.com
-  </footer>
-
-  <script>
-    function copyConnect() {
-      navigator.clipboard.writeText("connect play.rusticflight.com:28017").then(() => {
-        alert("Copied to clipboard!");
-      });
-    }
-  </script>
-  <script>
-    const tiktokVideos = [
-      "7504757782004944150",
-      "7504757112753442070",
-      "7497339945888058646",
-      "7490649013289569558",
-      "7492591418259655958"
-    ];
-    let currentIndex = 0;
-    function loadTikTok(index) {
-      const container = document.getElementById("tiktok-container");
-      container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px;min-width: 325px;" >
-        <section>Loading…</section></blockquote>
-      `;
-      const script = document.createElement("script");
-      script.src = "https://www.tiktok.com/embed.js";
-      script.async = true;
-      container.appendChild(script);
-    }
-    function nextTikTok() {
-      currentIndex = (currentIndex + 1) % tiktokVideos.length;
-      loadTikTok(currentIndex);
-    }
-    function prevTikTok() {
-      currentIndex = (currentIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
-      loadTikTok(currentIndex);
-    }
-    loadTikTok(currentIndex);
-  </script>
-  <script>
-    fetch("files.json")
-      .then((res) => res.json())
-      .then((files) => {
-        const list = document.getElementById("file-list");
-        list.innerHTML = "";
-        files.sort().reverse();
-        const latest = files[0];
-        files.forEach((file) => {
-          fetch(file).then((resp) => {
-            const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
-            const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
-            const li = document.createElement("li");
-            li.innerHTML = `<div><a class="file-link" href="${file}" download>${file}</a>${file === latest ? '<span class="latest-badge">Latest</span>' : ''}<div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div></div>`;
-            list.appendChild(li);
-          });
-        });
-      })
-      .catch((err) => {
-        document.getElementById("file-list").textContent = "Failed to load map list.";
-      });
-  </script>
-</body>
-</html>
