@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rustic Flight</title>
   <style>
-    /* General body styling */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -13,7 +12,6 @@
       color: #f0f0f0;
     }
 
-    /* Banner with glowing logo */
     header {
       position: relative;
       height: 240px;
@@ -28,26 +26,25 @@
       width: 64px;
       height: 64px;
       background: url('https://i.imgur.com/ffOqs3B.png') no-repeat center center/contain;
-      box-shadow: 0 0 25px 8px #ff6f00;
+      filter: drop-shadow(0 0 20px #ffa500);
       border-radius: 50%;
-      opacity: 0;
       animation: fadeInLogo 1.5s ease-in-out forwards;
+      opacity: 0;
     }
 
-    /* Fade-in animation for logo */
     @keyframes fadeInLogo {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
-    /* Container for all main sections */
     .container {
       max-width: 900px;
       margin: auto;
       padding: 20px;
     }
 
-    /* Map list */
     ul {
       list-style: none;
       padding: 0;
@@ -59,11 +56,11 @@
       padding: 15px;
       border-left: 4px solid #00b3ff;
       border-radius: 4px;
-      transition: box-shadow 0.3s ease;
+      transition: filter 0.3s ease;
     }
 
     li:hover {
-      box-shadow: 0 0 10px 2px #00b3ff;
+      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     .file-link {
@@ -87,7 +84,6 @@
       font-weight: bold;
     }
 
-    /* VIP section with hover glow */
     .vip-banner {
       text-align: center;
       margin: 40px auto;
@@ -95,22 +91,21 @@
 
     .vip-banner img {
       max-width: 220px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, filter 0.3s ease;
     }
 
     .vip-banner img:hover {
       transform: scale(1.1);
-      filter: drop-shadow(0 0 6px #00b3ff);
+      filter: drop-shadow(0 0 8px #00b3ff);
     }
 
-    /* Connection instructions box */
     .connect-box {
       background: #2b2b2b;
       padding: 20px;
       text-align: center;
       border-radius: 8px;
       margin: 40px 0;
-      transition: box-shadow 0.3s ease;
+      transition: filter 0.3s ease;
     }
 
     .connect-box:hover {
@@ -121,7 +116,7 @@
       background: none;
       border: none;
       cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease;
     }
 
     .copy-button img {
@@ -134,7 +129,74 @@
       filter: drop-shadow(0 0 6px #00b3ff);
     }
 
-    /* TikTok section */
+    .dropdown {
+      margin: 30px auto;
+      max-width: 900px;
+    }
+
+    .dropdown h3 {
+      background-color: #2b2b2b;
+      padding: 12px 20px;
+      margin: 0;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .dropdown h3:hover {
+      background-color: #333;
+    }
+
+    .dropdown .arrow {
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown.open .arrow {
+      transform: rotate(90deg);
+    }
+
+    .dropdown-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+      background-color: #1e1e1e;
+      padding: 0 20px;
+      border-left: 4px solid #00b3ff;
+      border-radius: 0 0 6px 6px;
+    }
+
+    .dropdown.open .dropdown-content {
+      max-height: 800px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .dropdown-content pre {
+      white-space: pre-wrap;
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .toggle-all {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .toggle-all button {
+      background-color: #00b3ff;
+      border: none;
+      color: #111;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     .tiktok-section {
       text-align: center;
       margin: 40px 0;
@@ -155,7 +217,6 @@
       filter: drop-shadow(0 0 6px #00b3ff);
     }
 
-    /* Social media links */
     .social-icons {
       display: flex;
       justify-content: center;
@@ -166,7 +227,7 @@
 
     .social-icons a img {
       height: 40px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, filter 0.3s ease;
     }
 
     .social-icons a img:hover {
@@ -174,7 +235,6 @@
       filter: drop-shadow(0 0 6px #00b3ff);
     }
 
-    /* Footer */
     footer {
       text-align: center;
       font-size: 12px;
@@ -190,29 +250,81 @@
 
   <div class="container">
 
-    <!-- VIP Section -->
     <div class="vip-banner">
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">
         <img src="https://i.imgur.com/j69bomM.png" alt="VIP Package">
       </a>
     </div>
 
-    <!-- Server Connect Info -->
     <div class="connect-box">
       <h3>Join our Rust server</h3>
       <p>Press <strong>F1</strong> in-game and paste:</p>
-      <code>connect play.rusticflight.com:28017</code>
-      <br><br>
+      <code>connect play.rusticflight.com:28017</code><br><br>
       <button class="copy-button" onclick="copyConnect()">
         <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy">
       </button>
     </div>
 
-    <!-- Map Downloads -->
+    <!-- Toggle All Dropdowns -->
+    <div class="toggle-all">
+      <button onclick="toggleAllDropdowns()">Toggle All Commands</button>
+    </div>
+
+    <!-- Server Commands -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <h3>📜 Server Commands <span class="arrow">▶</span></h3>
+      <div class="dropdown-content">
+        <pre>
+*/lobby          - Teleports you back to lobby
+*/mini, /mymini
+*/nomini         - Despawns any type of helicopter
+*/seats          - Adds seats to the mini
+*/heli, /myheli
+*/hab            - Hot Air Balloon
+*/attackheli
+*/fix            - Repairs your mini
+*/nodamage       - Mini takes no damage
+*/nocollision    - Vehicle can't be rammed
+*/radio          - Spawns radio on mini
+*/piano          - Spawns piano on mini
+*/env            - Personal time/weather
+*/tpsave         - Save teleport position
+*/tp             - Teleport to saved position
+*/keyui          - Key/mouse tracker UI
+
+Press R - Repair vehicle
+Press E - Show tracker
+        </pre>
+      </div>
+    </div>
+
+    <!-- VIP Commands -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <h3>👑 VIP Commands <span class="arrow">▶</span></h3>
+      <div class="dropdown-content">
+        <pre>
+*/ch47                   - Chinook
+*/spawn fighterbus       - Custom plane
+*/skins or /sb           - Modify skins
+*/trail pink/fire/etc    - Trails 1, 2, 3
+*/pe 0–3                 - Player effects
+*/car /nocar             - Sedan
+*/mycar 2–4              - Modular car
+*/sm /nosm               - Snowmobile
+*/horse /nohorse
+*/f15 /nof15             - F15 Jet
+*/pb /nopb               - Pedalbike
+*/bike /nobike           - Motorbike
+*/trains /notrains
+*/workcart /noworkcart
+*/rhib /rowboat
+        </pre>
+      </div>
+    </div>
+
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
 
-    <!-- TikTok Embed Player -->
     <div class="tiktok-section">
       <h3>Watch Rustic Flight</h3>
       <div>
@@ -222,7 +334,6 @@
       <div id="tiktok-container" style="margin-top: 20px;"></div>
     </div>
 
-    <!-- Social Links -->
     <div class="social-icons">
       <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
       <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
@@ -238,13 +349,21 @@
   </footer>
 
   <script>
-    // Copy-to-clipboard functionality
     function copyConnect() {
       navigator.clipboard.writeText("connect play.rusticflight.com:28017");
       alert("Copied to clipboard!");
     }
 
-    // TikTok video cycling
+    function toggleDropdown(el) {
+      el.classList.toggle("open");
+    }
+
+    function toggleAllDropdowns() {
+      document.querySelectorAll('.dropdown').forEach(drop => {
+        drop.classList.toggle('open');
+      });
+    }
+
     const tiktokVideos = [
       "7504757782004944150",
       "7504757112753442070",
@@ -277,10 +396,8 @@
       loadTikTok(currentIndex);
     }
 
-    // Load the first TikTok on page load
     loadTikTok(currentIndex);
 
-    // Load map file list from files.json
     fetch("files.json")
       .then(res => res.json())
       .then(files => {
@@ -288,8 +405,7 @@
         list.innerHTML = '';
         files.sort().reverse();
         const latest = files[0];
-
-        files.forEach((file, index) => {
+        files.forEach((file) => {
           fetch(file).then(resp => {
             const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
             const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
