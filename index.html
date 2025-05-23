@@ -6,22 +6,23 @@
 </head>
 <body>
   <h1>Available Map Downloads</h1>
-  <ul id="file-list">Loading...</ul>
+  <ul id="file-list">Loading files...</ul>
 
   <script>
     fetch('files.json')
       .then(res => res.json())
       .then(files => {
-        const ul = document.getElementById('file-list');
-        ul.innerHTML = '';
+        const list = document.getElementById('file-list');
+        list.innerHTML = '';
         files.forEach(file => {
           const li = document.createElement('li');
           li.innerHTML = `<a href="${file}" download>${file}</a>`;
-          ul.appendChild(li);
+          list.appendChild(li);
         });
       })
-      .catch(() => {
-        document.getElementById('file-list').innerText = "Could not load file list.";
+      .catch(err => {
+        document.getElementById('file-list').textContent = "Failed to load map list.";
+        console.error(err);
       });
   </script>
 </body>
