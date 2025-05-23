@@ -18,7 +18,7 @@
     header {
       position: relative;
       width: 100%;
-      height: 350px; /* Increased banner height */
+      height: 350px;
       overflow: hidden;
       background-color: #000;
       display: flex;
@@ -140,6 +140,37 @@
       margin-left: 10px;
     }
 
+    .social-section {
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+
+    .social-section h3 {
+      margin-bottom: 20px;
+      font-size: 20px;
+      color: #ccc;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    .social-icons a img {
+      width: 80px;
+      height: 80px;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      opacity: 0.85;
+    }
+
+    .social-icons a img:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 10px #00b3ff);
+      opacity: 1;
+    }
+
     footer {
       flex-shrink: 0;
       text-align: center;
@@ -158,33 +189,11 @@
       color: #ccc;
     }
 
-    .float-link {
-      position: fixed;
-      width: 100px;
-      z-index: 3;
-      opacity: 0.75;
-      transition: transform 0.3s ease, filter 0.3s ease;
-    }
-
-    .float-link:hover {
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 10px #00b3ff);
-      opacity: 1;
-    }
-
-    .left { left: 10px; }
-    .right { right: 10px; }
-
-    /* Positioning each image lower */
-    .link1 { top: 300px; }
-    .link2 { top: 440px; }
-    .link3 { top: 580px; }
-    .link4 { top: 300px; }
-    .link5 { top: 440px; }
-    .link6 { top: 580px; }
-
-    @media (max-width: 768px) {
-      .float-link { display: none; }
+    @media (max-width: 600px) {
+      .social-icons a img {
+        width: 60px;
+        height: 60px;
+      }
     }
   </style>
 </head>
@@ -197,17 +206,21 @@
     <h1>Rustic Flight Maps</h1>
   </header>
 
-  <!-- Floating clickable image links -->
-  <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank"><img src="https://i.imgur.com/XokcbuR.png" class="float-link left link1"></a>
-  <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/eXqWq9J.png" class="float-link left link2"></a>
-  <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/6hAh2aK.png" class="float-link left link3"></a>
-  <a href="https://www.tiktok.com/@rustic.flight" target="_blank"><img src="https://i.imgur.com/h3Cz2ZF.png" class="float-link right link4"></a>
-  <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/Gy4qc98.png" class="float-link right link5"></a>
-  <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/3O1xQOx.png" class="float-link right link6"></a>
-
   <div class="container">
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
+  </div>
+
+  <div class="social-section">
+    <h3>Social Media</h3>
+    <div class="social-icons">
+      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank"><img src="https://i.imgur.com/j69bomM.png" alt="Tebex"></a>
+      <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
+      <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
+      <a href="https://www.tiktok.com/@rustic.flight" target="_blank"><img src="https://i.imgur.com/qgP33oz.png" alt="TikTok"></a>
+      <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/5KTeOdy.png" alt="Twitter"></a>
+      <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
+    </div>
   </div>
 
   <footer>
