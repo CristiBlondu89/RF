@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <title>Rustic Flight Maps</title>
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
       font-family: 'Segoe UI', sans-serif;
       background-color: #1e1e1e;
       color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
@@ -21,6 +25,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      flex-shrink: 0;
     }
 
     header img.banner {
@@ -55,9 +60,7 @@
     }
 
     @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+      to { opacity: 1; }
     }
 
     header h1 {
@@ -68,10 +71,12 @@
       margin: 0;
     }
 
-    main {
+    .container {
+      flex: 1 0 auto;
       max-width: 900px;
       margin: 40px auto;
       padding: 0 20px;
+      position: relative;
     }
 
     h2 {
@@ -134,9 +139,9 @@
     }
 
     footer {
+      flex-shrink: 0;
       text-align: center;
       padding: 30px;
-      margin-top: 60px;
       font-size: 13px;
       color: #777;
       border-top: 1px solid #333;
@@ -150,24 +155,48 @@
     footer a:hover {
       color: #ccc;
     }
+
+    .side-image {
+      position: fixed;
+      left: -400px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 250px;
+      z-index: 3;
+      animation: slideInLeft 1s ease-out forwards;
+    }
+
+    @keyframes slideInLeft {
+      to {
+        left: 30px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .side-image {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <img src="https://i.imgur.com/XsqBYC7.png" alt="Rustic Banner" class="banner">
+    <img src="https://i.imgur.com/Vsn80es.png" alt="Rustic Banner" class="banner">
     <div class="overlay"></div>
     <img src="https://i.imgur.com/ffOqs3B.png" alt="Rustic Logo" class="logo">
     <h1>Rustic Flight Maps</h1>
   </header>
 
-  <main>
+  <img src="https://i.imgur.com/C9yxbLT.png" alt="Side Art" class="side-image">
+
+  <div class="container">
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
-  </main>
+  </div>
 
   <footer>
-    © 2025 Rustic Flight. All rights reserved. · Contact: <a href="mailto:cristiblondu89@gmail.com">cristiblondu89@gmail.com</a>
+    © 2025 Rustic Flight. All rights reserved. · Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
   </footer>
 
   <script>
@@ -187,7 +216,7 @@
               const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
 
               const li = document.createElement('li');
-              li.style.animationDelay = `${index * 0.1}s`; // staggered animation
+              li.style.animationDelay = `${index * 0.1}s`;
               li.innerHTML = `
                 <div>
                   <a class="file-link" href="${file}" download>${file}</a>
