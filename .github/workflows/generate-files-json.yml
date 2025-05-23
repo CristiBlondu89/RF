@@ -15,7 +15,10 @@ jobs:
     - name: Generate files.json
       run: |
         echo "[" > files.json
-        find . -maxdepth 1 -name "*.map" -printf '  "%f",\n' | sed '$ s/,$//' >> files.json
+        for f in *.map; do
+          echo "  \"${f}\"," >> files.json
+        done
+        sed -i '$ s/,$//' files.json
         echo "]" >> files.json
 
     - name: Commit and push if changed
