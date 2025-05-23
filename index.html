@@ -242,6 +242,76 @@
       color: #777;
       border-top: 1px solid #333;
     }
+
+    /* Floating Radio Player Styles */
+    .radio-player {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #2b2b2b;
+      color: #f0f0f0;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #00b3ff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      width: 250px;
+      transition: filter 0.3s ease;
+    }
+
+    .radio-player:hover {
+      filter: drop-shadow(0 0 6px #00b3ff);
+    }
+
+    .radio-player h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      text-align: center;
+      color: #00b3ff;
+    }
+
+    .radio-player audio {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .radio-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .radio-controls button {
+      background: #00b3ff;
+      border: none;
+      color: #111;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: filter 0.3s ease;
+    }
+
+    .radio-controls button:hover {
+      filter: drop-shadow(0 0 6px #00b3ff);
+    }
+
+    .volume-control {
+      display: flex;
+      align-items: center;
+    }
+
+    .volume-control span {
+      font-size: 14px;
+      color: #ddd;
+    }
+
+    .volume-control input {
+      width: 100px;
+      margin-left: 10px;
+      accent-color: #00b3ff;
+    }
   </style>
 </head>
 <body>
@@ -343,6 +413,19 @@ Press E - Show tracker
 
   </div>
 
+  <!-- Floating Radio Player -->
+  <div class="radio-player">
+    <h3>Untold Radio</h3>
+    <audio id="radio" src="http://p.onlineradiobox.com/ro/untold/player/?cs=ro.untold&played=1"></audio>
+    <div class="radio-controls">
+      <button id="play-pause">Play</button>
+      <div class="volume-control">
+        <span>Volume:</span>
+        <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
+      </div>
+    </div>
+  </div>
+
   <footer>
     © 2025 Rustic Flight. Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
   </footer>
@@ -418,6 +501,31 @@ Press E - Show tracker
           });
         });
       });
+
+    // Radio Player Functionality
+    const radio = document.getElementById('radio');
+    const playPauseBtn = document.getElementById('play-pause');
+    const volumeControl = document.getElementById('volume');
+
+    let isPlaying = false;
+
+    playPauseBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        radio.pause();
+        playPauseBtn.textContent = 'Play';
+      } else {
+        radio.play().catch(err => {
+          console.error('Error playing audio:', err);
+          alert('Failed to play radio. Please check the stream URL or try again.');
+        });
+        playPauseBtn.textContent = 'Pause';
+      }
+      isPlaying = !isPlaying;
+    });
+
+    volumeControl.addEventListener('input', () => {
+      radio.volume = volumeControl.value;
+    });
   </script>
 </body>
 </html>
