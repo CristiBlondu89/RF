@@ -429,25 +429,46 @@ Press E - Show tracker
     loadTikTok(currentIndex);
 
     fetch("files.json")
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch files.json");
+        return res.json();
+      })
       .then(files => {
         const list = document.getElementById("file-list");
         list.innerHTML = '';
+        if (!files || files.length === 0) {
+          list.innerHTML = '<li>No maps available.</li>';
+          return;
+        }
         files.sort().reverse();
         const latest = files[0];
         files.forEach((file) => {
-          fetch(file).then(resp => {
-            const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
-            const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
-            const li = document.createElement('li');
-            li.innerHTML = `
-              <a class="file-link" href="" download></a>
-               ''
-              <div class="file-meta">Uploaded:  · Size:  KB</div>
-            `;
-            list.appendChild(li);
-          });
+          fetch(file)
+            .then(resp => {
+              if (!resp.ok) throw new Error(`Failed to fetch file: ${file}`);
+              const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
+              const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
+              const li = document.createElement('li');
+              const fileName = file.split('/').pop();
+              li.innerHTML = `
+                <a class="file-link" href="${file}" download>${fileName}</a>
+                ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
+                <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
+              `;
+              list.appendChild(li);
+            })
+            .catch(err => {
+              console.error(err);
+              const li = document.createElement('li');
+              li.innerHTML = `Error loading file: ${file}`;
+              list.appendChild(li);
+            });
         });
+      })
+      .catch(err => {
+        console.error(err);
+        const list = document.getElementById("file-list");
+        list.innerHTML = '<li>Error loading map files. Please try again later.</li>';
       });
 
     const radio = document.getElementById('radio');
