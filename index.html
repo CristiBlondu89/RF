@@ -406,13 +406,15 @@ Press E - Show tracker
     function loadTikTok(index) {
       const container = document.getElementById("tiktok-container");
       container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/" data-video-id="" style="max-width: 325px; min-width: 300px;">
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
           <section>Loading…</section>
         </blockquote>
       `;
       const script = document.createElement("script");
       script.src = "https://www.tiktok.com/embed.js";
       script.async = true;
+      script.onload = () => console.log("TikTok embed script loaded");
+      script.onerror = () => console.error("Failed to load TikTok embed script");
       container.appendChild(script);
     }
 
