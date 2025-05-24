@@ -12,6 +12,12 @@
       color: #f0f0f0;
     }
 
+    header {
+      position: relative;
+      height: 240px;
+      background: url('https://i.imgur.com/AMXXDyR.png') no-repeat center center/cover;
+    }
+
     .container {
       max-width: 900px;
       margin: auto;
@@ -24,20 +30,16 @@
     }
 
     .vip-banner a {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
-      background: #00b3ff;
-      color: #111;
-      padding: 12px 24px;
-      border-radius: 6px;
+      color: #00b3ff;
       text-decoration: none;
-      display: inline-block;
-      transition: background 0.3s ease, transform 0.3s ease;
+      transition: color 0.3s ease;
     }
 
     .vip-banner a:hover {
-      background: #009bd9;
-      transform: scale(1.05);
+      color: #00e6ff;
+      text-shadow: 0 0 8px #00b3ff;
     }
 
     .connect-box {
@@ -177,36 +179,6 @@
       font-weight: bold;
     }
 
-    .tiktok-section {
-      text-align: center;
-      margin: 40px 0;
-    }
-
-    .tiktok-section.collapsed #tiktok-container {
-      display: none;
-    }
-
-    .tiktok-section h3 {
-      cursor: pointer;
-      font-size: 18px;
-      color: #00b3ff;
-    }
-
-    .tiktok-section button {
-      margin: 5px;
-      background: #00b3ff;
-      color: #111;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-weight: bold;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .tiktok-section button:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
-    }
-
     .social-icons {
       display: flex;
       justify-content: center;
@@ -232,12 +204,74 @@
       color: #777;
       border-top: 1px solid #333;
     }
-    
+
+    .radio-player {
+      position: fixed;
+      top: 240px;
+      left: 0;
+      right: 0;
+      background: #2b2b2b;
+      color: #f0f0f0;
+      padding: 15px;
+      border-bottom: 4px solid #00b3ff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .radio-player h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #00b3ff;
+    }
+
+    .radio-player audio {
+      width: 200px;
+      margin: 0 10px;
+    }
+
+    .radio-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .radio-controls button {
+      background: #00b3ff;
+      border: none;
+      color: #111;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .volume-control {
+      display: flex;
+      align-items: center;
+    }
+
+    .volume-control span {
+      font-size: 14px;
+      color: #ddd;
+    }
+
+    .volume-control input {
+      width: 100px;
+      margin-left: 10px;
+      accent-color: #00b3ff;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <header></header>
 
+  <div class="container">
     <div class="vip-banner">
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
     </div>
@@ -307,13 +341,16 @@ Press E - Show tracker
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
 
-    <div class="tiktok-section collapsed" id="tiktok-section">
-      <h3 onclick="toggleTikTok()">Watch Rustic Flight ▶</h3>
-      <div>
-        <button onclick="prevTikTok()">⏮ Prev</button>
-        <button onclick="nextTikTok()">Next ⏭</button>
+    <!-- TikTok section (collapsed dropdown) -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
+      <div class="dropdown-content">
+        <div style="text-align:center; margin-bottom: 10px;">
+          <button onclick="prevTikTok()">⏮ Prev</button>
+          <button onclick="nextTikTok()">Next ⏭</button>
+        </div>
+        <div id="tiktok-container" style="margin-top: 20px;"></div>
       </div>
-      <div id="tiktok-container" style="margin-top: 20px;"></div>
     </div>
 
     <div class="social-icons">
@@ -357,7 +394,6 @@ Press E - Show tracker
       });
     }
 
-    // TikTok player logic
     const tiktokVideos = [
       "7504757782004944150",
       "7504757112753442070",
@@ -367,15 +403,10 @@ Press E - Show tracker
     ];
     let currentIndex = 0;
 
-    function toggleTikTok() {
-      const section = document.getElementById("tiktok-section");
-      section.classList.toggle("collapsed");
-    }
-
     function loadTikTok(index) {
       const container = document.getElementById("tiktok-container");
       container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/" data-video-id="" style="max-width: 325px; min-width: 300px;">
           <section>Loading…</section>
         </blockquote>
       `;
@@ -397,7 +428,6 @@ Press E - Show tracker
 
     loadTikTok(currentIndex);
 
-    // Map downloads
     fetch("files.json")
       .then(res => res.json())
       .then(files => {
@@ -411,20 +441,18 @@ Press E - Show tracker
             const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
             const li = document.createElement('li');
             li.innerHTML = `
-              <a class="file-link" href="${file}" download>${file}</a>
-              ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
-              <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
+              <a class="file-link" href="" download></a>
+               ''
+              <div class="file-meta">Uploaded:  · Size:  KB</div>
             `;
             list.appendChild(li);
           });
         });
       });
 
-    // Radio player
     const radio = document.getElementById('radio');
     const playPauseBtn = document.getElementById('play-pause');
     const volumeControl = document.getElementById('volume');
-
     let isPlaying = false;
 
     playPauseBtn.addEventListener('click', () => {
@@ -432,12 +460,11 @@ Press E - Show tracker
         radio.pause();
         playPauseBtn.textContent = 'Play';
       } else {
-        radio.play().then(() => {
-          playPauseBtn.textContent = 'Pause';
-        }).catch(err => {
-          console.error('Radio error:', err);
-          alert('Unable to play stream. Try again.');
+        radio.play().catch(err => {
+          console.error('Error playing audio:', err);
+          alert('Failed to play radio. Please check the stream URL or try again.');
         });
+        playPauseBtn.textContent = 'Pause';
       }
       isPlaying = !isPlaying;
     });
