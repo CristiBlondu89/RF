@@ -243,71 +243,52 @@
       border-top: 1px solid #333;
     }
 
-    /* Collapsible Radio Player Styles */
+    /* Floating Radio Player Styles */
     .radio-player {
       position: fixed;
       bottom: 20px;
       right: 20px;
       background: #2b2b2b;
       color: #f0f0f0;
-      padding: 10px;
+      padding: 15px;
       border-radius: 8px;
       border-left: 4px solid #00b3ff;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
       z-index: 1000;
       width: 250px;
-      transition: all 0.3s ease;
+      transition: filter 0.3s ease;
     }
 
-    .radio-player.collapsed {
-      padding: 10px;
-      height: 40px;
-      overflow: hidden;
-    }
-
-    .radio-player.collapsed .radio-controls,
-    .radio-player.collapsed .visualization,
-    .radio-player.collapsed audio {
-      display: none;
+    .radio-player:hover {
+      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     .radio-player h3 {
-      margin: 0;
+      margin: 0 0 10px;
       font-size: 16px;
       text-align: center;
       color: #00b3ff;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-
-    .radio-player h3:hover {
-      color: #00e6ff;
     }
 
     .radio-player audio {
       width: 100%;
-      margin: 10px 0;
+      margin-bottom: 10px;
     }
 
     .radio-controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 10px;
-    }
-
-    .radio-controls.hidden {
-      display: none;
     }
 
     .radio-controls button {
       background: #00b3ff;
       border: none;
       color: #111;
-      padding: 6px 10px;
+      padding: 8px 12px;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: bold;
       transition: filter 0.3s ease;
     }
@@ -322,26 +303,14 @@
     }
 
     .volume-control span {
-      font-size: 12px;
+      font-size: 14px;
       color: #ddd;
     }
 
     .volume-control input {
-      width: 80px;
-      margin-left: 5px;
+      width: 100px;
+      margin-left: 10px;
       accent-color: #00b3ff;
-    }
-
-    .visualization {
-      width: 100%;
-      height: 50px;
-      background: #1e1e1e;
-      border-radius: 5px;
-      margin-top: 10px;
-    }
-
-    .visualization.hidden {
-      display: none;
     }
   </style>
 </head>
@@ -444,19 +413,16 @@ Press E - Show tracker
 
   </div>
 
-  <!-- Collapsible Radio Player -->
-  <div class="radio-player" id="radio-player">
-    <h3 onclick="toggleRadioPlayer()">Untold Radio <span class="arrow">▶</span></h3>
+  <!-- Floating Radio Player -->
+  <div class="radio-player">
+    <h3>Untold Radio</h3>
     <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3"></audio>
-    <div class="radio-controls" id="radio-controls">
+    <div class="radio-controls">
       <button id="play-pause">Play</button>
       <div class="volume-control">
         <span>Volume:</span>
         <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
       </div>
-    </div>
-    <div class="visualization" id="visualization">
-      <canvas id="visualizer"></canvas>
     </div>
   </div>
 
@@ -492,7 +458,7 @@ Press E - Show tracker
     function loadTikTok(index) {
       const container = document.getElementById("tiktok-container");
       container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/" data-video-id="" style="max-width: 325px; min-width: 300px;">
           <section>Loading…</section>
         </blockquote>
       `;
@@ -527,99 +493,38 @@ Press E - Show tracker
             const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
             const li = document.createElement('li');
             li.innerHTML = `
-              <a class="file-link" href="${file}" download>${file}</a>
-              ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
-              <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
+              <a class="file-link" href="" download></a>
+               ''
+              <div class="file-meta">Uploaded:  · Size:  KB</div>
             `;
             list.appendChild(li);
           });
         });
       });
 
-    // Radio Player and Visualization Functionality
-    const radioPlayer = document.getElementById('radio-player');
+    // Radio Player Functionality
     const radio = document.getElementById('radio');
     const playPauseBtn = document.getElementById('play-pause');
     const volumeControl = document.getElementById('volume');
-    const radioControls = document.getElementById('radio-controls');
-    const visualization = document.getElementById('visualization');
-    const canvas = document.getElementById('visualizer');
-    const ctx = canvas.getContext('2d');
 
     let isPlaying = false;
-    let isCollapsed = false;
-
-    function toggleRadioPlayer() {
-      isCollapsed = !isCollapsed;
-      radioPlayer.classList.toggle('collapsed');
-      const arrow = radioPlayer.querySelector('.arrow');
-      arrow.textContent = isCollapsed ? '▶' : '▼';
-    }
 
     playPauseBtn.addEventListener('click', () => {
       if (isPlaying) {
         radio.pause();
         playPauseBtn.textContent = 'Play';
-        isPlaying = false;
       } else {
-        radio.play().then(() => {
-          playPauseBtn.textContent = 'Pause';
-          isPlaying = true;
-          radioControls.classList.remove('hidden');
-          visualization.classList.remove('hidden');
-          visualizeAudio();
-        }).catch(err => {
+        radio.play().catch(err => {
           console.error('Error playing audio:', err);
           alert('Failed to play radio. Please check the stream URL or try again.');
-          radioControls.classList.add('hidden');
-          visualization.classList.add('hidden');
         });
+        playPauseBtn.textContent = 'Pause';
       }
+      isPlaying = !isPlaying;
     });
 
     volumeControl.addEventListener('input', () => {
       radio.volume = volumeControl.value;
     });
-
-    function visualizeAudio() {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const analyser = audioContext.createAnalyser();
-      const source = audioContext.createMediaElementSource(radio);
-      analyser.fftSize = 256;
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-
-      source.connect(analyser);
-      analyser.connect(audioContext.destination);
-
-      function draw() {
-        if (!isPlaying) return;
-
-        analyser.getByteFrequencyData(dataArray);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const barWidth = (canvas.width / bufferLength) * 2.5;
-        let x = 0;
-
-        for (let i = 0; i < bufferLength; i++) {
-          const barHeight = dataArray[i] / 2;
-          ctx.fillStyle = `rgba(0, 179, 255, ${barHeight / 255})`;
-          ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-          x += barWidth + 1;
-        }
-
-        requestAnimationFrame(draw);
-      }
-
-      draw();
-    }
-
-    // Set canvas size
-    canvas.width = 230;
-    canvas.height = 50;
-
-    // Initially hide controls and visualization if audio hasn't started
-    radioControls.classList.add('hidden');
-    visualization.classList.add('hidden');
   </script>
 </body>
-</html>
