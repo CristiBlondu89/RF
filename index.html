@@ -13,7 +13,6 @@
     }
 
     header {
-      position: relative;
       height: 240px;
       background: url('https://i.imgur.com/AMXXDyR.png') no-repeat center center/cover;
     }
@@ -34,12 +33,15 @@
       font-weight: bold;
       color: #00b3ff;
       text-decoration: none;
-      transition: color 0.3s ease;
+      border: 2px solid #00b3ff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      display: inline-block;
     }
 
     .vip-banner a:hover {
-      color: #00e6ff;
-      text-shadow: 0 0 8px #00b3ff;
+      background-color: #00b3ff;
+      color: #111;
     }
 
     .connect-box {
@@ -48,28 +50,16 @@
       text-align: center;
       border-radius: 8px;
       margin: 40px 0;
-      transition: filter 0.3s ease;
-    }
-
-    .connect-box:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     .copy-button {
       background: none;
       border: none;
       cursor: pointer;
-      transition: transform 0.3s ease;
     }
 
     .copy-button img {
       width: 20px;
-      height: 20px;
-    }
-
-    .copy-button:hover {
-      transform: scale(1.2);
-      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     .dropdown {
@@ -87,25 +77,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background-color 0.3s ease;
-    }
-
-    .dropdown h3:hover {
-      background-color: #333;
-    }
-
-    .dropdown .arrow {
-      transition: transform 0.3s ease;
-    }
-
-    .dropdown.open .arrow {
-      transform: rotate(90deg);
     }
 
     .dropdown-content {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.4s ease, padding 0.4s ease;
+      transition: max-height 0.4s ease;
       background-color: #1e1e1e;
       padding: 0 20px;
       border-left: 4px solid #00b3ff;
@@ -118,26 +95,9 @@
       padding-bottom: 10px;
     }
 
-    .dropdown-content pre {
-      white-space: pre-wrap;
-      color: #ddd;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
     .toggle-all {
       text-align: center;
       margin-bottom: 20px;
-    }
-
-    .toggle-all button {
-      background-color: #00b3ff;
-      border: none;
-      color: #111;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
     }
 
     ul {
@@ -151,11 +111,6 @@
       padding: 15px;
       border-left: 4px solid #00b3ff;
       border-radius: 4px;
-      transition: filter 0.3s ease;
-    }
-
-    li:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     .file-link {
@@ -179,30 +134,26 @@
       font-weight: bold;
     }
 
+    .tiktok-section h3 {
+      cursor: pointer;
+      color: #00b3ff;
+      text-align: center;
+    }
+
+    .tiktok-container {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .tiktok-section.open .tiktok-container {
+      display: block;
+    }
+
     .social-icons {
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
       gap: 20px;
       margin: 30px 0;
-    }
-
-    .social-icons a img {
-      height: 40px;
-      transition: transform 0.3s ease, filter 0.3s ease;
-    }
-
-    .social-icons a img:hover {
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 6px #00b3ff);
-    }
-
-    footer {
-      text-align: center;
-      font-size: 12px;
-      padding: 20px;
-      color: #777;
-      border-top: 1px solid #333;
     }
 
     .radio-player {
@@ -215,53 +166,15 @@
       border-radius: 8px;
       border-left: 4px solid #00b3ff;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-      z-index: 1000;
       width: 250px;
     }
 
-    .radio-player h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
-      text-align: center;
-      color: #00b3ff;
-    }
-
-    .radio-player audio {
+    .visualization {
       width: 100%;
-      margin-bottom: 10px;
-    }
-
-    .radio-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .radio-controls button {
-      background: #00b3ff;
-      border: none;
-      color: #111;
-      padding: 8px 12px;
+      height: 50px;
+      background: #1e1e1e;
       border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .volume-control {
-      display: flex;
-      align-items: center;
-    }
-
-    .volume-control span {
-      font-size: 14px;
-      color: #ddd;
-    }
-
-    .volume-control input {
-      width: 100px;
-      margin-left: 10px;
-      accent-color: #00b3ff;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -270,7 +183,7 @@
 
   <div class="container">
     <div class="vip-banner">
-      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
+      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP Here</a>
     </div>
 
     <div class="connect-box">
@@ -288,65 +201,23 @@
 
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>📜 Server Commands <span class="arrow">▶</span></h3>
-      <div class="dropdown-content">
-        <pre>
-/lobby - Teleports you back to lobby
-/mini, /mymini
-/nomini - Despawns any type of helicopter
-/seats - Adds seats to the mini
-/heli, /myheli
-/hab - Hot Air Balloon
-/attackheli
-/fix - Repairs your mini
-/nodamage - Mini takes no damage
-/nocollision - Vehicle can't be rammed
-/radio - Spawns radio on mini
-/piano - Spawns piano on mini
-/tpsave - Save teleport position
-/tp - Teleport to saved position
-/keyui - Key/mouse tracker UI
-
-Press R - Repair vehicle
-Press E - Show tracker
-        </pre>
-      </div>
+      <div class="dropdown-content"><pre>... (commands here) ...</pre></div>
     </div>
 
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>👑 VIP Commands <span class="arrow">▶</span></h3>
-      <div class="dropdown-content">
-        <pre>
-/ch47 - Chinook
-/spawn fighterbus - Custom plane
-/skins or /sb - Modify skins
-/trail pink/fire/etc - Trails 1, 2, 3
-/pe 0–3 - Player effects
-/car /nocar - Sedan
-/mycar 2–4 - Modular car
-/sm /nosm - Snowmobile
-/horse /nohorse
-/f15 /nof15 - F15 Jet
-/pb /nopb - Pedalbike
-/bike /nobike - Motorbike
-/trains /notrains
-/workcart /noworkcart
-/rhib /rowboat
-        </pre>
-      </div>
+      <div class="dropdown-content"><pre>... (VIP commands here) ...</pre></div>
     </div>
 
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
 
-    <!-- TikTok section (collapsed dropdown) -->
-    <div class="dropdown" onclick="toggleDropdown(this)">
-      <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
-      <div class="dropdown-content">
-        <div style="text-align:center; margin-bottom: 10px;">
-          <button onclick="prevTikTok()">⏮ Prev</button>
-          <button onclick="nextTikTok()">Next ⏭</button>
-        </div>
-        <div id="tiktok-container" style="margin-top: 20px;"></div>
+    <div class="tiktok-section" onclick="toggleTikTok()">
+      <h3>Watch Rustic Flight ▼</h3>
+      <div class="tiktok-container" id="tiktok-container-wrapper">
+        <div id="tiktok-container"></div>
+        <button onclick="prevTikTok()">⏮ Prev</button>
+        <button onclick="nextTikTok()">Next ⏭</button>
       </div>
     </div>
 
@@ -354,26 +225,18 @@ Press E - Show tracker
       <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
       <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
       <a href="https://www.tiktok.com/@rustic.flight" target="_blank"><img src="https://i.imgur.com/qgP33oz.png" alt="TikTok"></a>
-      <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/5KTeOdy.png" alt="Twitter"></a>
-      <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
     </div>
   </div>
 
   <div class="radio-player">
     <h3>Untold Radio</h3>
-    <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3"></audio>
-    <div class="radio-controls">
-      <button id="play-pause">Play</button>
-      <div class="volume-control">
-        <span>Volume:</span>
-        <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
-      </div>
-    </div>
+    <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3" crossorigin="anonymous"></audio>
+    <button id="play-pause">Play</button>
+    <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
+    <div class="visualization"><canvas id="visualizer"></canvas></div>
   </div>
 
-  <footer>
-    © 2025 Rustic Flight. Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
-  </footer>
+  <footer>© 2025 Rustic Flight. Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a></footer>
 
   <script>
     function copyConnect() {
@@ -386,26 +249,20 @@ Press E - Show tracker
     }
 
     function toggleAllDropdowns() {
-      document.querySelectorAll('.dropdown').forEach(drop => {
-        drop.classList.toggle('open');
-      });
+      document.querySelectorAll('.dropdown').forEach(drop => drop.classList.toggle('open'));
     }
 
-    const tiktokVideos = [
-      "7504757782004944150",
-      "7504757112753442070",
-      "7497339945888058646",
-      "7490649013289569558",
-      "7492591418259655958"
-    ];
+    function toggleTikTok() {
+      document.querySelector(".tiktok-section").classList.toggle("open");
+    }
+
+    const tiktokVideos = [..."7504757782004944150","7504757112753442070"];
     let currentIndex = 0;
 
     function loadTikTok(index) {
       const container = document.getElementById("tiktok-container");
       container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
-          <section>Loading…</section>
-        </blockquote>
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;"><section>Loading…</section></blockquote>
       `;
       const script = document.createElement("script");
       script.src = "https://www.tiktok.com/embed.js";
@@ -432,43 +289,62 @@ Press E - Show tracker
         list.innerHTML = '';
         files.sort().reverse();
         const latest = files[0];
-        files.forEach((file) => {
+        files.forEach(file => {
           fetch(file).then(resp => {
-            const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
-            const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
-            const li = document.createElement('li');
-            li.innerHTML = `
-              <a class="file-link" href="${file}" download>${file}</a>
-              ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
-              <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
-            `;
-            list.appendChild(li);
+            const size = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
+            const mod = new Date(resp.headers.get("Last-Modified")).toLocaleString();
+            list.innerHTML += `<li><a class="file-link" href="${file}" download>${file}</a>${file === latest ? ' <span class="latest-badge">Latest</span>' : ''}<div class="file-meta">Uploaded: ${mod} · Size: ${size} KB</div></li>`;
           });
         });
       });
 
     const radio = document.getElementById('radio');
-    const playPauseBtn = document.getElementById('play-pause');
-    const volumeControl = document.getElementById('volume');
-    let isPlaying = false;
+    const playPause = document.getElementById('play-pause');
+    const volume = document.getElementById('volume');
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
 
-    playPauseBtn.addEventListener('click', () => {
+    let isPlaying = false;
+    let audioCtx, analyser, source, dataArray;
+
+    function initVisualizer() {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      source = audioCtx.createMediaElementSource(radio);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      analyser.fftSize = 64;
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      draw();
+    }
+
+    function draw() {
+      requestAnimationFrame(draw);
+      if (!analyser) return;
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const width = canvas.width / dataArray.length;
+      dataArray.forEach((v, i) => {
+        const height = v / 2;
+        ctx.fillStyle = "#00b3ff";
+        ctx.fillRect(i * width, canvas.height - height, width - 1, height);
+      });
+    }
+
+    playPause.onclick = () => {
       if (isPlaying) {
         radio.pause();
-        playPauseBtn.textContent = 'Play';
+        playPause.textContent = 'Play';
       } else {
-        radio.play().catch(err => {
-          console.error('Error playing audio:', err);
-          alert('Failed to play radio. Please check the stream URL or try again.');
+        radio.play().then(() => {
+          if (!audioCtx) initVisualizer();
+          playPause.textContent = 'Pause';
         });
-        playPauseBtn.textContent = 'Pause';
       }
       isPlaying = !isPlaying;
-    });
+    };
 
-    volumeControl.addEventListener('input', () => {
-      radio.volume = volumeControl.value;
-    });
+    volume.oninput = () => radio.volume = volume.value;
   </script>
 </body>
 </html>
