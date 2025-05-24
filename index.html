@@ -319,7 +319,7 @@ Press E - Show tracker
 /ch47 - Chinook
 /spawn fighterbus - Custom plane
 /skins or /sb - Modify skins
-/trail pink/fire/firework - Trails 1, 2, 3
+/trail pink/fire/etc - Trails 1, 2, 3
 /pe 0–3 - Player effects
 /car /nocar - Sedan
 /mycar 2–4 - Modular car
@@ -343,8 +343,8 @@ Press E - Show tracker
       <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
         <div style="text-align:center; margin-bottom: 10px;">
-          <button onclick="prevTikTok()">⏮ Prev</button>
-          <button onclick="nextTikTok()">Next ⏭</button>
+          <button onclick="prevTikTok(event)">⏮ Prev</button>
+          <button onclick="nextTikTok(event)">Next ⏭</button>
         </div>
         <div id="tiktok-container" style="margin-top: 20px;"></div>
       </div>
@@ -414,12 +414,14 @@ Press E - Show tracker
       container.appendChild(script);
     }
 
-    function nextTikTok() {
+    function nextTikTok(event) {
+      event.stopPropagation();
       currentIndex = (currentIndex + 1) % tiktokVideos.length;
       loadTikTok(currentIndex);
     }
 
-    function prevTikTok() {
+    function prevTikTok(event) {
+      event.stopPropagation();
       currentIndex = (currentIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
       loadTikTok(currentIndex);
     }
