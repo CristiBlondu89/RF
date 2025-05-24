@@ -45,45 +45,6 @@
       padding: 20px;
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      background: #2b2b2b;
-      margin: 10px 0;
-      padding: 15px;
-      border-left: 4px solid #00b3ff;
-      border-radius: 4px;
-      transition: filter 0.3s ease;
-    }
-
-    li:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
-    }
-
-    .file-link {
-      color: #00b3ff;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    .file-meta {
-      font-size: 12px;
-      color: #aaa;
-    }
-
-    .latest-badge {
-      background: #00b3ff;
-      color: #111;
-      font-size: 12px;
-      margin-left: 8px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-weight: bold;
-    }
-
     .vip-banner {
       text-align: center;
       margin: 40px auto;
@@ -197,6 +158,45 @@
       cursor: pointer;
     }
 
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #2b2b2b;
+      margin: 10px 0;
+      padding: 15px;
+      border-left: 4px solid #00b3ff;
+      border-radius: 4px;
+      transition: filter 0.3s ease;
+    }
+
+    li:hover {
+      filter: drop-shadow(0 0 6px #00b3ff);
+    }
+
+    .file-link {
+      color: #00b3ff;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .file-meta {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .latest-badge {
+      background: #00b3ff;
+      color: #111;
+      font-size: 12px;
+      margin-left: 8px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
     .tiktok-section {
       text-align: center;
       margin: 40px 0;
@@ -243,7 +243,6 @@
       border-top: 1px solid #333;
     }
 
-    /* Floating Radio Player Styles */
     .radio-player {
       position: fixed;
       bottom: 20px;
@@ -256,11 +255,6 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
       z-index: 1000;
       width: 250px;
-      transition: filter 0.3s ease;
-    }
-
-    .radio-player:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     .radio-player h3 {
@@ -290,11 +284,6 @@
       cursor: pointer;
       font-size: 14px;
       font-weight: bold;
-      transition: filter 0.3s ease;
-    }
-
-    .radio-controls button:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     .volume-control {
@@ -315,17 +304,13 @@
   </style>
 </head>
 <body>
-
   <header></header>
-
   <div class="container">
-
     <div class="vip-banner">
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">
         <img src="https://i.imgur.com/j69bomM.png" alt="VIP Package">
       </a>
     </div>
-
     <div class="connect-box">
       <h3>Join our Rust server</h3>
       <p>Press <strong>F1</strong> in-game and paste:</p>
@@ -334,66 +319,58 @@
         <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy">
       </button>
     </div>
-
-    <!-- Toggle All Dropdowns -->
     <div class="toggle-all">
       <button onclick="toggleAllDropdowns()">Toggle All Commands</button>
     </div>
-
-    <!-- Server Commands -->
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>📜 Server Commands <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
         <pre>
-/lobby          - Teleports you back to lobby
+/lobby - Teleports you back to lobby
 /mini, /mymini
-/nomini         - Despawns any type of helicopter
-/seats          - Adds seats to the mini
+/nomini - Despawns any type of helicopter
+/seats - Adds seats to the mini
 /heli, /myheli
-/hab            - Hot Air Balloon
+/hab - Hot Air Balloon
 /attackheli
-/fix            - Repairs your mini
-/nodamage       - Mini takes no damage
-/nocollision    - Vehicle can't be rammed
-/radio          - Spawns radio on mini
-/piano          - Spawns piano on mini
-/tpsave         - Save teleport position
-/tp             - Teleport to saved position
-/keyui          - Key/mouse tracker UI
+/fix - Repairs your mini
+/nodamage - Mini takes no damage
+/nocollision - Vehicle can't be rammed
+/radio - Spawns radio on mini
+/piano - Spawns piano on mini
+/tpsave - Save teleport position
+/tp - Teleport to saved position
+/keyui - Key/mouse tracker UI
 
 Press R - Repair vehicle
 Press E - Show tracker
         </pre>
       </div>
     </div>
-
-    <!-- VIP Commands -->
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>👑 VIP Commands <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
         <pre>
-/ch47                   - Chinook
-/spawn fighterbus       - Custom plane
-/skins or /sb           - Modify skins
-/trail pink/fire/etc    - Trails 1, 2, 3
-/pe 0–3                 - Player effects
-/car /nocar             - Sedan
-/mycar 2–4              - Modular car
-/sm /nosm               - Snowmobile
+/ch47 - Chinook
+/spawn fighterbus - Custom plane
+/skins or /sb - Modify skins
+/trail pink/fire/etc - Trails 1, 2, 3
+/pe 0–3 - Player effects
+/car /nocar - Sedan
+/mycar 2–4 - Modular car
+/sm /nosm - Snowmobile
 /horse /nohorse
-/f15 /nof15             - F15 Jet
-/pb /nopb               - Pedalbike
-/bike /nobike           - Motorbike
+/f15 /nof15 - F15 Jet
+/pb /nopb - Pedalbike
+/bike /nobike - Motorbike
 /trains /notrains
 /workcart /noworkcart
 /rhib /rowboat
         </pre>
       </div>
     </div>
-
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
-
     <div class="tiktok-section">
       <h3>Watch Rustic Flight</h3>
       <div>
@@ -402,7 +379,6 @@ Press E - Show tracker
       </div>
       <div id="tiktok-container" style="margin-top: 20px;"></div>
     </div>
-
     <div class="social-icons">
       <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
       <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
@@ -410,10 +386,7 @@ Press E - Show tracker
       <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/5KTeOdy.png" alt="Twitter"></a>
       <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
     </div>
-
   </div>
-
-  <!-- Floating Radio Player -->
   <div class="radio-player">
     <h3>Untold Radio</h3>
     <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3"></audio>
@@ -425,11 +398,9 @@ Press E - Show tracker
       </div>
     </div>
   </div>
-
   <footer>
     © 2025 Rustic Flight. Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
   </footer>
-
   <script>
     function copyConnect() {
       navigator.clipboard.writeText("connect play.rusticflight.com:28017");
@@ -458,7 +429,7 @@ Press E - Show tracker
     function loadTikTok(index) {
       const container = document.getElementById("tiktok-container");
       container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/" data-video-id="" style="max-width: 325px; min-width: 300px;">
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
           <section>Loading…</section>
         </blockquote>
       `;
@@ -493,16 +464,15 @@ Press E - Show tracker
             const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
             const li = document.createElement('li');
             li.innerHTML = `
-              <a class="file-link" href="" download></a>
-               ''
-              <div class="file-meta">Uploaded:  · Size:  KB</div>
+              <a class="file-link" href="${file}" download>${file}</a>
+              ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
+              <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
             `;
             list.appendChild(li);
           });
         });
       });
 
-    // Radio Player Functionality
     const radio = document.getElementById('radio');
     const playPauseBtn = document.getElementById('play-pause');
     const volumeControl = document.getElementById('volume');
@@ -528,3 +498,4 @@ Press E - Show tracker
     });
   </script>
 </body>
+</html>
