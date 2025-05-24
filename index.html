@@ -488,17 +488,21 @@ Press E - Show tracker
         files.sort().reverse();
         const latest = files[0];
         files.forEach((file) => {
-          fetch(file).then(resp => {
-            const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
-            const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
-            const li = document.createElement('li');
-            li.innerHTML = `
-              <a class="file-link" href="" download></a>
-               ''
-              <div class="file-meta">Uploaded:  · Size:  KB</div>
-            `;
-            list.appendChild(li);
-          });
+        fetch(file).then(resp => {
+          const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
+          const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
+      
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <a class="file-link" href="" download></a>
+            <div class="file-meta">Uploaded:  · Size:  KB</div>
+          `;
+      
+          if (file === latest) {
+            li.querySelector('.file-link').insertAdjacentHTML('afterend', '<span class="latest-badge">Latest</span>');
+          }
+      
+          list.appendChild(li);
         });
       });
 
@@ -528,3 +532,4 @@ Press E - Show tracker
     });
   </script>
 </body>
+</html>
