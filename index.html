@@ -5,13 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rustic Flight</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #1e1e1e;
-      color: #f0f0f0;
+    /* General Styles */
+    :root {
+      --primary-bg: #1e1e1e;
+      --secondary-bg: #2b2b2b;
+      --text-color: #f0f0f0;
+      --accent-color: #00b3ff;
+      --shadow-color: rgba(0, 179, 255, 0.5);
+      --text-secondary: #aaa;
+      --text-muted: #777;
     }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--primary-bg);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header Styles */
     header {
       position: relative;
       height: 240px;
@@ -39,54 +63,24 @@
       }
     }
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
+    /* Section Styles */
+    h2, h3 {
+      color: var(--text-color);
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
+    h2 {
+      margin-bottom: 20px;
     }
 
-    li {
-      background: #2b2b2b;
-      margin: 10px 0;
-      padding: 15px;
-      border-left: 4px solid #00b3ff;
-      border-radius: 4px;
-      transition: filter 0.3s ease;
+    h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
     }
 
-    li:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
-    }
-
-    .file-link {
-      color: #00b3ff;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    .file-meta {
-      font-size: 12px;
-      color: #aaa;
-    }
-
-    .latest-badge {
-      background: #00b3ff;
-      color: #111;
-      font-size: 12px;
-      margin-left: 8px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-weight: bold;
-    }
-
+    /* VIP Banner */
     .vip-banner {
       text-align: center;
-      margin: 40px auto;
+      margin: 40px 0;
     }
 
     .vip-banner img {
@@ -96,11 +90,12 @@
 
     .vip-banner img:hover {
       transform: scale(1.1);
-      filter: drop-shadow(0 0 8px #00b3ff);
+      filter: drop-shadow(0 0 8px var(--accent-color));
     }
 
+    /* Connect Box */
     .connect-box {
-      background: #2b2b2b;
+      background: var(--secondary-bg);
       padding: 20px;
       text-align: center;
       border-radius: 8px;
@@ -109,7 +104,13 @@
     }
 
     .connect-box:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
+      filter: drop-shadow(0 0 6px var(--accent-color));
+    }
+
+    .connect-box code {
+      background: #333;
+      padding: 5px 10px;
+      border-radius: 5px;
     }
 
     .copy-button {
@@ -126,20 +127,18 @@
 
     .copy-button:hover {
       transform: scale(1.2);
-      filter: drop-shadow(0 0 6px #00b3ff);
+      filter: drop-shadow(0 0 6px var(--accent-color));
     }
 
+    /* Dropdown Styles */
     .dropdown {
-      margin: 30px auto;
-      max-width: 900px;
+      margin: 30px 0;
     }
 
     .dropdown h3 {
-      background-color: #2b2b2b;
+      background: var(--secondary-bg);
       padding: 12px 20px;
-      margin: 0;
       cursor: pointer;
-      font-size: 18px;
       border-radius: 6px;
       display: flex;
       justify-content: space-between;
@@ -148,7 +147,7 @@
     }
 
     .dropdown h3:hover {
-      background-color: #333;
+      background: #333;
     }
 
     .dropdown .arrow {
@@ -163,16 +162,15 @@
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.4s ease, padding 0.4s ease;
-      background-color: #1e1e1e;
+      background: var(--primary-bg);
       padding: 0 20px;
-      border-left: 4px solid #00b3ff;
+      border-left: 4px solid var(--accent-color);
       border-radius: 0 0 6px 6px;
     }
 
     .dropdown.open .dropdown-content {
       max-height: 800px;
-      padding-top: 10px;
-      padding-bottom: 10px;
+      padding: 10px 20px;
     }
 
     .dropdown-content pre {
@@ -182,21 +180,68 @@
       line-height: 1.5;
     }
 
+    /* Toggle All */
     .toggle-all {
       text-align: center;
       margin-bottom: 20px;
     }
 
     .toggle-all button {
-      background-color: #00b3ff;
+      background: var(--accent-color);
       border: none;
       color: #111;
       padding: 8px 16px;
       border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
+      transition: filter 0.3s ease;
     }
 
+    .toggle-all button:hover {
+      filter: drop-shadow(0 0 6px var(--accent-color));
+    }
+
+    /* File List */
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: var(--secondary-bg);
+      margin: 10px 0;
+      padding: 15px;
+      border-left: 4px solid var(--accent-color);
+      border-radius: 4px;
+      transition: filter 0.3s ease;
+    }
+
+    li:hover {
+      filter: drop-shadow(0 0 6px var(--accent-color));
+    }
+
+    .file-link {
+      color: var(--accent-color);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .file-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .latest-badge {
+      background: var(--accent-color);
+      color: #111;
+      font-size: 12px;
+      margin-left: 8px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    /* TikTok Section */
     .tiktok-section {
       text-align: center;
       margin: 40px 0;
@@ -204,19 +249,21 @@
 
     .tiktok-section button {
       margin: 5px;
-      background: #00b3ff;
+      background: var(--accent-color);
       color: #111;
       border: none;
       padding: 6px 10px;
       border-radius: 4px;
       font-weight: bold;
-      transition: box-shadow 0.3s ease;
+      cursor: pointer;
+      transition: filter 0.3s ease;
     }
 
     .tiktok-section button:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
+      filter: drop-shadow(0 0 6px var(--accent-color));
     }
 
+    /* Social Icons */
     .social-icons {
       display: flex;
       justify-content: center;
@@ -232,69 +279,97 @@
 
     .social-icons a img:hover {
       transform: scale(1.1);
-      filter: drop-shadow(0 0 6px #00b3ff);
+      filter: drop-shadow(0 0 6px var(--accent-color));
     }
 
+    /* Footer */
     footer {
       text-align: center;
       font-size: 12px;
       padding: 20px;
-      color: #777;
+      color: var(--text-muted);
       border-top: 1px solid #333;
     }
 
-    /* Floating Radio Player Styles */
+    footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Collapsible Radio Player */
     .radio-player {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: #2b2b2b;
-      color: #f0f0f0;
-      padding: 15px;
+      background: var(--secondary-bg);
+      color: var(--text-color);
+      padding: 10px;
       border-radius: 8px;
-      border-left: 4px solid #00b3ff;
+      border-left: 4px solid var(--accent-color);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
       z-index: 1000;
       width: 250px;
-      transition: filter 0.3s ease;
+      transition: all 0.3s ease;
     }
 
-    .radio-player:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
+    .radio-player.collapsed {
+      height: 40px;
+      overflow: hidden;
+    }
+
+    .radio-player.collapsed .radio-controls,
+    .radio-player.collapsed .visualization,
+    .radio-player.collapsed audio {
+      display: none;
     }
 
     .radio-player h3 {
-      margin: 0 0 10px;
+      margin: 0;
       font-size: 16px;
       text-align: center;
-      color: #00b3ff;
+      color: var(--accent-color);
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .radio-player h3:hover {
+      color: #00e6ff;
     }
 
     .radio-player audio {
       width: 100%;
-      margin-bottom: 10px;
+      margin: 10px 0;
     }
 
     .radio-controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-top: 10px;
+    }
+
+    .radio-controls.hidden {
+      display: none;
     }
 
     .radio-controls button {
-      background: #00b3ff;
+      background: var(--accent-color);
       border: none;
       color: #111;
-      padding: 8px 12px;
+      padding: 6px 10px;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
       transition: filter 0.3s ease;
     }
 
     .radio-controls button:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
+      filter: drop-shadow(0 0 6px var(--accent-color));
     }
 
     .volume-control {
@@ -303,46 +378,59 @@
     }
 
     .volume-control span {
-      font-size: 14px;
+      font-size: 12px;
       color: #ddd;
     }
 
     .volume-control input {
-      width: 100px;
-      margin-left: 10px;
-      accent-color: #00b3ff;
+      width: 80px;
+      margin-left: 5px;
+      accent-color: var(--accent-color);
+    }
+
+    .visualization {
+      width: 100%;
+      height: 50px;
+      background: var(--primary-bg);
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .visualization.hidden {
+      display: none;
+    }
+
+    #visualizer {
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-
   <header></header>
 
-  <div class="container">
-
-    <div class="vip-banner">
+  <main class="container">
+    <section class="vip-banner">
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">
         <img src="https://i.imgur.com/j69bomM.png" alt="VIP Package">
       </a>
-    </div>
+    </section>
 
-    <div class="connect-box">
+    <section class="connect-box">
       <h3>Join our Rust server</h3>
       <p>Press <strong>F1</strong> in-game and paste:</p>
       <code>connect play.rusticflight.com:28017</code><br><br>
       <button class="copy-button" onclick="copyConnect()">
         <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy">
       </button>
-    </div>
+    </section>
 
-    <!-- Toggle All Dropdowns -->
-    <div class="toggle-all">
+    <section class="toggle-all">
       <button onclick="toggleAllDropdowns()">Toggle All Commands</button>
-    </div>
+    </section>
 
-    <!-- Server Commands -->
-    <div class="dropdown" onclick="toggleDropdown(this)">
-      <h3>📜 Server Commands <span class="arrow">▶</span></h3>
+    <section class="dropdown">
+      <h3 onclick="toggleDropdown(this)">📜 Server Commands <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
         <pre>
 /lobby          - Teleports you back to lobby
@@ -365,11 +453,10 @@ Press R - Repair vehicle
 Press E - Show tracker
         </pre>
       </div>
-    </div>
+    </section>
 
-    <!-- VIP Commands -->
-    <div class="dropdown" onclick="toggleDropdown(this)">
-      <h3>👑 VIP Commands <span class="arrow">▶</span></h3>
+    <section class="dropdown">
+      <h3 onclick="toggleDropdown(this)">👑 VIP Commands <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
         <pre>
 /ch47                   - Chinook
@@ -389,63 +476,71 @@ Press E - Show tracker
 /rhib /rowboat
         </pre>
       </div>
-    </div>
+    </section>
 
-    <h2>Available Map Downloads</h2>
-    <ul id="file-list">Loading maps...</ul>
+    <section>
+      <h2>Available Map Downloads</h2>
+      <ul id="file-list">Loading maps...</ul>
+    </section>
 
-    <div class="tiktok-section">
+    <section class="tiktok-section">
       <h3>Watch Rustic Flight</h3>
       <div>
         <button onclick="prevTikTok()">⏮ Prev</button>
         <button onclick="nextTikTok()">Next ⏭</button>
       </div>
       <div id="tiktok-container" style="margin-top: 20px;"></div>
-    </div>
+    </section>
 
-    <div class="social-icons">
+    <section class="social-icons">
       <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
       <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
       <a href="https://www.tiktok.com/@rustic.flight" target="_blank"><img src="https://i.imgur.com/qgP33oz.png" alt="TikTok"></a>
       <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/5KTeOdy.png" alt="Twitter"></a>
       <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
-    </div>
+    </section>
+  </main>
 
-  </div>
-
-  <!-- Floating Radio Player -->
-  <div class="radio-player">
-    <h3>Untold Radio</h3>
+  <aside class="radio-player" id="radio-player">
+    <h3 onclick="toggleRadioPlayer()">Untold Radio <span class="arrow">▶</span></h3>
     <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3"></audio>
-    <div class="radio-controls">
+    <div class="radio-controls" id="radio-controls">
       <button id="play-pause">Play</button>
       <div class="volume-control">
         <span>Volume:</span>
         <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
       </div>
     </div>
-  </div>
+    <div class="visualization" id="visualization">
+      <canvas id="visualizer"></canvas>
+    </div>
+  </aside>
 
   <footer>
     © 2025 Rustic Flight. Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
   </footer>
 
   <script>
+    // Utility Functions
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => document.querySelectorAll(selector);
+
+    // Connect Functionality
     function copyConnect() {
-      navigator.clipboard.writeText("connect play.rusticflight.com:28017");
-      alert("Copied to clipboard!");
+      navigator.clipboard.writeText("connect play.rusticflight.com:28017")
+        .then(() => alert("Copied to clipboard!"));
     }
 
-    function toggleDropdown(el) {
-      el.classList.toggle("open");
+    // Dropdown Functionality
+    function toggleDropdown(element) {
+      element.classList.toggle("open");
     }
 
     function toggleAllDropdowns() {
-      document.querySelectorAll('.dropdown').forEach(drop => {
-        drop.classList.toggle('open');
-      });
+      $$('.dropdown').forEach(dropdown => dropdown.classList.toggle('open'));
     }
 
+    // TikTok Functionality
     const tiktokVideos = [
       "7504757782004944150",
       "7504757112753442070",
@@ -453,10 +548,10 @@ Press E - Show tracker
       "7490649013289569558",
       "7492591418259655958"
     ];
-    let currentIndex = 0;
+    let tiktokIndex = 0;
 
     function loadTikTok(index) {
-      const container = document.getElementById("tiktok-container");
+      const container = $('#tiktok-container');
       container.innerHTML = `
         <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
           <section>Loading…</section>
@@ -469,25 +564,27 @@ Press E - Show tracker
     }
 
     function nextTikTok() {
-      currentIndex = (currentIndex + 1) % tiktokVideos.length;
-      loadTikTok(currentIndex);
+      tiktokIndex = (tiktokIndex + 1) % tiktokVideos.length;
+      loadTikTok(tiktokIndex);
     }
 
     function prevTikTok() {
-      currentIndex = (currentIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
-      loadTikTok(currentIndex);
+      tiktokIndex = (tiktokIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
+      loadTikTok(tiktokIndex);
     }
 
-    loadTikTok(currentIndex);
+    // Initialize TikTok
+    loadTikTok(tiktokIndex);
 
+    // File List Functionality
     fetch("files.json")
       .then(res => res.json())
       .then(files => {
-        const list = document.getElementById("file-list");
+        const list = $('#file-list');
         list.innerHTML = '';
         files.sort().reverse();
         const latest = files[0];
-        files.forEach((file) => {
+        files.forEach(file => {
           fetch(file).then(resp => {
             const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
             const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
@@ -500,32 +597,98 @@ Press E - Show tracker
             list.appendChild(li);
           });
         });
+      })
+      .catch(err => {
+        $('#file-list').innerHTML = 'Failed to load maps. Please try again later.';
       });
 
     // Radio Player Functionality
-    const radio = document.getElementById('radio');
-    const playPauseBtn = document.getElementById('play-pause');
-    const volumeControl = document.getElementById('volume');
+    const radioPlayer = $('#radio-player');
+    const radio = $('#radio');
+    const playPauseBtn = $('#play-pause');
+    const volumeControl = $('#volume');
+    const radioControls = $('#radio-controls');
+    const visualization = $('#visualization');
+    const canvas = $('#visualizer');
+    const ctx = canvas.getContext('2d');
 
     let isPlaying = false;
+    let isCollapsed = false;
+    let audioContext, analyser, source;
+
+    function toggleRadioPlayer() {
+      isCollapsed = !isCollapsed;
+      radioPlayer.classList.toggle('collapsed');
+      const arrow = radioPlayer.querySelector('.arrow');
+      arrow.textContent = isCollapsed ? '▶' : '▼';
+    }
+
+    function setupAudioContext() {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      source = audioContext.createMediaElementSource(radio);
+      analyser.fftSize = 256;
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+    }
+
+    function visualizeAudio() {
+      if (!analyser) return;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      canvas.width = 230;
+      canvas.height = 50;
+
+      function draw() {
+        if (!isPlaying) return;
+
+        analyser.getByteFrequencyData(dataArray);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const barWidth = (canvas.width / bufferLength) * 2.5;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const barHeight = dataArray[i] / 2;
+          ctx.fillStyle = `rgba(0, 179, 255, ${barHeight / 255})`;
+          ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+          x += barWidth + 1;
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    }
 
     playPauseBtn.addEventListener('click', () => {
       if (isPlaying) {
         radio.pause();
         playPauseBtn.textContent = 'Play';
+        isPlaying = false;
       } else {
-        radio.play().catch(err => {
+        if (!audioContext) setupAudioContext();
+        radio.play().then(() => {
+          playPauseBtn.textContent = 'Pause';
+          isPlaying = true;
+          radioControls.classList.remove('hidden');
+          visualization.classList.remove('hidden');
+          visualizeAudio();
+        }).catch(err => {
           console.error('Error playing audio:', err);
           alert('Failed to play radio. Please check the stream URL or try again.');
+          radioControls.classList.add('hidden');
+          visualization.classList.add('hidden');
         });
-        playPauseBtn.textContent = 'Pause';
       }
-      isPlaying = !isPlaying;
     });
 
     volumeControl.addEventListener('input', () => {
       radio.volume = volumeControl.value;
     });
+
+    // Initial state
+    radioControls.classList.add('hidden');
+    visualization.classList.add('hidden');
   </script>
 </body>
 </html>
