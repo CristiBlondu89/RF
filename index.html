@@ -18,27 +18,6 @@
       background: url('https://i.imgur.com/AMXXDyR.png') no-repeat center center/cover;
     }
 
-    header::before {
-      content: '';
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      width: 64px;
-      height: 64px;
-      background: url('https://i.imgur.com/ffOqs3B.png') no-repeat center center/contain;
-      filter: drop-shadow(0 0 20px #ffa500);
-      border-radius: 50%;
-      animation: fadeInLogo 1.5s ease-in-out forwards;
-      opacity: 0;
-    }
-
-    @keyframes fadeInLogo {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
     .container {
       max-width: 900px;
       margin: auto;
@@ -50,14 +29,17 @@
       margin: 40px auto;
     }
 
-    .vip-banner img {
-      max-width: 220px;
-      transition: transform 0.3s ease, filter 0.3s ease;
+    .vip-banner a {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00b3ff;
+      text-decoration: none;
+      transition: color 0.3s ease;
     }
 
-    .vip-banner img:hover {
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 8px #00b3ff);
+    .vip-banner a:hover {
+      color: #00e6ff;
+      text-shadow: 0 0 8px #00b3ff;
     }
 
     .connect-box {
@@ -197,26 +179,6 @@
       font-weight: bold;
     }
 
-    .tiktok-section {
-      text-align: center;
-      margin: 40px 0;
-    }
-
-    .tiktok-section button {
-      margin: 5px;
-      background: #00b3ff;
-      color: #111;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-weight: bold;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .tiktok-section button:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
-    }
-
     .social-icons {
       display: flex;
       justify-content: center;
@@ -305,12 +267,12 @@
 </head>
 <body>
   <header></header>
+
   <div class="container">
     <div class="vip-banner">
-      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">
-        <img src="https://i.imgur.com/j69bomM.png" alt="VIP Package">
-      </a>
+      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
     </div>
+
     <div class="connect-box">
       <h3>Join our Rust server</h3>
       <p>Press <strong>F1</strong> in-game and paste:</p>
@@ -319,9 +281,11 @@
         <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy">
       </button>
     </div>
+
     <div class="toggle-all">
       <button onclick="toggleAllDropdowns()">Toggle All Commands</button>
     </div>
+
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>📜 Server Commands <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
@@ -347,6 +311,7 @@ Press E - Show tracker
         </pre>
       </div>
     </div>
+
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>👑 VIP Commands <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
@@ -369,16 +334,22 @@ Press E - Show tracker
         </pre>
       </div>
     </div>
+
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
-    <div class="tiktok-section">
-      <h3>Watch Rustic Flight</h3>
-      <div>
-        <button onclick="prevTikTok()">⏮ Prev</button>
-        <button onclick="nextTikTok()">Next ⏭</button>
+
+    <!-- TikTok section (collapsed dropdown) -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
+      <div class="dropdown-content">
+        <div style="text-align:center; margin-bottom: 10px;">
+          <button onclick="prevTikTok()">⏮ Prev</button>
+          <button onclick="nextTikTok()">Next ⏭</button>
+        </div>
+        <div id="tiktok-container" style="margin-top: 20px;"></div>
       </div>
-      <div id="tiktok-container" style="margin-top: 20px;"></div>
     </div>
+
     <div class="social-icons">
       <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
       <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
@@ -387,6 +358,7 @@ Press E - Show tracker
       <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
     </div>
   </div>
+
   <div class="radio-player">
     <h3>Untold Radio</h3>
     <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3"></audio>
@@ -398,9 +370,11 @@ Press E - Show tracker
       </div>
     </div>
   </div>
+
   <footer>
     © 2025 Rustic Flight. Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
   </footer>
+
   <script>
     function copyConnect() {
       navigator.clipboard.writeText("connect play.rusticflight.com:28017");
@@ -476,7 +450,6 @@ Press E - Show tracker
     const radio = document.getElementById('radio');
     const playPauseBtn = document.getElementById('play-pause');
     const volumeControl = document.getElementById('volume');
-
     let isPlaying = false;
 
     playPauseBtn.addEventListener('click', () => {
