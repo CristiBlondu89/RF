@@ -11,25 +11,25 @@
       background: #1e1e1e;
       color: #f0f0f0;
     }
-
     .container {
       max-width: 900px;
       margin: auto;
       padding: 20px;
     }
-
     .vip-banner {
       text-align: center;
-      margin: 40px 0;
+      margin: 40px auto;
     }
-
     .vip-banner a {
       font-size: 20px;
       font-weight: bold;
       color: #00b3ff;
       text-decoration: none;
     }
-
+    .vip-banner a:hover {
+      color: #00e6ff;
+      text-shadow: 0 0 8px #00b3ff;
+    }
     .connect-box {
       background: #2b2b2b;
       padding: 20px;
@@ -37,56 +37,67 @@
       border-radius: 8px;
       margin: 40px 0;
     }
-
     .copy-button {
       background: none;
       border: none;
       cursor: pointer;
     }
-
+    .copy-button img {
+      width: 20px;
+      height: 20px;
+    }
+    .dropdown {
+      margin: 30px auto;
+      max-width: 900px;
+    }
     .dropdown h3 {
       background-color: #2b2b2b;
       padding: 12px 20px;
-      margin: 0;
       cursor: pointer;
       font-size: 18px;
       border-radius: 6px;
       display: flex;
       justify-content: space-between;
     }
-
-    .dropdown .arrow {
-      transition: transform 0.3s ease;
-    }
-
     .dropdown.open .arrow {
       transform: rotate(90deg);
     }
-
     .dropdown-content {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.4s ease;
-      background-color: #1e1e1e;
+      transition: all 0.4s ease;
+      background: #1e1e1e;
       padding: 0 20px;
       border-left: 4px solid #00b3ff;
+      border-radius: 0 0 6px 6px;
     }
-
     .dropdown.open .dropdown-content {
       max-height: 800px;
       padding: 10px 20px;
     }
-
-    pre {
+    .dropdown-content pre {
       white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.5;
       color: #ddd;
     }
-
+    .toggle-all {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .toggle-all button {
+      background-color: #00b3ff;
+      border: none;
+      color: #111;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
     ul {
       list-style: none;
       padding: 0;
     }
-
     li {
       background: #2b2b2b;
       margin: 10px 0;
@@ -94,13 +105,14 @@
       border-left: 4px solid #00b3ff;
       border-radius: 4px;
     }
-
     .file-link {
       color: #00b3ff;
       font-weight: bold;
-      text-decoration: none;
     }
-
+    .file-meta {
+      font-size: 12px;
+      color: #aaa;
+    }
     .latest-badge {
       background: #00b3ff;
       color: #111;
@@ -108,18 +120,8 @@
       margin-left: 8px;
       padding: 2px 6px;
       border-radius: 3px;
+      font-weight: bold;
     }
-
-    .tiktok-section {
-      text-align: center;
-      margin: 40px 0;
-    }
-
-    .tiktok-section.collapsed #tiktok-container,
-    .tiktok-section.collapsed .tiktok-controls {
-      display: none;
-    }
-
     .social-icons {
       display: flex;
       justify-content: center;
@@ -127,11 +129,15 @@
       gap: 20px;
       margin: 30px 0;
     }
-
-    .social-icons img {
+    .social-icons a img {
       height: 40px;
     }
-
+    footer {
+      text-align: center;
+      font-size: 12px;
+      padding: 20px;
+      color: #777;
+    }
     .radio-player {
       position: fixed;
       bottom: 20px;
@@ -140,82 +146,121 @@
       padding: 15px;
       border-radius: 8px;
       border-left: 4px solid #00b3ff;
-      color: white;
+      width: 250px;
       z-index: 1000;
     }
-
-    #visualizer {
-      margin-top: 10px;
-      width: 100%;
-      height: 50px;
-      background: #1e1e1e;
-      border-radius: 5px;
-    }
-
-    footer {
+    .radio-player h3 {
+      font-size: 16px;
       text-align: center;
-      font-size: 12px;
-      padding: 20px;
-      color: #777;
+      color: #00b3ff;
+    }
+    .radio-player audio {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .radio-controls {
+      display: flex;
+      justify-content: space-between;
+    }
+    .radio-controls button {
+      background: #00b3ff;
+      border: none;
+      color: #111;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .volume-control {
+      display: flex;
+      align-items: center;
+    }
+    .volume-control span {
+      font-size: 14px;
+      color: #ddd;
+    }
+    .volume-control input {
+      width: 100px;
+      margin-left: 10px;
+      accent-color: #00b3ff;
     }
   </style>
 </head>
 <body>
-
   <div class="container">
     <div class="vip-banner">
-      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP Here</a>
+      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
     </div>
-
     <div class="connect-box">
       <h3>Join our Rust server</h3>
-      <p>Press <strong>F1</strong> and paste:</p>
+      <p>Press <strong>F1</strong> in-game and paste:</p>
       <code>connect play.rusticflight.com:28017</code><br><br>
-      <button class="copy-button" onclick="navigator.clipboard.writeText('connect play.rusticflight.com:28017').then(()=>alert('Copied!'))">Copy</button>
+      <button class="copy-button" onclick="copyConnect()">
+        <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy">
+      </button>
     </div>
-
-    <div class="dropdown" onclick="this.classList.toggle('open')">
+    <div class="toggle-all">
+      <button onclick="toggleAllDropdowns()">Toggle All Commands</button>
+    </div>
+    <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>📜 Server Commands <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
         <pre>
-/lobby - Lobby
+/lobby - Teleports you back to lobby
 /mini, /mymini
-/nomini - Despawn
-/seats - Add seats
+/nomini - Despawns any type of helicopter
+/seats - Adds seats to the mini
+/heli, /myheli
+/hab - Hot Air Balloon
 /attackheli
-/fix - Repair
-/nodamage
-/nocollision
-/tpsave, /tp
-/keyui - Tracker
+/fix - Repairs your mini
+/nodamage - Mini takes no damage
+/nocollision - Vehicle can't be rammed
+/radio - Spawns radio on mini
+/piano - Spawns piano on mini
+/tpsave - Save teleport position
+/tp - Teleport to saved position
+/keyui - Key/mouse tracker UI
+
+Press R - Repair vehicle
+Press E - Show tracker
         </pre>
       </div>
     </div>
-
-    <div class="dropdown" onclick="this.classList.toggle('open')">
+    <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>👑 VIP Commands <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
         <pre>
 /ch47 - Chinook
-/f15 /nof15 - Jet
-/pb - Pedalbike
-/mycar 2–4 - Car
+/spawn fighterbus - Custom plane
+/skins or /sb - Modify skins
+/trail pink/fire/etc - Trails 1, 2, 3
+/pe 0–3 - Player effects
+/car /nocar - Sedan
+/mycar 2–4 - Modular car
+/sm /nosm - Snowmobile
+/horse /nohorse
+/f15 /nof15 - F15 Jet
+/pb /nopb - Pedalbike
+/bike /nobike - Motorbike
+/trains /notrains
+/workcart /noworkcart
+/rhib /rowboat
         </pre>
       </div>
     </div>
-
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
-
-    <div class="tiktok-section collapsed" id="tiktok-wrapper">
-      <h3 onclick="this.parentElement.classList.toggle('collapsed')">Watch Rustic Flight ▶</h3>
-      <div class="tiktok-controls">
-        <button onclick="prevTikTok()">⏮ Prev</button>
-        <button onclick="nextTikTok()">Next ⏭</button>
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
+      <div class="dropdown-content">
+        <div style="text-align:center;">
+          <button onclick="prevTikTok()">⏮ Prev</button>
+          <button onclick="nextTikTok()">Next ⏭</button>
+        </div>
+        <div id="tiktok-container" style="margin-top: 20px;"></div>
       </div>
-      <div id="tiktok-container" style="margin-top: 20px;"></div>
     </div>
-
     <div class="social-icons">
       <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
       <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
@@ -224,20 +269,33 @@
       <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
     </div>
   </div>
-
   <div class="radio-player">
     <h3>Untold Radio</h3>
-    <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3" crossorigin="anonymous"></audio>
-    <button id="play-pause">Play</button>
-    <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
-    <canvas id="visualizer"></canvas>
+    <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3"></audio>
+    <div class="radio-controls">
+      <button id="play-pause">Play</button>
+      <div class="volume-control">
+        <span>Volume:</span>
+        <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
+      </div>
+    </div>
   </div>
-
   <footer>
-    © 2025 Rustic Flight — <a href="mailto:rusticflight@gmail.com">Contact Us</a>
+    © 2025 Rustic Flight. Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
   </footer>
-
   <script>
+    function copyConnect() {
+      navigator.clipboard.writeText("connect play.rusticflight.com:28017");
+      alert("Copied to clipboard!");
+    }
+    function toggleDropdown(el) {
+      el.classList.toggle("open");
+    }
+    function toggleAllDropdowns() {
+      document.querySelectorAll('.dropdown').forEach(drop => {
+        drop.classList.toggle('open');
+      });
+    }
     const tiktokVideos = [
       "7504757782004944150",
       "7504757112753442070",
@@ -249,10 +307,13 @@
     function loadTikTok(index) {
       const container = document.getElementById("tiktok-container");
       container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;"><section>Loading…</section></blockquote>
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
+          <section>Loading…</section>
+        </blockquote>
       `;
       const script = document.createElement("script");
       script.src = "https://www.tiktok.com/embed.js";
+      script.async = true;
       container.appendChild(script);
     }
     function nextTikTok() {
@@ -264,7 +325,6 @@
       loadTikTok(currentIndex);
     }
     loadTikTok(currentIndex);
-
     fetch("files.json")
       .then(res => res.json())
       .then(files => {
@@ -274,65 +334,38 @@
         const latest = files[0];
         files.forEach(file => {
           fetch(file).then(resp => {
-            const size = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
-            const time = new Date(resp.headers.get("Last-Modified")).toLocaleString();
-            const li = document.createElement("li");
-            li.innerHTML = `<a class="file-link" href="${file}" download>${file}</a> ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}<div class="file-meta">Uploaded: ${time} · Size: ${size} KB</div>`;
+            const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
+            const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <a class="file-link" href="${file}" download>${file}</a>
+              ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
+              <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
+            `;
             list.appendChild(li);
           });
         });
       });
-
-    const radio = document.getElementById("radio");
-    const playPauseBtn = document.getElementById("play-pause");
-    const volumeSlider = document.getElementById("volume");
-    const canvas = document.getElementById("visualizer");
-    const ctx = canvas.getContext("2d");
-
-    let audioCtx, analyser, source, dataArray;
+    const radio = document.getElementById('radio');
+    const playPauseBtn = document.getElementById('play-pause');
+    const volumeControl = document.getElementById('volume');
     let isPlaying = false;
-
-    function initVisualizer() {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioCtx.createAnalyser();
-      source = audioCtx.createMediaElementSource(radio);
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
-      analyser.fftSize = 64;
-      dataArray = new Uint8Array(analyser.frequencyBinCount);
-      draw();
-    }
-
-    function draw() {
-      if (!isPlaying) return;
-      requestAnimationFrame(draw);
-      analyser.getByteFrequencyData(dataArray);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const barWidth = canvas.width / dataArray.length;
-      dataArray.forEach((val, i) => {
-        const height = val / 2;
-        ctx.fillStyle = "#00b3ff";
-        ctx.fillRect(i * barWidth, canvas.height - height, barWidth - 1, height);
-      });
-    }
-
-    playPauseBtn.onclick = () => {
+    playPauseBtn.addEventListener('click', () => {
       if (isPlaying) {
         radio.pause();
-        playPauseBtn.textContent = "Play";
+        playPauseBtn.textContent = 'Play';
       } else {
-        radio.play().then(() => {
-          if (!audioCtx) initVisualizer();
-          draw();
-          playPauseBtn.textContent = "Pause";
+        radio.play().catch(err => {
+          console.error('Error playing audio:', err);
+          alert('Failed to play radio.');
         });
+        playPauseBtn.textContent = 'Pause';
       }
       isPlaying = !isPlaying;
-    };
-
-    volumeSlider.oninput = () => {
-      radio.volume = volumeSlider.value;
-    };
+    });
+    volumeControl.addEventListener('input', () => {
+      radio.volume = volumeControl.value;
+    });
   </script>
 </body>
 </html>
