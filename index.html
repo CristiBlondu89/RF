@@ -72,20 +72,30 @@
       filter: drop-shadow(0 0 6px #00b3ff);
     }
 
-    <!-- TSARVAR WIDGET -->
-<a href="https://tsarvar.com/servers/rust/play.rusticflight.com:28017" data-tsarvarServerId="483341">Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy</a>
-<script type="text/javascript" charset="utf-8" src="https://widget.tsarvar.com/load.js?v=2"></script>
-<script type="text/javascript">
-    (function(k){(window[k]||(window[k]=[])).push({
-        element:'*[data-tsarvarServerId="483341"]',
-        serverId:483341,
-        serverDomain:'play.rusticflight.com',
-        serverIp:'135.125.189.228',
-        serverPort:28017,
-        blackMode:true
-    });})('TsarvarWidgetQueue');
-</script>
-<!-- /TSARVAR WIDGET -->
+    .server-status {
+      background: #2b2b2b;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+      margin: 20px 0;
+      transition: filter 0.3s ease;
+      border-left: 4px solid #00b3ff;
+    }
+
+    .server-status:hover {
+      filter: drop-shadow(0 0 6px #00b3ff);
+    }
+
+    .server-status a {
+      color: #00b3ff;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .server-status a:hover {
+      color: #00e6ff;
+    }
 
     .dropdown {
       margin: 30px auto;
@@ -308,6 +318,22 @@
       </button>
     </div>
 
+    <!-- Server Status Widget -->
+    <div class="server-status">
+      <a href="https://tsarvar.com/servers/rust/play.rusticflight.com:28017" data-tsarvarServerId="483341">Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy</a>
+      <script type="text/javascript" charset="utf-8" src="https://widget.tsarvar.com/load.js?v=2"></script>
+      <script type="text/javascript">
+        (function(k){(window[k]||(window[k]=[])).push({
+          element:'*[data-tsarvarServerId="483341"]',
+          serverId:483341,
+          serverDomain:'play.rusticflight.com',
+          serverIp:'135.125.189.228',
+          serverPort:28017,
+          blackMode:true
+        });})('TsarvarWidgetQueue');
+      </script>
+    </div>
+
     <div class="toggle-all">
       <button onclick="toggleAllDropdowns()">Toggle All Commands</button>
     </div>
@@ -420,7 +446,7 @@ Press E - Show tracker
     const tiktokVideos = [
       "7504757782004944150",
       "7504757112753442070",
-      "749733994588 Popsicle8646",
+      "7497339945888646",
       "7490649013289569558",
       "7492591418259655958"
     ];
