@@ -42,17 +42,57 @@
       text-shadow: 0 0 8px #00b3ff;
     }
 
-    .connect-box {
+    .server-status {
       background: #2b2b2b;
       padding: 20px;
       text-align: center;
       border-radius: 8px;
       margin: 40px 0;
       transition: filter 0.3s ease;
+      border-left: 4px solid #00b3ff;
     }
 
-    .connect-box:hover {
+    .server-status:hover {
       filter: drop-shadow(0 0 6px #00b3ff);
+    }
+
+    /* Hide the Tsarvar widget's link text */
+    .server-status a[data-tsarvarServerId] {
+      display: none;
+    }
+
+    /* Style the widget's status and player count */
+    .server-status .tsarvar-widget {
+      color: #ddd;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .server-status .tsarvar-widget .status-online {
+      color: #00ff00;
+      font-weight: bold;
+    }
+
+    .server-status .tsarvar-widget .status-offline {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    .server-status .connect-instructions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #ddd;
+    }
+
+    .server-status .connect-instructions span {
+      white-space: nowrap;
+    }
+
+    .server-status .connect-instructions strong {
+      color: #00b3ff;
     }
 
     .copy-button {
@@ -70,31 +110,6 @@
     .copy-button:hover {
       transform: scale(1.2);
       filter: drop-shadow(0 0 6px #00b3ff);
-    }
-
-    .server-status {
-      background: #2b2b2b;
-      padding: 20px;
-      text-align: center;
-      border-radius: 8px;
-      margin: 20px 0;
-      transition: filter 0.3s ease;
-      border-left: 4px solid #00b3ff;
-    }
-
-    .server-status:hover {
-      filter: drop-shadow(0 0 6px #00b3ff);
-    }
-
-    .server-status a {
-      color: #00b3ff;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 16px;
-    }
-
-    .server-status a:hover {
-      color: #00e6ff;
     }
 
     .dropdown {
@@ -309,17 +324,9 @@
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
     </div>
 
-    <div class="connect-box">
-      <h3>Join our Rust server</h3>
-      <p>Press <strong>F1</strong> in-game and paste:</p>
-      <code>connect play.rusticflight.com:28017</code><br><br>
-      <button class="copy-button" onclick="copyConnect()">
-        <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy">
-      </button>
-    </div>
-
-    <!-- Server Status Widget -->
+    <!-- Tsarvar Server Status Widget with Instructions and Copy Address -->
     <div class="server-status">
+      <h3>Server Status</h3>
       <a href="https://tsarvar.com/servers/rust/play.rusticflight.com:28017" data-tsarvarServerId="483341">Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy</a>
       <script type="text/javascript" charset="utf-8" src="https://widget.tsarvar.com/load.js?v=2"></script>
       <script type="text/javascript">
@@ -329,9 +336,16 @@
           serverDomain:'play.rusticflight.com',
           serverIp:'135.125.189.228',
           serverPort:28017,
-          blackMode:true
+          blackMode:true,
+          players:false
         });})('TsarvarWidgetQueue');
       </script>
+      <div class="connect-instructions">
+        <span>Press <strong>F1</strong> for console, click to copy address:</span>
+        <button class="copy-button" onclick="copyServerAddress()">
+          <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy Address">
+        </button>
+      </div>
     </div>
 
     <div class="toggle-all">
@@ -428,9 +442,9 @@ Press E - Show tracker
   </footer>
 
   <script>
-    function copyConnect() {
+    function copyServerAddress() {
       navigator.clipboard.writeText("connect play.rusticflight.com:28017");
-      alert("Copied to clipboard!");
+      alert("Server address copied to clipboard!");
     }
 
     function toggleDropdown(el) {
@@ -481,6 +495,22 @@ Press E - Show tracker
 
     loadTikTok(currentIndex);
 
+    // Modify Tsarvar widget to remove link text
+    function cleanTsarvarWidget() {
+      const widget = document.querySelector('.server-status .tsarvar-widget');
+      if (widget) {
+        // Remove any branding or unwanted links
+        const branding = widget.querySelectorAll('a[href*="tsarvar.com"]:not([data-tsarvarServerId])');
+        branding.forEach(el => el.remove());
+      }
+    }
+
+    // Observe widget loading to apply cleanup
+    const observer = new MutationObserver(() => {
+      cleanTsarvarWidget();
+    });
+    observer.observe(document.querySelector('.server-status'), { childList: true, subtree: true });
+
     fetch("files.json")
       .then(res => {
         if (!res.ok) throw new Error("Failed to fetch files.json");
@@ -511,7 +541,6 @@ Press E - Show tracker
               list.appendChild(li);
             })
             .catch(err => {
-              console.error(err);
               const li = document.createElement('li');
               li.innerHTML = `Error loading file: ${file}`;
               list.appendChild(li);
@@ -541,29 +570,29 @@ Press E - Show tracker
         source = audioContext.createMediaElementSource(radio);
         source.connect(analyser);
         analyser.connect(audioContext.destination);
-        analyser.fftSize = 64; // Number of frequency bins (32 bars)
+        analyser.fftSize = 64;
         dataArray = new Uint8Array(analyser.frequencyBinCount);
-        canvas.width = canvas.offsetWidth; // Set canvas width to match CSS
+        canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
         drawVisualizer();
       } catch (err) {
         console.error('Error initializing visualizer:', err);
-        canvas.style.display = 'none'; // Hide canvas if initialization fails
+        canvas.style.display = 'none';
       }
     }
 
     function drawVisualizer() {
-      if (!isPlaying) return; // Stop drawing if not playing
+      if (!isPlaying) return;
       requestAnimationFrame(drawVisualizer);
       analyser.getByteFrequencyData(dataArray);
-      ctx.fillStyle = '#1e1e1e'; // Background color
+      ctx.fillStyle = '#1e1e1e';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       const barWidth = (canvas.width / dataArray.length) * 1.5;
       let x = 0;
       for (let i = 0; i < dataArray.length; i++) {
         const barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
-        ctx.fillStyle = '#00b3ff'; // Bar color
+        ctx.fillStyle = '#00b3ff';
         ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
         x += barWidth;
       }
@@ -581,7 +610,7 @@ Press E - Show tracker
         });
         playPauseBtn.textContent = 'Pause';
         isPlaying = true;
-        if (!audioContext) initVisualizer(); // Initialize on first play
+        if (!audioContext) initVisualizer();
         else if (audioContext.state === 'suspended') audioContext.resume();
       }
     });
