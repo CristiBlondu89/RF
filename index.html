@@ -245,6 +245,40 @@
       border-top: 1px solid #333;
     }
 
+    /* Wordle styles */
+#wordle-grid div {
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+#wordle-container input,
+#wordle-container button {
+  background: #2b2b2b;
+  color: #00b3ff;
+  border: 1px solid #00b3ff;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+#wordle-container button {
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+#wordle-container button:hover {
+  background-color: #00b3ff;
+  color: #111;
+}
+
+#wordle-message {
+  color: #ddd;
+}
+
+
     .radio-player {
       background: #2b2b2b;
       color: #f0f0f0;
@@ -415,6 +449,19 @@ Press E - Show tracker
         <div id="tiktok-container" style="margin-top: 20px;"></div>
       </div>
     </div>
+    
+<div class="dropdown" onclick="toggleDropdown(this)">
+  <h3>🟩 Play Wordle <span class="arrow">▶</span></h3>
+  <div class="dropdown-content">
+    <div id="wordle-container" style="padding: 20px;">
+      <div id="wordle-grid" style="display: grid; grid-template-columns: repeat(5, 40px); gap: 5px; margin-bottom: 10px;"></div>
+      <input type="text" id="wordle-input" maxlength="5" placeholder="Enter a 5-letter word" style="width: 200px; padding: 6px;" />
+      <button onclick="submitWord()">Submit</button>
+      <div id="wordle-message" style="margin-top: 10px; font-size: 14px;"></div>
+    </div>
+  </div>
+</div>
+
 
     <div class="social-icons">
       <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
