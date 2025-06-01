@@ -1,3 +1,24 @@
+
+Conversation opened. 1 unread message.
+
+Skip to content
+Using Gmail with screen readers
+1 of 3
+Index
+Inbox
+Cristian Andrei Circa
+	
+Attachments1:30 PM (0 minutes ago)
+	
+to me
+
+
+
+Regards,
+Cristian Circa
+ One attachment  •  Scanned by Gmail
+	
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,10 +77,12 @@
       filter: drop-shadow(0 0 6px #00b3ff);
     }
 
+    /* Hide the Tsarvar widget's link text */
     .server-status a[data-tsarvarServerId] {
       display: none;
     }
 
+    /* Style the widget's status and player count */
     .server-status .tsarvar-widget {
       color: #ddd;
       font-size: 16px;
@@ -312,167 +335,6 @@
       background: #1e1e1e;
       border: 1px solid #00b3ff;
     }
-
-    #wordle-game {
-      background: #121213;
-      padding: 20px;
-      border-radius: 8px;
-    }
-
-    #wordle-grid {
-      display: grid;
-      grid-template-rows: repeat(6, 58px);
-      gap: 5px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .wordle-row {
-      display: grid;
-      grid-template-columns: repeat(5, 58px);
-      gap: 5px;
-    }
-
-    .wordle-tile {
-      width: 58px;
-      height: 58px;
-      background: #2b2b2b;
-      border: 2px solid #3a3a3c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: #d7dadc;
-      transition: background 0.3s ease, border 0.3s ease;
-    }
-
-    .wordle-tile.correct {
-      background: #6aaa64;
-      border-color: #6aaa64;
-      color: #fff;
-    }
-
-    .wordle-tile.present {
-      background: #c9b458;
-      border-color: #c9b458;
-      color: #fff;
-    }
-
-    .wordle-tile.absent {
-      background: #787c7e;
-      border-color: #787c7e;
-      color: #fff;
-    }
-
-    #wordle-keyboard {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      justify-content: center;
-      align-items: center;
-      margin: 20px auto;
-      max-width: 500px;
-    }
-
-    .keyboard-row {
-      display: flex;
-      gap: 6px;
-    }
-
-    .wordle-key {
-      background: #818384;
-      border: none;
-      color: #d7dadc;
-      font-size: 16px;
-      font-weight: bold;
-      padding: 0;
-      width: 36px;
-      height: 54px;
-      border-radius: 4px;
-      cursor: pointer;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s ease, transform 0.3s ease;
-      touch-action: manipulation;
-    }
-
-    .wordle-key:hover,
-    .wordle-key:active {
-      transform: scale(1.05);
-    }
-
-    .wordle-key.correct {
-      background: #6aaa64;
-      color: #fff;
-    }
-
-    .wordle-key.present {
-      background: #c9b458;
-      color: #fff;
-    }
-
-    .wordle-key.absent {
-      background: #787c7e;
-      color: #fff;
-    }
-
-    .wordle-key.enter,
-    .wordle-key.backspace {
-      width: 60px;
-      font-size: 12px;
-    }
-
-    #wordle-message {
-      color: #d7dadc;
-      font-size: 16px;
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    #wordle-restart {
-      background: #00b3ff;
-      border: none;
-      color: #111;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      display: none;
-    }
-
-    @media (max-width: 600px) {
-      #wordle-grid {
-        grid-template-rows: repeat(6, 48px);
-      }
-
-      .wordle-row {
-        grid-template-columns: repeat(5, 48px);
-        gap: 4px;
-      }
-
-      .wordle-tile {
-        width: 48px;
-        height: 48px;
-        font-size: 28px;
-      }
-
-      .wordle-key {
-        width: 30px;
-        height: 48px;
-        font-size: 14px;
-      }
-
-      .wordle-key.enter,
-      .wordle-key.backspace {
-        width: 50px;
-        font-size: 10px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -483,6 +345,7 @@
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
     </div>
 
+    <!-- Tsarvar Server Status Widget with Instructions and Copy Address -->
     <div class="server-status">
       <h3>Server Status</h3>
       <a href="https://tsarvar.com/servers/rust/play.rusticflight.com:28017" data-tsarvarServerId="483341">Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy</a>
@@ -562,6 +425,7 @@ Press E - Show tracker
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
 
+    <!-- TikTok section (collapsed dropdown) -->
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
@@ -570,18 +434,6 @@ Press E - Show tracker
           <button onclick="nextTikTok(event)">Next ⏭</button>
         </div>
         <div id="tiktok-container" style="margin-top: 20px;"></div>
-      </div>
-    </div>
-
-    <div class="dropdown" id="wordle-dropdown" onclick="toggleDropdownWithWordle(this)">
-      <h3>🎮 Play Wordle <span class="arrow">▶</span></h3>
-      <div class="dropdown-content">
-        <div id="wordle-game">
-          <div id="wordle-grid"></div>
-          <div id="wordle-keyboard"></div>
-          <div id="wordle-message"></div>
-          <button id="wordle-restart">Restart Game</button>
-        </div>
       </div>
     </div>
 
@@ -597,7 +449,7 @@ Press E - Show tracker
   <footer>
     <div class="radio-player">
       <h3>Untold Radio</h3>
-      <audio id="radio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" crossorigin="anonymous"></audio>
+      <audio id="radio" src="https://mscp4.gazduireradio.ro:8180/untoldfestival.mp3" crossorigin="anonymous"></audio>
       <div class="radio-controls">
         <button id="play-pause">Play</button>
         <div class="volume-control">
@@ -611,443 +463,182 @@ Press E - Show tracker
   </footer>
 
   <script>
-    // Global Error Handler
-    window.onerror = function(message, source, lineno, colno, error) {
-      console.error(`Global Error: ${message} at ${source}:${lineno}:${colno}`, error);
-    };
-
-    // General Functions
     function copyServerAddress() {
-      try {
-        navigator.clipboard.writeText("connect play.rusticflight.com:28017")
-          .then(() => console.log("Server address copied to clipboard!"))
-          .catch(err => console.error("Failed to copy server address:", err));
-        alert("Server address copied to clipboard!");
-      } catch (err) {
-        console.error("Error in copyServerAddress:", err);
-      }
+      navigator.clipboard.writeText("connect play.rusticflight.com:28017");
+      alert("Server address copied to clipboard!");
     }
 
     function toggleDropdown(el) {
-      try {
-        el.classList.toggle("open");
-      } catch (err) {
-        console.error("Error in toggleDropdown:", err);
-      }
+      el.classList.toggle("open");
     }
 
     function toggleAllDropdowns() {
-      try {
-        document.querySelectorAll('.dropdown').forEach(drop => {
-          drop.classList.toggle('open');
-        });
-      } catch (err) {
-        console.error("Error in toggleAllDropdowns:", err);
+      document.querySelectorAll('.dropdown').forEach(drop => {
+        drop.classList.toggle('open');
+      });
+    }
+
+    const tiktokVideos = [
+      "7504757782004944150",
+      "7504757112753442070",
+      "7497339945888646",
+      "7490649013289569558",
+      "7492591418259655958"
+    ];
+    let currentIndex = 0;
+
+    function loadTikTok(index) {
+      const container = document.getElementById("tiktok-container");
+      container.innerHTML = `
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
+          <section>Loading…</section>
+        </blockquote>
+      `;
+      const script = document.createElement("script");
+      script.src = "https://www.tiktok.com/embed.js";
+      script.async = true;
+      script.onload = () => console.log("TikTok embed script loaded");
+      script.onerror = () => console.error("Failed to load TikTok embed script");
+      container.appendChild(script);
+    }
+
+    function nextTikTok(event) {
+      event.stopPropagation();
+      currentIndex = (currentIndex + 1) % tiktokVideos.length;
+      loadTikTok(currentIndex);
+    }
+
+    function prevTikTok(event) {
+      event.stopPropagation();
+      currentIndex = (currentIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
+      loadTikTok(currentIndex);
+    }
+
+    loadTikTok(currentIndex);
+
+    // Modify Tsarvar widget to remove link text
+    function cleanTsarvarWidget() {
+      const widget = document.querySelector('.server-status .tsarvar-widget');
+      if (widget) {
+        // Remove any branding or unwanted links
+        const branding = widget.querySelectorAll('a[href*="tsarvar.com"]:not([data-tsarvarServerId])');
+        branding.forEach(el => el.remove());
       }
     }
 
-    // TikTok Logic
-    (function() {
-      try {
-        const tiktokVideos = [
-          "7504757782004944150",
-          "7504757112753442070",
-          "7497339945888646",
-          "7490649013289569558",
-          "7492591418259655958"
-        ];
-        let currentIndex = 0;
+    // Observe widget loading to apply cleanup
+    const observer = new MutationObserver(() => {
+      cleanTsarvarWidget();
+    });
+    observer.observe(document.querySelector('.server-status'), { childList: true, subtree: true });
 
-        function loadTikTok(index) {
-          const container = document.getElementById("tiktok-container");
-          if (!container) {
-            console.error("TikTok container not found!");
-            return;
-          }
-          container.innerHTML = `
-            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
-              <section>Loading…</section>
-            </blockquote>
-          `;
-          const script = document.createElement("script");
-          script.src = "https://www.tiktok.com/embed.js";
-          script.async = true;
-          script.onload = () => console.log("TikTok embed script loaded");
-          script.onerror = () => console.error("Failed to load TikTok embed script");
-          container.appendChild(script);
+    fetch("files.json")
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch files.json");
+        return res.json();
+      })
+      .then(files => {
+        const list = document.getElementById("file-list");
+        list.innerHTML = '';
+        if (!files || files.length === 0) {
+          list.innerHTML = '<li>No maps available.</li>';
+          return;
         }
-
-        window.nextTikTok = function(event) {
-          event.stopPropagation();
-          currentIndex = (currentIndex + 1) % tiktokVideos.length;
-          loadTikTok(currentIndex);
-        };
-
-        window.prevTikTok = function(event) {
-          event.stopPropagation();
-          currentIndex = (currentIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
-          loadTikTok(currentIndex);
-        };
-
-        loadTikTok(currentIndex);
-      } catch (err) {
-        console.error("Error in TikTok logic:", err);
-      }
-    })();
-
-    // Tsarvar Widget Logic
-    (function() {
-      try {
-        function cleanTsarvarWidget() {
-          const widget = document.querySelector('.server-status .tsarvar-widget');
-          if (widget) {
-            const branding = widget.querySelectorAll('a[href*="tsarvar.com"]:not([data-tsarvarServerId])');
-            branding.forEach(el => el.remove());
-          }
-        }
-
-        const observer = new MutationObserver(() => {
-          cleanTsarvarWidget();
-        });
-        const serverStatus = document.querySelector('.server-status');
-        if (serverStatus) {
-          observer.observe(serverStatus, { childList: true, subtree: true });
-        } else {
-          console.error("Server status element not found!");
-        }
-      } catch (err) {
-        console.error("Error in Tsarvar widget logic:", err);
-      }
-    })();
-
-    // File Fetch Logic
-    (function() {
-      try {
-        fetch("files.json")
-          .then(res => {
-            if (!res.ok) throw new Error("Failed to fetch files.json");
-            return res.json();
-          })
-          .then(files => {
-            const list = document.getElementById("file-list");
-            if (!list) {
-              console.error("File list element not found!");
-              return;
-            }
-            list.innerHTML = '';
-            if (!files || files.length === 0) {
-              list.innerHTML = '<li>No maps available.</li>';
-              return;
-            }
-            files.sort().reverse();
-            const latest = files[0];
-            files.forEach((file) => {
-              fetch(file)
-                .then(resp => {
-                  if (!resp.ok) throw new Error(`Failed to fetch file: ${file}`);
-                  const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
-                  const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
-                  const li = document.createElement('li');
-                  const fileName = file.split('/').pop();
-                  li.innerHTML = `
-                    <a class="file-link" href="${file}" download>${fileName}</a>
-                    ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
-                    <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
-                  `;
-                  list.appendChild(li);
-                })
-                .catch(err => {
-                  const li = document.createElement('li');
-                  li.innerHTML = `Error loading file: ${file}`;
-                  list.appendChild(li);
-                });
+        files.sort().reverse();
+        const latest = files[0];
+        files.forEach((file) => {
+          fetch(file)
+            .then(resp => {
+              if (!resp.ok) throw new Error(`Failed to fetch file: ${file}`);
+              const sizeKB = (parseInt(resp.headers.get("Content-Length")) / 1024).toFixed(1);
+              const modified = new Date(resp.headers.get("Last-Modified")).toLocaleString();
+              const li = document.createElement('li');
+              const fileName = file.split('/').pop();
+              li.innerHTML = `
+                <a class="file-link" href="${file}" download>${fileName}</a>
+                ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
+                <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
+              `;
+              list.appendChild(li);
+            })
+            .catch(err => {
+              const li = document.createElement('li');
+              li.innerHTML = `Error loading file: ${file}`;
+              list.appendChild(li);
             });
-          })
-          .catch(err => {
-            console.error(err);
-            const list = document.getElementById("file-list");
-            if (list) {
-              list.innerHTML = '<li>Error loading map files. Please try again later.</li>';
-            }
-          });
-      } catch (err) {
-        console.error("Error in file fetch logic:", err);
-      }
-    })();
-
-    // Radio Logic
-    (function() {
-      try {
-        const radio = document.getElementById('radio');
-        const playPauseBtn = document.getElementById('play-pause');
-        const volumeControl = document.getElementById('volume');
-        let isPlaying = false;
-        let audioContext, analyser, source, dataArray;
-        const canvas = document.getElementById('visualizer');
-        const ctx = canvas.getContext('2d');
-
-        function initVisualizer() {
-          try {
-            console.log("Initializing visualizer...");
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            source = audioContext.createMediaElementSource(radio);
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
-            analyser.fftSize = 64;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            drawVisualizer();
-            console.log("Visualizer initialized successfully");
-          } catch (err) {
-            console.error('Error initializing visualizer:', err);
-            canvas.style.display = 'none';
-          }
-        }
-
-        function drawVisualizer() {
-          if (!isPlaying) return;
-          requestAnimationFrame(drawVisualizer);
-          analyser.getByteFrequencyData(dataArray);
-          ctx.fillStyle = '#1e1e1e';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          const barWidth = (canvas.width / dataArray.length) * 1.5;
-          let x = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            const barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
-            ctx.fillStyle = '#00b3ff';
-            ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
-            x += barWidth;
-          }
-        }
-
-        playPauseBtn.addEventListener('click', () => {
-          console.log("Play/Pause button clicked");
-          if (isPlaying) {
-            radio.pause();
-            playPauseBtn.textContent = 'Play';
-            isPlaying = false;
-            console.log("Radio paused");
-          } else {
-            radio.play().then(() => {
-              console.log("Radio playing successfully");
-              playPauseBtn.textContent = 'Pause';
-              isPlaying = true;
-              if (!audioContext) initVisualizer();
-              else if (audioContext.state === 'suspended') audioContext.resume();
-            }).catch(err => {
-              console.error('Error playing audio:', err);
-              alert('Failed to play radio. The stream may be unavailable.');
-            });
-          }
         });
+      })
+      .catch(err => {
+        console.error(err);
+        const list = document.getElementById("file-list");
+        list.innerHTML = '<li>Error loading map files. Please try again later.</li>';
+      });
 
-        volumeControl.addEventListener('input', () => {
-          console.log("Volume changed to:", volumeControl.value);
-          radio.volume = volumeControl.value;
-        });
-      } catch (err) {
-        console.error("Error in radio logic:", err);
-      }
-    })();
+    const radio = document.getElementById('radio');
+    const playPauseBtn = document.getElementById('play-pause');
+    const volumeControl = document.getElementById('volume');
+    let isPlaying = false;
 
-    // Wordle Logic
-    (function() {
+    // Web Audio API setup for visualization
+    let audioContext, analyser, source, dataArray;
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
+
+    function initVisualizer() {
       try {
-        const wordList = ['RUSTY', 'FLIGHT', 'COPTER', 'SKIES', 'PILOT', 'CRASH', 'HELIX', 'TURBO', 'GLIDE', 'SOARS'];
-        let targetWord = wordList[Math.floor(Math.random() * wordList.length)];
-        let currentRow = 0;
-        let currentTile = 0;
-        let currentGuess = '';
-        let gameOver = false;
-        let isWordleInitialized = false;
-
-        function initWordle() {
-          console.log("Initializing Wordle...");
-          const grid = document.getElementById('wordle-grid');
-          const keyboard = document.getElementById('wordle-keyboard');
-          const message = document.getElementById('wordle-message');
-          const restartBtn = document.getElementById('wordle-restart');
-
-          if (!grid || !keyboard || !message || !restartBtn) {
-            console.error("Wordle elements not found:", { grid, keyboard, message, restartBtn });
-            return;
-          }
-
-          grid.innerHTML = '';
-          for (let i = 0; i < 6; i++) {
-            const row = document.createElement('div');
-            row.className = 'wordle-row';
-            for (let j = 0; j < 5; j++) {
-              const tile = document.createElement('div');
-              tile.className = 'wordle-tile';
-              row.appendChild(tile);
-            }
-            grid.appendChild(row);
-          }
-
-          keyboard.innerHTML = '';
-          const rows = [
-            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-            ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACKSPACE']
-          ];
-
-          rows.forEach(keys => {
-            const row = document.createElement('div');
-            row.className = 'keyboard-row';
-            keys.forEach(key => {
-              const button = document.createElement('button');
-              button.className = 'wordle-key';
-              button.textContent = key;
-              button.dataset.key = key;
-              button.classList.add(key.toLowerCase() === 'enter' ? 'enter' : key.toLowerCase() === 'backspace' ? 'backspace' : '');
-              button.addEventListener('click', () => handleKey(key));
-              button.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                handleKey(key);
-              });
-              row.appendChild(button);
-            });
-            keyboard.appendChild(row);
-          });
-
-          document.addEventListener('keydown', (e) => {
-            if (gameOver) return;
-            const key = e.key.toUpperCase();
-            if (key === 'ENTER') handleKey('ENTER');
-            else if (key === 'BACKSPACE') handleKey('BACKSPACE');
-            else if (/^[A-Z]$/.test(key)) handleKey(key);
-          });
-
-          restartBtn.addEventListener('click', resetWordle);
-          restartBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            resetWordle();
-          });
-
-          isWordleInitialized = true;
-          console.log("Wordle initialized successfully");
-        }
-
-        function handleKey(key) {
-          if (gameOver) return;
-          console.log(`Key pressed: ${key}`);
-          const message = document.getElementById('wordle-message');
-          if (!message) {
-            console.error("Wordle message element not found!");
-            return;
-          }
-
-          if (key === 'ENTER') {
-            if (currentTile !== 5) {
-              message.textContent = 'Guess must be 5 letters!';
-              return;
-            }
-            submitGuess();
-          } else if (key === 'BACKSPACE') {
-            if (currentTile > 0) {
-              currentTile--;
-              currentGuess = currentGuess.slice(0, -1);
-              const tile = document.getElementsByClassName('wordle-row')[currentRow].children[currentTile];
-              tile.textContent = '';
-            }
-          } else if (/^[A-Z]$/.test(key) && currentTile < 5) {
-            currentGuess += key;
-            const tile = document.getElementsByClassName('wordle-row')[currentRow].children[currentTile];
-            tile.textContent = key;
-            currentTile++;
-          }
-        }
-
-        function submitGuess() {
-          console.log(`Submitting guess: ${currentGuess}`);
-          const guess = currentGuess;
-          const message = document.getElementById('wordle-message');
-          if (!wordList.includes(guess)) {
-            message.textContent = 'Not a valid word!';
-            return;
-          }
-
-          const row = document.getElementsByClassName('wordle-row')[currentRow];
-          const targetCopy = targetWord.split('');
-          const guessCopy = guess.split('');
-
-          for (let i = 0; i < 5; i++) {
-            const tile = row.children[i];
-            if (guessCopy[i] === targetCopy[i]) {
-              tile.classList.add('correct');
-              targetCopy[i] = null;
-              updateKeyboard(guessCopy[i], 'correct');
-            }
-          }
-
-          for (let i = 0; i < 5; i++) {
-            const tile = row.children[i];
-            if (!tile.classList.contains('correct')) {
-              if (targetCopy.includes(guessCopy[i])) {
-                tile.classList.add('present');
-                targetCopy[targetCopy.indexOf(guessCopy[i])] = null;
-                updateKeyboard(guessCopy[i], 'present');
-              } else {
-                tile.classList.add('absent');
-                updateKeyboard(guessCopy[i], 'absent');
-              }
-            }
-          }
-
-          if (guess === targetWord) {
-            message.textContent = 'Congratulations! You won!';
-            gameOver = true;
-            document.getElementById('wordle-restart').style.display = 'block';
-            return;
-          }
-
-          currentRow++;
-          currentTile = 0;
-          currentGuess = '';
-
-          if (currentRow >= 6) {
-            message.textContent = `Game Over! The word was ${targetWord}.`;
-            gameOver = true;
-            document.getElementById('wordle-restart').style.display = 'block';
-          }
-        }
-
-        function updateKeyboard(letter, status) {
-          const key = document.querySelector(`.wordle-key[data-key="${letter}"]`);
-          if (key && !key.classList.contains('correct')) {
-            key.classList.add(status);
-          }
-        }
-
-        function resetWordle() {
-          console.log("Resetting Wordle...");
-          targetWord = wordList[Math.floor(Math.random() * wordList.length)];
-          currentRow = 0;
-          currentTile = 0;
-          currentGuess = '';
-          gameOver = false;
-          document.getElementById('wordle-message').textContent = '';
-          document.getElementById('wordle-restart').style.display = 'none';
-          document.querySelectorAll('.wordle-key').forEach(key => {
-            key.classList.remove('correct', 'present', 'absent');
-          });
-          initWordle();
-        }
-
-        // Initialize Wordle when dropdown is opened
-        window.toggleDropdownWithWordle = function(el) {
-          toggleDropdown(el);
-          if (el.classList.contains('open') && !isWordleInitialized) {
-            initWordle();
-          }
-        };
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        source = audioContext.createMediaElementSource(radio);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        analyser.fftSize = 64;
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        drawVisualizer();
       } catch (err) {
-        console.error("Error in Wordle logic:", err);
+        console.error('Error initializing visualizer:', err);
+        canvas.style.display = 'none';
       }
-    })();
+    }
+
+    function drawVisualizer() {
+      if (!isPlaying) return;
+      requestAnimationFrame(drawVisualizer);
+      analyser.getByteFrequencyData(dataArray);
+      ctx.fillStyle = '#1e1e1e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      const barWidth = (canvas.width / dataArray.length) * 1.5;
+      let x = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
+        ctx.fillStyle = '#00b3ff';
+        ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+        x += barWidth;
+      }
+    }
+
+    playPauseBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        radio.pause();
+        playPauseBtn.textContent = 'Play';
+        isPlaying = false;
+      } else {
+        radio.play().catch(err => {
+          console.error('Error playing audio:', err);
+          alert('Failed to play radio. Please check the stream URL or try again.');
+        });
+        playPauseBtn.textContent = 'Pause';
+        isPlaying = true;
+        if (!audioContext) initVisualizer();
+        else if (audioContext.state === 'suspended') audioContext.resume();
+      }
+    });
+
+    volumeControl.addEventListener('input', () => {
+      radio.volume = volumeControl.value;
+    });
   </script>
 </body>
 </html>
