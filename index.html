@@ -381,9 +381,11 @@
       cursor: pointer;
       text-transform: uppercase;
       transition: background 0.3s ease, transform 0.3s ease;
+      touch-action: manipulation; /* Prevent iOS zoom on tap */
     }
 
-    .wordle-key:hover {
+    .wordle-key:hover,
+    .wordle-key:active {
       background: #333;
       transform: scale(1.1);
       filter: drop-shadow(0 0 6px #00b3ff);
@@ -405,6 +407,34 @@
     .wordle-key.enter,
     .wordle-key.backspace {
       width: 60px;
+    }
+
+    /* Responsive adjustments for mobile */
+    @media (max-width: 600px) {
+      #wordle-grid {
+        grid-template-rows: repeat(6, 40px);
+      }
+
+      .wordle-row {
+        grid-template-columns: repeat(5, 40px);
+      }
+
+      .wordle-tile {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+
+      .wordle-key {
+        width: 25px;
+        height: 35px;
+        font-size: 14px;
+      }
+
+      .wordle-key.enter,
+      .wordle-key.backspace {
+        width: 50px;
+      }
     }
   </style>
 </head>
@@ -724,162 +754,166 @@ Press E - Show tracker
       radio.volume = volumeControl.value;
     });
 
-    // Wordle Game Logic
-    const wordList = ['RUSTY', 'FLIGHT', 'COPTER', 'SKIES', 'PILOT', 'CRASH', 'HELIX', 'TURBO', 'GLIDE', 'SOARS'];
-    let targetWord = wordList[Math.floor(Math.random() * wordList.length)];
-    let currentRow = 0;
-    let currentTile = 0;
-    let currentGuess = '';
-    let gameOver = false;
+    // Wordle Game Logic (Scoped to avoid conflicts)
+    (function() {
+      const wordList = ['RUSTY', 'FLIGHT', 'COPTER', 'SKIES', 'PILOT', 'CRASH', 'HELIX', 'TURBO', 'GLIDE', 'SOARS'];
+      let targetWord = wordList[Math.floor(Math.random() * wordList.length)];
+      let currentRow = 0;
+      let currentTile = 0;
+      let currentGuess = '';
+      let gameOver = false;
 
-    function initWordle() {
-      const grid = document.getElementById('wordle-grid');
-      grid.innerHTML = '';
-      for (let i = 0; i < 6; i++) {
-        const row = document.createElement('div');
-        row.className = 'wordle-row';
-        for (let j = 0; j < 5; j++) {
-          const tile = document.createElement('div');
-          tile.className = 'wordle-tile';
-          row.appendChild(tile);
+      function initWordle() {
+        const grid = document.getElementById('wordle-grid');
+        grid.innerHTML = '';
+        for (let i = 0; i < 6; i++) {
+          const row = document.createElement('div');
+          row.className = 'wordle-row';
+          for (let j = 0; j < 5; j++) {
+            const tile = document.createElement('div');
+            tile.className = 'wordle-tile';
+            row.appendChild(tile);
+          }
+          grid.appendChild(row);
         }
-        grid.appendChild(row);
+
+        const keyboard = document.getElementById('wordle-keyboard');
+        const keys = [
+          'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+          'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
+          'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'ENTER', 'BACKSPACE'
+        ];
+        keyboard.innerHTML = '';
+        keys.forEach(key => {
+          const button = document.createElement('button');
+          button.className = 'wordle-key';
+          button.textContent = key;
+          button.dataset.key = key; // For easier lookup
+          button.classList.add(key.toLowerCase() === 'enter' ? 'enter' : key.toLowerCase() === 'backspace' ? 'backspace' : '');
+          button.addEventListener('click', () => handleKey(key));
+          button.addEventListener('touchend', (e) => {
+            e.preventDefault(); // Prevent iOS double-tap zoom
+            handleKey(key);
+          });
+          keyboard.appendChild(button);
+        });
+
+        // Keyboard input
+        document.addEventListener('keydown', (e) => {
+          if (gameOver) return;
+          const key = e.key.toUpperCase();
+          if (key === 'ENTER') handleKey('ENTER');
+          else if (key === 'BACKSPACE') handleKey('BACKSPACE');
+          else if (/^[A-Z]$/.test(key)) handleKey(key);
+        });
       }
 
-      const keyboard = document.getElementById('wordle-keyboard');
-      const keys = [
-        'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
-        'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
-        'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'ENTER', 'BACKSPACE'
-      ];
-      keyboard.innerHTML = '';
-      keys.forEach(key => {
-        const button = document.createElement('button');
-        button.className = 'wordle-key';
-        button.textContent = key;
-        button.classList.add(key.toLowerCase() === 'enter' ? 'enter' : key.toLowerCase() === 'backspace' ? 'backspace' : '');
-        button.addEventListener('click', () => handleKey(key));
-        keyboard.appendChild(button);
-      });
-
-      document.addEventListener('keydown', (e) => {
+      function handleKey(key) {
         if (gameOver) return;
-        const key = e.key.toUpperCase();
-        if (key === 'ENTER') handleKey('ENTER');
-        else if (key === 'BACKSPACE') handleKey('BACKSPACE');
-        else if (/^[A-Z]$/.test(key)) handleKey(key);
-      });
+        const message = document.getElementById('wordle-message');
 
-      document.getElementById('wordle-restart').addEventListener('click', resetWordle);
-    }
+        if (key === 'ENTER') {
+          if (currentTile !== 5) {
+            message.textContent = 'Guess must be 5 letters!';
+            return;
+          }
+          submitGuess();
+        } else if (key === 'BACKSPACE') {
+          if (currentTile > 0) {
+            currentTile--;
+            currentGuess = currentGuess.slice(0, -1);
+            const tile = document.getElementsByClassName('wordle-row')[currentRow].children[currentTile];
+            tile.textContent = '';
+          }
+        } else if (/^[A-Z]$/.test(key) && currentTile < 5) {
+          currentGuess += key;
+          const tile = document.getElementsByClassName('wordle-row')[currentRow].children[currentTile];
+          tile.textContent = key;
+          currentTile++;
+        }
+      }
 
-    function handleKey(key) {
-      if (gameOver) return;
-      const message = document.getElementById('wordle-message');
-
-      if (key === 'ENTER') {
-        if (currentTile !== 5) {
-          message.textContent = 'Guess must be 5 letters!';
+      function submitGuess() {
+        const guess = currentGuess;
+        const message = document.getElementById('wordle-message');
+        if (!wordList.includes(guess)) {
+          message.textContent = 'Not a valid word!';
           return;
         }
-        submitGuess();
-      } else if (key === 'BACKSPACE') {
-        if (currentTile > 0) {
-          currentTile--;
-          currentGuess = currentGuess.slice(0, -1);
-          const tile = document.getElementsByClassName('wordle-row')[currentRow].children[currentTile];
-          tile.textContent = '';
-        }
-      } else if (/^[A-Z]$/.test(key) && currentTile < 5) {
-        currentGuess += key;
-        const tile = document.getElementsByClassName('wordle-row')[currentRow].children[currentTile];
-        tile.textContent = key;
-        currentTile++;
-      }
-    }
 
-    function submitGuess() {
-      const guess = currentGuess;
-      const message = document.getElementById('wordle-message');
-      if (!wordList.includes(guess)) {
-        message.textContent = 'Not a valid word!';
-        return;
-      }
+        const row = document.getElementsByClassName('wordle-row')[currentRow];
+        const targetCopy = targetWord.split('');
+        const guessCopy = guess.split('');
 
-      const row = document.getElementsByClassName('wordle-row')[currentRow];
-      const targetCopy = targetWord.split('');
-      const guessCopy = guess.split('');
-
-      // Mark correct letters
-      for (let i = 0; i < 5; i++) {
-        const tile = row.children[i];
-        if (guessCopy[i] === targetCopy[i]) {
-          tile.classList.add('correct');
-          targetCopy[i] = null;
-          updateKeyboard(guessCopy[i], 'correct');
-        }
-      }
-
-      // Mark present and absent letters
-      for (let i = 0; i < 5; i++) {
-        const tile = row.children[i];
-        if (!tile.classList.contains('correct')) {
-          if (targetCopy.includes(guessCopy[i])) {
-            tile.classList.add('present');
-            targetCopy[targetCopy.indexOf(guessCopy[i])] = null;
-            updateKeyboard(guessCopy[i], 'present');
-          } else {
-            tile.classList.add('absent');
-            updateKeyboard(guessCopy[i], 'absent');
+        // Mark correct letters
+        for (let i = 0; i < 5; i++) {
+          const tile = row.children[i];
+          if (guessCopy[i] === targetCopy[i]) {
+            tile.classList.add('correct');
+            targetCopy[i] = null;
+            updateKeyboard(guessCopy[i], 'correct');
           }
         }
+
+        // Mark present and absent letters
+        for (let i = 0; i < 5; i++) {
+          const tile = row.children[i];
+          if (!tile.classList.contains('correct')) {
+            if (targetCopy.includes(guessCopy[i])) {
+              tile.classList.add('present');
+              targetCopy[targetCopy.indexOf(guessCopy[i])] = null;
+              updateKeyboard(guessCopy[i], 'present');
+            } else {
+              tile.classList.add('absent');
+              updateKeyboard(guessCopy[i], 'absent');
+            }
+          }
+        }
+
+        if (guess === targetWord) {
+          message.textContent = 'Congratulations! You won!';
+          gameOver = true;
+          document.getElementById('wordle-restart').style.display = 'block';
+          return;
+        }
+
+        currentRow++;
+        currentTile = 0;
+        currentGuess = '';
+
+        if (currentRow >= 6) {
+          message.textContent = `Game Over! The word was ${targetWord}.`;
+          gameOver = true;
+          document.getElementById('wordle-restart').style.display = 'block';
+        }
       }
 
-      if (guess === targetWord) {
-        message.textContent = 'Congratulations! You won!';
-        gameOver = true;
-        document.getElementById('wordle-restart').style.display = 'block';
-        return;
+      function updateKeyboard(letter, status) {
+        const key = document.querySelector(`.wordle-key[data-key="${letter}"]`);
+        if (key && !key.classList.contains('correct')) {
+          key.classList.add(status);
+        }
       }
 
-      currentRow++;
-      currentTile = 0;
-      currentGuess = '';
-
-      if (currentRow >= 6) {
-        message.textContent = `Game Over! The word was ${targetWord}.`;
-        gameOver = true;
-        document.getElementById('wordle-restart').style.display = 'block';
+      function resetWordle() {
+        targetWord = wordList[Math.floor(Math.random() * wordList.length)];
+        currentRow = 0;
+        currentTile = 0;
+        currentGuess = '';
+        gameOver = false;
+        document.getElementById('wordle-message').textContent = '';
+        document.getElementById('wordle-restart').style.display = 'none';
+        initWordle();
       }
-    }
 
-    function updateKeyboard(letter, status) {
-      const key = document.querySelector(`.wordle-key:contains('${letter}')`);
-      if (key && !key.classList.contains('correct')) {
-        key.classList.add(status);
-      }
-    }
+      document.getElementById('wordle-restart').addEventListener('click', resetWordle);
+      document.getElementById('wordle-restart').addEventListener('touchend', (e) => {
+        e.preventDefault();
+        resetWordle();
+      });
 
-    function resetWordle() {
-      targetWord = wordList[Math.floor(Math.random() * wordList.length)];
-      currentRow = 0;
-      currentTile = 0;
-      currentGuess = '';
-      gameOver = false;
-      document.getElementById('wordle-message').textContent = '';
-      document.getElementById('wordle-restart').style.display = 'none';
       initWordle();
-    }
-
-    // jQuery-like :contains selector
-    document.querySelectorAll(':contains').forEach(el => {
-      el.matches = function(selector) {
-        return selector.startsWith(':contains') &&
-               this.textContent.includes(selector.match(/:contains\(['"](.+?)['"]\)/)[1]);
-      };
-    });
-
-    initWordle();
+    })();
   </script>
 </body>
 </html>
