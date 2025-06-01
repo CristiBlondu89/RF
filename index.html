@@ -315,125 +315,166 @@
       border: 1px solid #00b3ff;
     }
 
-    /* Wordle Styles */
+    /* Wordle Styles (NYT-inspired) */
+    #wordle-game {
+      background: #121213;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
     #wordle-grid {
       display: grid;
-      grid-template-rows: repeat(6, 50px);
+      grid-template-rows: repeat(6, 58px);
       gap: 5px;
       justify-content: center;
+      margin-bottom: 20px;
     }
 
     .wordle-row {
       display: grid;
-      grid-template-columns: repeat(5, 50px);
+      grid-template-columns: repeat(5, 58px);
       gap: 5px;
     }
 
     .wordle-tile {
-      width: 50px;
-      height: 50px;
+      width: 58px;
+      height: 58px;
       background: #2b2b2b;
-      border: 2px solid #333;
+      border: 2px solid #3a3a3c;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 32px;
       font-weight: bold;
       text-transform: uppercase;
-      color: #ddd;
+      color: #d7dadc;
       transition: background 0.3s ease, border 0.3s ease;
     }
 
     .wordle-tile.correct {
-      background: #00b3ff;
-      border-color: #00b3ff;
-      color: #111;
+      background: #6aaa64; /* NYT green */
+      border-color: #6aaa64;
+      color: #fff;
     }
 
     .wordle-tile.present {
-      background: #ffaa00;
-      border-color: #ffaa00;
+      background: #c9b458; /* NYT yellow */
+      border-color: #c9b458;
+      color: #fff;
     }
 
     .wordle-tile.absent {
-      background: #555;
-      border-color: #555;
+      background: #787c7e; /* NYT gray */
+      border-color: #787c7e;
+      color: #fff;
     }
 
     #wordle-keyboard {
       display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
+      flex-direction: column;
+      gap: 6px;
       justify-content: center;
-      max-width: 500px;
+      align-items: center;
       margin: 20px auto;
+      max-width: 500px;
+    }
+
+    .keyboard-row {
+      display: flex;
+      gap: 6px;
     }
 
     .wordle-key {
-      background: #2b2b2b;
+      background: #818384;
       border: none;
-      color: #ddd;
+      color: #d7dadc;
       font-size: 16px;
-      padding: 10px;
-      width: 30px;
-      height: 40px;
+      font-weight: bold;
+      padding: 0;
+      width: 36px;
+      height: 54px;
       border-radius: 4px;
       cursor: pointer;
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: background 0.3s ease, transform 0.3s ease;
-      touch-action: manipulation; /* Prevent iOS zoom on tap */
+      touch-action: manipulation;
     }
 
     .wordle-key:hover,
     .wordle-key:active {
-      background: #333;
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 6px #00b3ff);
+      transform: scale(1.05);
     }
 
     .wordle-key.correct {
-      background: #00b3ff;
-      color: #111;
+      background: #6aaa64;
+      color: #fff;
     }
 
     .wordle-key.present {
-      background: #ffaa00;
+      background: #c9b458;
+      color: #fff;
     }
 
     .wordle-key.absent {
-      background: #555;
+      background: #787c7e;
+      color: #fff;
     }
 
     .wordle-key.enter,
     .wordle-key.backspace {
       width: 60px;
+      font-size: 12px;
+    }
+
+    #wordle-message {
+      color: #d7dadc;
+      font-size: 16px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    #wordle-restart {
+      background: #00b3ff;
+      border: none;
+      color: #111;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      display: none;
     }
 
     /* Responsive adjustments for mobile */
     @media (max-width: 600px) {
       #wordle-grid {
-        grid-template-rows: repeat(6, 40px);
+        grid-template-rows: repeat(6, 48px);
       }
 
       .wordle-row {
-        grid-template-columns: repeat(5, 40px);
+        grid-template-columns: repeat(5, 48px);
+        gap: 4px;
       }
 
       .wordle-tile {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
+        width: 48px;
+        height: 48px;
+        font-size: 28px;
       }
 
       .wordle-key {
-        width: 25px;
-        height: 35px;
+        width: 30px;
+        height: 48px;
         font-size: 14px;
       }
 
       .wordle-key.enter,
       .wordle-key.backspace {
         width: 50px;
+        font-size: 10px;
       }
     }
   </style>
@@ -542,11 +583,11 @@ Press E - Show tracker
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>🎮 Play Wordle <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
-        <div id="wordle-game" style="text-align: center;">
+        <div id="wordle-game">
           <div id="wordle-grid"></div>
-          <div id="wordle-keyboard" style="margin-top: 20px;"></div>
-          <div id="wordle-message" style="margin-top: 10px; color: #ddd;"></div>
-          <button id="wordle-restart" style="display: none; background: #00b3ff; border: none; color: #111; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">Restart Game</button>
+          <div id="wordle-keyboard"></div>
+          <div id="wordle-message"></div>
+          <button id="wordle-restart">Restart Game</button>
         </div>
       </div>
     </div>
@@ -754,8 +795,8 @@ Press E - Show tracker
       radio.volume = volumeControl.value;
     });
 
-    // Wordle Game Logic (Scoped to avoid conflicts)
-    (function() {
+    // Wordle Game Logic
+    document.addEventListener('DOMContentLoaded', () => {
       const wordList = ['RUSTY', 'FLIGHT', 'COPTER', 'SKIES', 'PILOT', 'CRASH', 'HELIX', 'TURBO', 'GLIDE', 'SOARS'];
       let targetWord = wordList[Math.floor(Math.random() * wordList.length)];
       let currentRow = 0;
@@ -778,33 +819,45 @@ Press E - Show tracker
         }
 
         const keyboard = document.getElementById('wordle-keyboard');
-        const keys = [
-          'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
-          'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
-          'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'ENTER', 'BACKSPACE'
-        ];
         keyboard.innerHTML = '';
-        keys.forEach(key => {
-          const button = document.createElement('button');
-          button.className = 'wordle-key';
-          button.textContent = key;
-          button.dataset.key = key; // For easier lookup
-          button.classList.add(key.toLowerCase() === 'enter' ? 'enter' : key.toLowerCase() === 'backspace' ? 'backspace' : '');
-          button.addEventListener('click', () => handleKey(key));
-          button.addEventListener('touchend', (e) => {
-            e.preventDefault(); // Prevent iOS double-tap zoom
-            handleKey(key);
+        const rows = [
+          ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+          ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+          ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACKSPACE']
+        ];
+
+        rows.forEach(keys => {
+          const row = document.createElement('div');
+          row.className = 'keyboard-row';
+          keys.forEach(key => {
+            const button = document.createElement('button');
+            button.className = 'wordle-key';
+            button.textContent = key;
+            button.dataset.key = key;
+            button.classList.add(key.toLowerCase() === 'enter' ? 'enter' : key.toLowerCase() === 'backspace' ? 'backspace' : '');
+            button.addEventListener('click', () => handleKey(key));
+            button.addEventListener('touchstart', (e) => {
+              e.preventDefault();
+              handleKey(key);
+            });
+            row.appendChild(button);
           });
-          keyboard.appendChild(button);
+          keyboard.appendChild(row);
         });
 
-        // Keyboard input
         document.addEventListener('keydown', (e) => {
           if (gameOver) return;
           const key = e.key.toUpperCase();
           if (key === 'ENTER') handleKey('ENTER');
           else if (key === 'BACKSPACE') handleKey('BACKSPACE');
           else if (/^[A-Z]$/.test(key)) handleKey(key);
+        });
+
+        const restartBtn = document.getElementById('wordle-restart');
+        restartBtn.addEventListener('click', resetWordle);
+        restartBtn.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          resetWordle();
         });
       }
 
@@ -903,17 +956,15 @@ Press E - Show tracker
         gameOver = false;
         document.getElementById('wordle-message').textContent = '';
         document.getElementById('wordle-restart').style.display = 'none';
+        // Reset keyboard colors
+        document.querySelectorAll('.wordle-key').forEach(key => {
+          key.classList.remove('correct', 'present', 'absent');
+        });
         initWordle();
       }
 
-      document.getElementById('wordle-restart').addEventListener('click', resetWordle);
-      document.getElementById('wordle-restart').addEventListener('touchend', (e) => {
-        e.preventDefault();
-        resetWordle();
-      });
-
       initWordle();
-    })();
+    });
   </script>
 </body>
 </html>
