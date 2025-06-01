@@ -56,12 +56,10 @@
       filter: drop-shadow(0 0 6px #00b3ff);
     }
 
-    /* Hide the Tsarvar widget's link text */
     .server-status a[data-tsarvarServerId] {
       display: none;
     }
 
-    /* Style the widget's status and player count */
     .server-status .tsarvar-widget {
       color: #ddd;
       font-size: 16px;
@@ -352,19 +350,19 @@
     }
 
     .wordle-tile.correct {
-      background: #6aaa64; /* NYT green */
+      background: #6aaa64;
       border-color: #6aaa64;
       color: #fff;
     }
 
     .wordle-tile.present {
-      background: #c9b458; /* NYT yellow */
+      background: #c9b458;
       border-color: #c9b458;
       color: #fff;
     }
 
     .wordle-tile.absent {
-      background: #787c7e; /* NYT gray */
+      background: #787c7e;
       border-color: #787c7e;
       color: #fff;
     }
@@ -448,7 +446,6 @@
       display: none;
     }
 
-    /* Responsive adjustments for mobile */
     @media (max-width: 600px) {
       #wordle-grid {
         grid-template-rows: repeat(6, 48px);
@@ -487,7 +484,6 @@
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
     </div>
 
-    <!-- Tsarvar Server Status Widget with Instructions and Copy Address -->
     <div class="server-status">
       <h3>Server Status</h3>
       <a href="https://tsarvar.com/servers/rust/play.rusticflight.com:28017" data-tsarvarServerId="483341">Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy</a>
@@ -567,7 +563,6 @@ Press E - Show tracker
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
 
-    <!-- TikTok section (collapsed dropdown) -->
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
@@ -579,7 +574,6 @@ Press E - Show tracker
       </div>
     </div>
 
-    <!-- Wordle Game Dropdown -->
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>🎮 Play Wordle <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
@@ -618,8 +612,11 @@ Press E - Show tracker
   </footer>
 
   <script>
+    // General Functions
     function copyServerAddress() {
-      navigator.clipboard.writeText("connect play.rusticflight.com:28017");
+      navigator.clipboard.writeText("connect play.rusticflight.com:28017")
+        .then(() => console.log("Server address copied to clipboard!"))
+        .catch(err => console.error("Failed to copy server address:", err));
       alert("Server address copied to clipboard!");
     }
 
@@ -633,6 +630,7 @@ Press E - Show tracker
       });
     }
 
+    // TikTok Logic
     const tiktokVideos = [
       "7504757782004944150",
       "7504757112753442070",
@@ -644,6 +642,10 @@ Press E - Show tracker
 
     function loadTikTok(index) {
       const container = document.getElementById("tiktok-container");
+      if (!container) {
+        console.error("TikTok container not found!");
+        return;
+      }
       container.innerHTML = `
         <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
           <section>Loading…</section>
@@ -671,22 +673,26 @@ Press E - Show tracker
 
     loadTikTok(currentIndex);
 
-    // Modify Tsarvar widget to remove link text
+    // Tsarvar Widget Logic
     function cleanTsarvarWidget() {
       const widget = document.querySelector('.server-status .tsarvar-widget');
       if (widget) {
-        // Remove any branding or unwanted links
         const branding = widget.querySelectorAll('a[href*="tsarvar.com"]:not([data-tsarvarServerId])');
         branding.forEach(el => el.remove());
       }
     }
 
-    // Observe widget loading to apply cleanup
     const observer = new MutationObserver(() => {
       cleanTsarvarWidget();
     });
-    observer.observe(document.querySelector('.server-status'), { childList: true, subtree: true });
+    const serverStatus = document.querySelector('.server-status');
+    if (serverStatus) {
+      observer.observe(serverStatus, { childList: true, subtree: true });
+    } else {
+      console.error("Server status element not found!");
+    }
 
+    // File Fetch Logic
     fetch("files.json")
       .then(res => {
         if (!res.ok) throw new Error("Failed to fetch files.json");
@@ -694,6 +700,10 @@ Press E - Show tracker
       })
       .then(files => {
         const list = document.getElementById("file-list");
+        if (!list) {
+          console.error("File list element not found!");
+          return;
+        }
         list.innerHTML = '';
         if (!files || files.length === 0) {
           list.innerHTML = '<li>No maps available.</li>';
@@ -726,77 +736,81 @@ Press E - Show tracker
       .catch(err => {
         console.error(err);
         const list = document.getElementById("file-list");
-        list.innerHTML = '<li>Error loading map files. Please try again later.</li>';
+        if (list) {
+          list.innerHTML = '<li>Error loading map files. Please try again later.</li>';
+        }
       });
 
-    const radio = document.getElementById('radio');
-    const playPauseBtn = document.getElementById('play-pause');
-    const volumeControl = document.getElementById('volume');
-    let isPlaying = false;
+    // Radio Logic (Isolated)
+    (function() {
+      const radio = document.getElementById('radio');
+      const playPauseBtn = document.getElementById('play-pause');
+      const volumeControl = document.getElementById('volume');
+      let isPlaying = false;
+      let audioContext, analyser, source, dataArray;
+      const canvas = document.getElementById('visualizer');
+      const ctx = canvas.getContext('2d');
 
-    // Web Audio API setup for visualization
-    let audioContext, analyser, source, dataArray;
-    const canvas = document.getElementById('visualizer');
-    const ctx = canvas.getContext('2d');
-
-    function initVisualizer() {
-      try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        source = audioContext.createMediaElementSource(radio);
-        source.connect(analyser);
-        analyser.connect(audioContext.destination);
-        analyser.fftSize = 64;
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        drawVisualizer();
-      } catch (err) {
-        console.error('Error initializing visualizer:', err);
-        canvas.style.display = 'none';
+      function initVisualizer() {
+        try {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          source = audioContext.createMediaElementSource(radio);
+          source.connect(analyser);
+          analyser.connect(audioContext.destination);
+          analyser.fftSize = 64;
+          dataArray = new Uint8Array(analyser.frequencyBinCount);
+          canvas.width = canvas.offsetWidth;
+          canvas.height = canvas.offsetHeight;
+          drawVisualizer();
+        } catch (err) {
+          console.error('Error initializing visualizer:', err);
+          canvas.style.display = 'none';
+        }
       }
-    }
 
-    function drawVisualizer() {
-      if (!isPlaying) return;
-      requestAnimationFrame(drawVisualizer);
-      analyser.getByteFrequencyData(dataArray);
-      ctx.fillStyle = '#1e1e1e';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      const barWidth = (canvas.width / dataArray.length) * 1.5;
-      let x = 0;
-      for (let i = 0; i < dataArray.length; i++) {
-        const barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
-        ctx.fillStyle = '#00b3ff';
-        ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
-        x += barWidth;
+      function drawVisualizer() {
+        if (!isPlaying) return;
+        requestAnimationFrame(drawVisualizer);
+        analyser.getByteFrequencyData(dataArray);
+        ctx.fillStyle = '#1e1e1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const barWidth = (canvas.width / dataArray.length) * 1.5;
+        let x = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+          const barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
+          ctx.fillStyle = '#00b3ff';
+          ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+          x += barWidth;
+        }
       }
-    }
 
-    playPauseBtn.addEventListener('click', () => {
-      if (isPlaying) {
-        radio.pause();
-        playPauseBtn.textContent = 'Play';
-        isPlaying = false;
-      } else {
-        radio.play().catch(err => {
-          console.error('Error playing audio:', err);
-          alert('Failed to play radio. Please check the stream URL or try again.');
-        });
-        playPauseBtn.textContent = 'Pause';
-        isPlaying = true;
-        if (!audioContext) initVisualizer();
-        else if (audioContext.state === 'suspended') audioContext.resume();
-      }
-    });
+      playPauseBtn.addEventListener('click', () => {
+        if (isPlaying) {
+          radio.pause();
+          playPauseBtn.textContent = 'Play';
+          isPlaying = false;
+        } else {
+          radio.play().then(() => {
+            console.log("Radio playing successfully");
+            playPauseBtn.textContent = 'Pause';
+            isPlaying = true;
+            if (!audioContext) initVisualizer();
+            else if (audioContext.state === 'suspended') audioContext.resume();
+          }).catch(err => {
+            console.error('Error playing audio:', err);
+            alert('Failed to play radio. The stream may be unavailable or blocked.');
+          });
+        }
+      });
 
-    volumeControl.addEventListener('input', () => {
-      radio.volume = volumeControl.value;
-    });
+      volumeControl.addEventListener('input', () => {
+        radio.volume = volumeControl.value;
+      });
+    })();
 
-    // Wordle Game Logic
-    document.addEventListener('DOMContentLoaded', () => {
+    // Wordle Logic (Isolated)
+    (function() {
       const wordList = ['RUSTY', 'FLIGHT', 'COPTER', 'SKIES', 'PILOT', 'CRASH', 'HELIX', 'TURBO', 'GLIDE', 'SOARS'];
       let targetWord = wordList[Math.floor(Math.random() * wordList.length)];
       let currentRow = 0;
@@ -805,7 +819,12 @@ Press E - Show tracker
       let gameOver = false;
 
       function initWordle() {
+        console.log("Initializing Wordle...");
         const grid = document.getElementById('wordle-grid');
+        if (!grid) {
+          console.error("Wordle grid element not found!");
+          return;
+        }
         grid.innerHTML = '';
         for (let i = 0; i < 6; i++) {
           const row = document.createElement('div');
@@ -819,6 +838,10 @@ Press E - Show tracker
         }
 
         const keyboard = document.getElementById('wordle-keyboard');
+        if (!keyboard) {
+          console.error("Wordle keyboard element not found!");
+          return;
+        }
         keyboard.innerHTML = '';
         const rows = [
           ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
@@ -854,17 +877,27 @@ Press E - Show tracker
         });
 
         const restartBtn = document.getElementById('wordle-restart');
-        restartBtn.addEventListener('click', resetWordle);
-        restartBtn.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          resetWordle();
-        });
+        if (restartBtn) {
+          restartBtn.addEventListener('click', resetWordle);
+          restartBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            resetWordle();
+          });
+        } else {
+          console.error("Wordle restart button not found!");
+        }
+        console.log("Wordle initialized successfully");
       }
 
       function handleKey(key) {
         if (gameOver) return;
         const message = document.getElementById('wordle-message');
+        if (!message) {
+          console.error("Wordle message element not found!");
+          return;
+        }
 
+        console.log(`Key pressed: ${key}`);
         if (key === 'ENTER') {
           if (currentTile !== 5) {
             message.textContent = 'Guess must be 5 letters!';
@@ -887,6 +920,7 @@ Press E - Show tracker
       }
 
       function submitGuess() {
+        console.log(`Submitting guess: ${currentGuess}`);
         const guess = currentGuess;
         const message = document.getElementById('wordle-message');
         if (!wordList.includes(guess)) {
@@ -898,7 +932,6 @@ Press E - Show tracker
         const targetCopy = targetWord.split('');
         const guessCopy = guess.split('');
 
-        // Mark correct letters
         for (let i = 0; i < 5; i++) {
           const tile = row.children[i];
           if (guessCopy[i] === targetCopy[i]) {
@@ -908,7 +941,6 @@ Press E - Show tracker
           }
         }
 
-        // Mark present and absent letters
         for (let i = 0; i < 5; i++) {
           const tile = row.children[i];
           if (!tile.classList.contains('correct')) {
@@ -949,6 +981,7 @@ Press E - Show tracker
       }
 
       function resetWordle() {
+        console.log("Resetting Wordle...");
         targetWord = wordList[Math.floor(Math.random() * wordList.length)];
         currentRow = 0;
         currentTile = 0;
@@ -956,15 +989,15 @@ Press E - Show tracker
         gameOver = false;
         document.getElementById('wordle-message').textContent = '';
         document.getElementById('wordle-restart').style.display = 'none';
-        // Reset keyboard colors
         document.querySelectorAll('.wordle-key').forEach(key => {
           key.classList.remove('correct', 'present', 'absent');
         });
         initWordle();
       }
 
+      // Initialize Wordle immediately
       initWordle();
-    });
+    })();
   </script>
 </body>
 </html>
