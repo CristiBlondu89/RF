@@ -56,12 +56,10 @@
       filter: drop-shadow(0 0 6px #00b3ff);
     }
 
-    /* Hide the Tsarvar widget's link text */
     .server-status a[data-tsarvarServerId] {
       display: none;
     }
 
-    /* Style the widget's status and player count */
     .server-status .tsarvar-widget {
       color: #ddd;
       font-size: 16px;
@@ -324,18 +322,17 @@
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
     </div>
 
-    <!-- Tsarvar Server Status Widget with Instructions and Copy Address -->
     <div class="server-status">
       <h3>Server Status</h3>
-      <a href="https://tsarvar.com/servers/rust/play.rusticflight.com:28017" data-tsarvarServerId="483341">Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy</a>
+      <a href="https://tsarvar.com/servers/rust/play.rusticflight.com:28023" data-tsarvarServerId="483341">Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy</a>
       <script type="text/javascript" charset="utf-8" src="https://widget.tsarvar.com/load.js?v=2"></script>
       <script type="text/javascript">
         (function(k){(window[k]||(window[k]=[])).push({
           element:'*[data-tsarvarServerId="483341"]',
           serverId:483341,
           serverDomain:'play.rusticflight.com',
-          serverIp:'135.125.189.228',
-          serverPort:28017,
+          serverIp:'45.43.163.77',
+          serverPort:28023,
           blackMode:true,
           players:false
         });})('TsarvarWidgetQueue');
@@ -404,7 +401,6 @@ Press E - Show tracker
     <h2>Available Map Downloads</h2>
     <ul id="file-list">Loading maps...</ul>
 
-    <!-- TikTok section (collapsed dropdown) -->
     <div class="dropdown" onclick="toggleDropdown(this)">
       <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
       <div class="dropdown-content">
@@ -446,7 +442,7 @@ Press E - Show tracker
 
   <script>
     function copyServerAddress() {
-      navigator.clipboard.writeText("connect play.rusticflight.com:28017");
+      navigator.clipboard.writeText("connect play.rusticflight.com:28023");
       alert("Server address copied to clipboard!");
     }
 
@@ -498,17 +494,14 @@ Press E - Show tracker
 
     loadTikTok(currentIndex);
 
-    // Modify Tsarvar widget to remove link text
     function cleanTsarvarWidget() {
       const widget = document.querySelector('.server-status .tsarvar-widget');
       if (widget) {
-        // Remove any branding or unwanted links
         const branding = widget.querySelectorAll('a[href*="tsarvar.com"]:not([data-tsarvarServerId])');
         branding.forEach(el => el.remove());
       }
     }
 
-    // Observe widget loading to apply cleanup
     const observer = new MutationObserver(() => {
       cleanTsarvarWidget();
     });
@@ -561,7 +554,6 @@ Press E - Show tracker
     const volumeControl = document.getElementById('volume');
     let isPlaying = false;
 
-    // Web Audio API setup for visualization
     let audioContext, analyser, source, dataArray;
     const canvas = document.getElementById('visualizer');
     const ctx = canvas.getContext('2d');
@@ -590,7 +582,7 @@ Press E - Show tracker
       analyser.getByteFrequencyData(dataArray);
       ctx.fillStyle = '#1e1e1e';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
+
       const barWidth = (canvas.width / dataArray.length) * 1.5;
       let x = 0;
       for (let i = 0; i < dataArray.length; i++) {
