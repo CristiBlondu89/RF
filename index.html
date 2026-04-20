@@ -10,18 +10,21 @@
     }
 
     :root {
-      --bg: #0a0f1c;
-      --bg2: #11192b;
-      --panel: rgba(18, 28, 48, 0.72);
-      --panel-strong: rgba(20, 32, 54, 0.88);
-      --border: rgba(0, 200, 255, 0.18);
-      --accent: #00c8ff;
-      --accent2: #59f0ff;
-      --text: #edf6ff;
-      --muted: #9db2c9;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      --glow: 0 0 18px rgba(0, 200, 255, 0.25);
+      --bg: #0a0f17;
+      --bg2: #111827;
+      --panel: #141c28;
+      --panel-2: #1a2534;
+      --panel-3: #101720;
+      --border: rgba(0, 179, 255, 0.16);
+      --border-strong: rgba(0, 179, 255, 0.3);
+      --accent: #00b3ff;
+      --accent-2: #52d6ff;
+      --text: #eef6ff;
+      --muted: #9db0c6;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      --glow: 0 0 18px rgba(0, 179, 255, 0.12);
       --radius: 18px;
+      --radius-sm: 12px;
     }
 
     html {
@@ -33,9 +36,9 @@
       font-family: "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(0, 200, 255, 0.12), transparent 30%),
-        radial-gradient(circle at top right, rgba(90, 120, 255, 0.10), transparent 28%),
-        linear-gradient(180deg, #07101d 0%, #0c1526 40%, #09101b 100%);
+        radial-gradient(circle at top left, rgba(0, 179, 255, 0.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(66, 133, 244, 0.10), transparent 24%),
+        linear-gradient(180deg, #08111a 0%, #0c141f 40%, #09111a 100%);
       min-height: 100vh;
       overflow-x: hidden;
     }
@@ -48,57 +51,53 @@
       background:
         linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-      background-size: 34px 34px;
-      opacity: 0.25;
+      background-size: 36px 36px;
+      opacity: 0.18;
       z-index: 0;
     }
 
     a {
-      color: var(--accent2);
+      color: var(--accent-2);
     }
 
     header {
       position: relative;
       height: 320px;
       background:
-        linear-gradient(to bottom, rgba(5, 12, 22, 0.2), rgba(5, 12, 22, 0.82)),
+        linear-gradient(to bottom, rgba(5, 11, 18, 0.22), rgba(5, 11, 18, 0.86)),
         url("https://i.imgur.com/AMXXDyR.png") no-repeat center center / cover;
       display: flex;
       align-items: end;
       justify-content: center;
       padding: 30px 20px;
-      overflow: hidden;
       border-bottom: 1px solid rgba(255,255,255,0.06);
-      box-shadow: inset 0 -40px 80px rgba(0, 0, 0, 0.45);
+      box-shadow: inset 0 -40px 80px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
     }
 
-    header::before {
-      content: "";
-      position: absolute;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(0,200,255,0.18) 0%, transparent 70%);
-      top: -150px;
-      right: -100px;
-      filter: blur(25px);
-      animation: floatGlow 7s ease-in-out infinite;
-    }
-
+    header::before,
     header::after {
       content: "";
       position: absolute;
-      width: 380px;
-      height: 380px;
-      background: radial-gradient(circle, rgba(0,140,255,0.14) 0%, transparent 72%);
-      left: -120px;
-      bottom: -100px;
-      filter: blur(25px);
-      animation: floatGlow 8s ease-in-out infinite reverse;
+      border-radius: 50%;
+      filter: blur(30px);
+      pointer-events: none;
     }
 
-    @keyframes floatGlow {
-      0%, 100% { transform: translateY(0px) translateX(0px); }
-      50% { transform: translateY(18px) translateX(10px); }
+    header::before {
+      width: 420px;
+      height: 420px;
+      right: -100px;
+      top: -120px;
+      background: radial-gradient(circle, rgba(0, 179, 255, 0.18) 0%, transparent 72%);
+    }
+
+    header::after {
+      width: 300px;
+      height: 300px;
+      left: -60px;
+      bottom: -90px;
+      background: radial-gradient(circle, rgba(82, 214, 255, 0.12) 0%, transparent 72%);
     }
 
     .hero {
@@ -110,42 +109,69 @@
 
     .hero h1 {
       margin: 0;
-      font-size: clamp(34px, 6vw, 64px);
+      font-size: clamp(34px, 6vw, 62px);
       letter-spacing: 1px;
-      text-shadow: 0 0 25px rgba(0, 200, 255, 0.35);
+      text-shadow: 0 0 22px rgba(0, 179, 255, 0.25);
     }
 
     .hero p {
       margin: 12px 0 0;
-      color: #d1e5f7;
+      color: #d7e7f8;
       font-size: clamp(14px, 2vw, 18px);
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .mini-badge {
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(82, 214, 255, 0.14);
+      color: #d9f3ff;
+      backdrop-filter: blur(8px);
     }
 
     .container {
       position: relative;
       z-index: 1;
-      max-width: 1080px;
+      max-width: 1120px;
       margin: auto;
-      padding: 30px 20px 40px;
+      padding: 28px 20px 40px;
     }
 
     .section-card {
-      background: var(--panel);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(20, 28, 40, 0.95), rgba(16, 23, 32, 0.95));
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow), var(--glow);
       padding: 24px;
-      margin-bottom: 28px;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      margin-bottom: 26px;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
 
     .section-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(89, 240, 255, 0.3);
-      box-shadow: 0 14px 34px rgba(0,0,0,0.4), 0 0 24px rgba(0, 200, 255, 0.18);
+      border-color: rgba(0, 179, 255, 0.24);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.38), 0 0 20px rgba(0, 179, 255, 0.12);
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 28px;
+      color: #fff;
+    }
+
+    .section-subtitle {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
     .vip-banner {
@@ -160,36 +186,23 @@
       font-size: 18px;
       font-weight: 700;
       color: #03131a;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 8px 24px rgba(0, 200, 255, 0.35);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 10px 24px rgba(0, 179, 255, 0.26);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
     }
 
     .vip-banner a:hover {
       transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 12px 30px rgba(0, 200, 255, 0.45);
-      filter: brightness(1.06);
+      box-shadow: 0 14px 30px rgba(0, 179, 255, 0.32);
+      filter: brightness(1.05);
     }
 
     .grid-2 {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 1.1fr 0.9fr;
       gap: 24px;
       align-items: start;
-      margin-bottom: 28px;
-    }
-
-    .section-title {
-      margin: 0 0 16px;
-      font-size: 24px;
-      color: #ffffff;
-      letter-spacing: 0.4px;
-    }
-
-    .section-subtitle {
-      margin: -6px 0 18px;
-      color: var(--muted);
-      font-size: 14px;
+      margin-bottom: 26px;
     }
 
     .server-status {
@@ -203,13 +216,13 @@
       inset: 0;
       background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
       transform: translateX(-100%);
-      animation: shimmer 6s infinite;
+      animation: shimmer 6s linear infinite;
       pointer-events: none;
     }
 
     @keyframes shimmer {
       0% { transform: translateX(-100%); }
-      25% { transform: translateX(100%); }
+      30% { transform: translateX(100%); }
       100% { transform: translateX(100%); }
     }
 
@@ -226,7 +239,7 @@
     .server-status .tsarvar-widget .status-online {
       color: #63ff9d;
       font-weight: 700;
-      text-shadow: 0 0 10px rgba(99,255,157,0.3);
+      text-shadow: 0 0 10px rgba(99,255,157,0.2);
     }
 
     .server-status .tsarvar-widget .status-offline {
@@ -246,23 +259,22 @@
     }
 
     .connect-instructions strong {
-      color: var(--accent2);
+      color: var(--accent-2);
     }
 
     .copy-button {
-      border: 1px solid rgba(89, 240, 255, 0.2);
+      border: 1px solid rgba(82, 214, 255, 0.2);
       background: rgba(255,255,255,0.04);
-      backdrop-filter: blur(10px);
       padding: 10px;
       border-radius: 12px;
       cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.25s ease;
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.22s ease;
     }
 
     .copy-button:hover {
       transform: scale(1.08);
-      background: rgba(255,255,255,0.08);
-      box-shadow: 0 0 18px rgba(0,200,255,0.2);
+      background: rgba(255,255,255,0.07);
+      box-shadow: 0 0 16px rgba(0,179,255,0.16);
     }
 
     .copy-button img {
@@ -273,29 +285,33 @@
 
     .toggle-all {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .toggle-all button,
     .tiktok-nav button,
-    .radio-controls button {
-      background: linear-gradient(135deg, rgba(0,200,255,0.92), rgba(89,240,255,0.92));
+    .radio-controls button,
+    .game-buttons a {
+      background: linear-gradient(135deg, rgba(0,179,255,0.96), rgba(82,214,255,0.96));
       color: #03131a;
       border: none;
-      padding: 10px 18px;
+      padding: 10px 16px;
       border-radius: 12px;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s ease;
-      box-shadow: 0 8px 20px rgba(0,200,255,0.18);
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.22s ease, filter 0.2s ease;
+      box-shadow: 0 8px 18px rgba(0,179,255,0.16);
+      display: inline-block;
     }
 
     .toggle-all button:hover,
     .tiktok-nav button:hover,
-    .radio-controls button:hover {
+    .radio-controls button:hover,
+    .game-buttons a:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(0,200,255,0.28);
-      filter: brightness(1.05);
+      box-shadow: 0 12px 24px rgba(0,179,255,0.24);
+      filter: brightness(1.04);
     }
 
     .dropdown {
@@ -304,9 +320,9 @@
 
     .dropdown-toggle {
       width: 100%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
       color: var(--text);
-      border: 1px solid rgba(89, 240, 255, 0.14);
+      border: 1px solid rgba(82, 214, 255, 0.14);
       padding: 16px 18px;
       border-radius: 16px;
       cursor: pointer;
@@ -316,19 +332,19 @@
       justify-content: space-between;
       align-items: center;
       text-align: left;
-      transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+      transition: background 0.22s ease, transform 0.2s ease, box-shadow 0.22s ease;
     }
 
     .dropdown-toggle:hover {
-      background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
       transform: translateY(-1px);
-      box-shadow: 0 0 20px rgba(0,200,255,0.08);
+      box-shadow: 0 0 16px rgba(0,179,255,0.08);
     }
 
     .dropdown .arrow {
       transition: transform 0.3s ease;
       margin-left: 12px;
-      color: var(--accent2);
+      color: var(--accent-2);
     }
 
     .dropdown.open .arrow {
@@ -338,7 +354,7 @@
     .dropdown-content {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.45s ease, padding 0.45s ease, margin-top 0.45s ease;
+      transition: max-height 0.42s ease, padding 0.42s ease, margin-top 0.42s ease;
       padding: 0 18px;
       margin-top: 0;
     }
@@ -348,8 +364,8 @@
       padding: 18px;
       margin-top: 12px;
       border-radius: 16px;
-      background: rgba(4, 12, 24, 0.52);
-      border: 1px solid rgba(89, 240, 255, 0.12);
+      background: rgba(6, 14, 22, 0.66);
+      border: 1px solid rgba(82, 214, 255, 0.1);
     }
 
     .dropdown-content pre {
@@ -361,11 +377,6 @@
       font-family: Consolas, monospace;
     }
 
-    h2 {
-      margin: 0 0 12px;
-      font-size: 28px;
-    }
-
     ul {
       list-style: none;
       padding: 0;
@@ -373,22 +384,22 @@
     }
 
     li {
-      background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.025));
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
       margin: 12px 0;
       padding: 16px;
       border-radius: 14px;
-      border: 1px solid rgba(89, 240, 255, 0.12);
-      transition: transform 0.22s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      border: 1px solid rgba(82, 214, 255, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
 
     li:hover {
       transform: translateY(-2px);
-      border-color: rgba(89,240,255,0.26);
-      box-shadow: 0 0 20px rgba(0,200,255,0.08);
+      border-color: rgba(82,214,255,0.22);
+      box-shadow: 0 0 16px rgba(0,179,255,0.08);
     }
 
     .file-link {
-      color: #b9f7ff;
+      color: #bff4ff;
       font-weight: 700;
       text-decoration: none;
       word-break: break-word;
@@ -407,7 +418,7 @@
 
     .latest-badge {
       display: inline-block;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: #021118;
       font-size: 12px;
       margin-left: 8px;
@@ -415,7 +426,6 @@
       border-radius: 999px;
       font-weight: 800;
       vertical-align: middle;
-      box-shadow: 0 0 12px rgba(0,200,255,0.22);
     }
 
     .tiktok-nav {
@@ -430,18 +440,96 @@
       min-height: 400px;
     }
 
-    .wordle-frame {
-      overflow: hidden;
-      border-radius: 18px;
-      border: 1px solid rgba(89, 240, 255, 0.15);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
     }
 
-    iframe {
-      display: block;
-      width: 100%;
-      border: none;
-      background: #fff;
+    .game-card {
+      position: relative;
+      background: linear-gradient(180deg, #1a2432 0%, #151e2a 100%);
+      border: 1px solid rgba(0, 179, 255, 0.18);
+      border-left: 4px solid var(--accent);
+      border-radius: 14px;
+      padding: 18px;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(0, 179, 255, 0.08) 50%, transparent 100%);
+      transform: translateX(-120%);
+      transition: transform 0.7s ease;
+      pointer-events: none;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 18px rgba(0, 179, 255, 0.14);
+      border-color: rgba(0, 179, 255, 0.34);
+    }
+
+    .game-card:hover::before {
+      transform: translateX(120%);
+    }
+
+    .game-card h3 {
+      margin: 0 0 8px;
+      color: #f0f0f0;
+      font-size: 20px;
+    }
+
+    .game-card p {
+      margin: 0 0 14px;
+      color: #b9c8d9;
+      font-size: 14px;
+      line-height: 1.55;
+      min-height: 66px;
+    }
+
+    .game-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .game-tags span {
+      font-size: 11px;
+      font-weight: 700;
+      color: #08111a;
+      background: var(--accent);
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
+
+    .game-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .game-buttons a.secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(0, 179, 255, 0.35);
+      box-shadow: none;
+    }
+
+    .game-buttons a.secondary:hover {
+      background: rgba(0, 179, 255, 0.08);
+    }
+
+    .mini-games-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 16px;
+      text-align: center;
     }
 
     .social-icons {
@@ -460,16 +548,15 @@
       height: 62px;
       border-radius: 18px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(89, 240, 255, 0.12);
-      backdrop-filter: blur(10px);
-      transition: transform 0.22s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+      border: 1px solid rgba(82, 214, 255, 0.12);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
     }
 
     .social-icons a:hover {
       transform: translateY(-3px) scale(1.04);
       background: rgba(255,255,255,0.07);
-      border-color: rgba(89, 240, 255, 0.28);
-      box-shadow: 0 0 20px rgba(0,200,255,0.12);
+      border-color: rgba(82, 214, 255, 0.24);
+      box-shadow: 0 0 18px rgba(0,179,255,0.1);
     }
 
     .social-icons a img {
@@ -490,9 +577,8 @@
     }
 
     .radio-player {
-      background: var(--panel-strong);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(89, 240, 255, 0.18);
+      background: linear-gradient(180deg, rgba(20, 28, 40, 0.95), rgba(16, 23, 32, 0.95));
+      border: 1px solid rgba(82, 214, 255, 0.18);
       box-shadow: var(--shadow), var(--glow);
       color: var(--text);
       padding: 22px;
@@ -500,7 +586,7 @@
       flex-direction: column;
       align-items: center;
       gap: 14px;
-      max-width: 1080px;
+      max-width: 1120px;
       margin: 0 auto 18px auto;
       border-radius: 20px;
       position: relative;
@@ -510,10 +596,11 @@
     .radio-player::before {
       content: "";
       position: absolute;
-      inset: auto auto -90px -90px;
-      width: 240px;
-      height: 240px;
-      background: radial-gradient(circle, rgba(0,200,255,0.14) 0%, transparent 70%);
+      width: 220px;
+      height: 220px;
+      left: -70px;
+      bottom: -80px;
+      background: radial-gradient(circle, rgba(0,179,255,0.12) 0%, transparent 72%);
       filter: blur(18px);
       pointer-events: none;
     }
@@ -521,15 +608,13 @@
     .radio-player h3 {
       margin: 0;
       font-size: 20px;
-      color: #ffffff;
-      text-shadow: 0 0 12px rgba(0,200,255,0.18);
+      color: #fff;
     }
 
     .radio-player audio {
       width: 100%;
       max-width: 280px;
       margin: 0;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35));
     }
 
     .radio-controls {
@@ -547,7 +632,7 @@
       background: rgba(255,255,255,0.04);
       padding: 10px 14px;
       border-radius: 999px;
-      border: 1px solid rgba(89,240,255,0.1);
+      border: 1px solid rgba(82,214,255,0.1);
     }
 
     .volume-control span {
@@ -568,8 +653,8 @@
       margin-top: 6px;
       border-radius: 14px;
       background: linear-gradient(180deg, rgba(4,11,20,0.95), rgba(8,18,34,0.95));
-      border: 1px solid rgba(89,240,255,0.12);
-      box-shadow: inset 0 0 20px rgba(0,200,255,0.05);
+      border: 1px solid rgba(82,214,255,0.12);
+      box-shadow: inset 0 0 18px rgba(0,179,255,0.05);
     }
 
     .footer-links {
@@ -577,24 +662,7 @@
       color: var(--muted);
     }
 
-    .badge-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 14px;
-    }
-
-    .mini-badge {
-      font-size: 12px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(89,240,255,0.12);
-      color: #cbefff;
-    }
-
-    @media (max-width: 900px) {
+    @media (max-width: 920px) {
       .grid-2 {
         grid-template-columns: 1fr;
       }
@@ -630,6 +698,10 @@
 
       .visualizer {
         height: 68px;
+      }
+
+      .game-card p {
+        min-height: auto;
       }
     }
   </style>
@@ -754,7 +826,7 @@ Press E - Show tracker
 
     <div class="section-card">
       <h2 class="section-title">Available Map Downloads</h2>
-      <p class="section-subtitle">Grab the latest uploaded maps directly from the site.</p>
+      <p class="section-subtitle">Download the latest uploaded maps.</p>
       <ul id="file-list">
         <li>Loading maps...</li>
       </ul>
@@ -777,16 +849,103 @@ Press E - Show tracker
     </div>
 
     <div class="section-card">
-      <h2 class="section-title" style="text-align:center;">Play Wordle</h2>
-      <p class="section-subtitle" style="text-align:center;">Take a break between flights.</p>
-      <div class="wordle-frame">
-        <iframe src="wordle/index.html" height="600" title="Wordle Game"></iframe>
+      <h2 class="section-title" style="text-align:center;">Mini Games</h2>
+      <p class="section-subtitle" style="text-align:center;">Play something while waiting, chilling, or between flights.</p>
+
+      <div class="games-grid">
+        <div class="game-card">
+          <h3>Snake</h3>
+          <p>Classic browser Snake with clean controls and a simple HTML5 setup.</p>
+          <div class="game-tags">
+            <span>Arcade</span>
+            <span>Browser</span>
+            <span>MIT</span>
+          </div>
+          <div class="game-buttons">
+            <a href="https://ramazancetinkaya.github.io/snake-game/" target="_blank" rel="noopener noreferrer">Play</a>
+            <a class="secondary" href="https://github.com/ramazancetinkaya/snake-game" target="_blank" rel="noopener noreferrer">Source</a>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <h3>2048</h3>
+          <p>Slide tiles, combine numbers, and try to reach 2048 without filling the board.</p>
+          <div class="game-tags">
+            <span>Puzzle</span>
+            <span>Classic</span>
+            <span>MIT</span>
+          </div>
+          <div class="game-buttons">
+            <a href="https://play2048.co/" target="_blank" rel="noopener noreferrer">Play</a>
+            <a class="secondary" href="https://github.com/gabrielecirulli/2048" target="_blank" rel="noopener noreferrer">Source</a>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <h3>Minesweeper</h3>
+          <p>Old-school Minesweeper gameplay in the browser. Clean, quick, and easy to jump into.</p>
+          <div class="game-tags">
+            <span>Logic</span>
+            <span>Classic</span>
+            <span>MIT</span>
+          </div>
+          <div class="game-buttons">
+            <a href="https://theajack.github.io/minesweeper/" target="_blank" rel="noopener noreferrer">Play</a>
+            <a class="secondary" href="https://github.com/theajack/minesweeper" target="_blank" rel="noopener noreferrer">Source</a>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <h3>Tic-Tac-Toe</h3>
+          <p>A lightweight browser version of Tic-Tac-Toe for quick matches.</p>
+          <div class="game-tags">
+            <span>2 Player</span>
+            <span>Quick</span>
+            <span>MIT</span>
+          </div>
+          <div class="game-buttons">
+            <a href="https://capwan.github.io/Tic-Tac-Toe-Game/" target="_blank" rel="noopener noreferrer">Play</a>
+            <a class="secondary" href="https://github.com/capwan/Tic-Tac-Toe-Game" target="_blank" rel="noopener noreferrer">Source</a>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <h3>Flappy Bird</h3>
+          <p>A browser Flappy Bird clone built for quick reflex-based runs.</p>
+          <div class="game-tags">
+            <span>Arcade</span>
+            <span>Reflex</span>
+            <span>MIT</span>
+          </div>
+          <div class="game-buttons">
+            <a href="https://elmejdki.github.io/FlappyBird/" target="_blank" rel="noopener noreferrer">Play</a>
+            <a class="secondary" href="https://github.com/elmejdki/FlappyBird" target="_blank" rel="noopener noreferrer">Source</a>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <h3>Memory Game</h3>
+          <p>A simple browser memory challenge where difficulty ramps up as you progress.</p>
+          <div class="game-tags">
+            <span>Memory</span>
+            <span>Browser</span>
+            <span>MIT</span>
+          </div>
+          <div class="game-buttons">
+            <a href="https://code4fukui.github.io/memory-game/" target="_blank" rel="noopener noreferrer">Play</a>
+            <a class="secondary" href="https://github.com/code4fukui/memory-game" target="_blank" rel="noopener noreferrer">Source</a>
+          </div>
+        </div>
       </div>
+
+      <p class="mini-games-note">
+        Games open in a new tab so your Rustic Flight page stays clean.
+      </p>
     </div>
 
     <div class="section-card">
       <h2 class="section-title" style="text-align:center;">Follow Rustic Flight</h2>
-      <p class="section-subtitle" style="text-align:center;">Join the community and keep up with clips and updates.</p>
+      <p class="section-subtitle" style="text-align:center;">Discord, clips, updates and socials.</p>
 
       <div class="social-icons">
         <a href="https://discord.gg/cmTVfv644p" target="_blank" rel="noopener noreferrer">
@@ -1058,14 +1217,12 @@ Press E - Show tracker
 
       for (let i = 0; i < dataArray.length; i++) {
         const barHeight = (dataArray[i] / 255) * canvas.height * 0.88;
-
         const gradient = ctx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
-        gradient.addColorStop(0, "#59f0ff");
-        gradient.addColorStop(1, "#00c8ff");
+        gradient.addColorStop(0, "#52d6ff");
+        gradient.addColorStop(1, "#00b3ff");
 
         ctx.fillStyle = gradient;
         ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
-
         x += barWidth;
       }
     }
