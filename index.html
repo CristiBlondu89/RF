@@ -17,7 +17,6 @@
       font-family: 'Inter', sans-serif;
       background: var(--dark);
       color: #eee;
-      line-height: 1.6;
     }
     header {
       position: sticky;
@@ -42,24 +41,19 @@
       color: var(--primary);
       text-shadow: 0 0 10px var(--primary);
     }
+
     .hero {
-      height: 380px;
-      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://i.imgur.com/AMXXDyR.png') center/cover no-repeat;
+      height: 360px;
+      background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.8)), url('https://i.imgur.com/AMXXDyR.png') center/cover no-repeat;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      position: relative;
     }
     .hero h1 {
       font-size: 3.2rem;
       margin: 0;
-      color: white;
       text-shadow: 0 4px 20px rgba(0,212,255,0.6);
-    }
-    .hero p {
-      font-size: 1.4rem;
-      margin: 15px 0 30px;
     }
 
     .container {
@@ -67,12 +61,11 @@
       margin: 0 auto;
       padding: 30px 20px;
     }
-
     .card {
       background: var(--card);
       border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 30px;
+      padding: 25px;
+      margin-bottom: 35px;
       border-left: 5px solid var(--primary);
       box-shadow: 0 6px 20px rgba(0,0,0,0.4);
     }
@@ -87,48 +80,25 @@
       font-weight: 600;
       margin: 30px 0;
     }
-    .vip-banner a {
-      color: #111;
-      text-decoration: none;
-    }
+    .vip-banner a { color: #111; text-decoration: none; }
 
-    .server-status {
-      text-align: center;
-    }
-    .status-title {
-      color: var(--primary);
-      font-size: 1.4rem;
-      margin-bottom: 10px;
-    }
+    /* Server Status */
+    .server-status { text-align: center; }
 
+    /* Commands */
     .commands-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 25px;
     }
-    @media (max-width: 900px) {
-      .commands-section { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 900px) { .commands-section { grid-template-columns: 1fr; } }
 
-    .command-card h3 {
-      margin-top: 0;
-      color: var(--rust);
-      border-bottom: 2px solid var(--primary);
-      padding-bottom: 10px;
-    }
-    .command-list {
-      list-style: none;
-      padding: 0;
-    }
     .command-list li {
       padding: 10px 0;
       border-bottom: 1px solid #444;
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-    .command-list li:last-child {
-      border: none;
     }
     .copy-btn {
       background: transparent;
@@ -137,34 +107,86 @@
       padding: 5px 12px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 0.9rem;
     }
-    .copy-btn:hover {
-      background: var(--primary);
-      color: #111;
-    }
+    .copy-btn:hover { background: var(--primary); color: #111; }
 
-    .maps-grid {
+    /* Minigames */
+    .games-section {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 25px;
     }
-    .map-item {
-      background: var(--card);
-      padding: 18px;
+    .game-container {
+      background: #222;
+      padding: 20px;
       border-radius: 10px;
-      transition: all 0.3s;
+      text-align: center;
     }
-    .map-item:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 15px var(--primary);
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      max-width: 320px;
+      margin: 15px auto;
+    }
+    .tile {
+      width: 60px;
+      height: 60px;
+      border: 2px solid #555;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 340px;
+      margin: 20px auto;
+    }
+    .memory-card {
+      width: 70px;
+      height: 70px;
+      background: #333;
+      border: 3px solid var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .memory-card.flipped, .memory-card.matched {
+      transform: rotateY(180deg);
+      background: #444;
+    }
+    .tic-tac-toe {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 8px;
+      max-width: 260px;
+      margin: 20px auto;
+    }
+    .ttt-cell {
+      width: 80px;
+      height: 80px;
+      background: #333;
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid var(--rust);
     }
 
     .social-icons {
       display: flex;
       justify-content: center;
       gap: 25px;
-      margin: 40px 0;
+      margin: 50px 0;
       flex-wrap: wrap;
     }
     .social-icons a img {
@@ -176,20 +198,11 @@
       filter: drop-shadow(0 0 12px var(--primary));
     }
 
-    .mini-game {
-      background: var(--card);
-      padding: 25px;
-      border-radius: 12px;
-      text-align: center;
-      margin: 40px 0;
-    }
-
     footer {
       text-align: center;
       padding: 40px 20px;
       background: #161616;
       color: #777;
-      font-size: 0.95rem;
     }
 
     .toast {
@@ -214,31 +227,29 @@
   <header>
     <div class="header-content">
       <div class="logo">RUSTIC FLIGHT</div>
-      <div>
-        <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank" style="color:var(--rust); font-weight:600; text-decoration:none;">GET VIP →</a>
-      </div>
+      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank" style="color:var(--rust); font-weight:600;">GET VIP →</a>
     </div>
   </header>
 
   <div class="hero">
     <div>
       <h1>RUSTIC FLIGHT</h1>
-      <p>Minicopter | PvP | Attack Heli | Scrappy Fun</p>
+      <p>Minicopter • PvP • Attack Heli • Scrappy Chaos</p>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- VIP Banner -->
+    <!-- VIP -->
     <div class="vip-banner">
       <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">
         GET VIP – Exclusive Vehicles, Trails, Jets & More!
       </a>
     </div>
 
-    <!-- Server Status -->
+    <!-- Server Status (kept your original Tsarvar) -->
     <div class="card server-status">
-      <h2 class="status-title">Server Status</h2>
+      <h2 style="color:var(--primary);">Server Status</h2>
       <a href="https://tsarvar.com/servers/rust/45.43.163.77:28023" data-tsarvarServerId="514115">
         Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy
       </a>
@@ -252,39 +263,52 @@
           color:'#11111a'
         });})('TsarvarWidgetQueue');
       </script>
-      <div style="margin-top:20px;">
+      <p style="margin-top:20px;">
         <strong>Connect:</strong> play.rusticflight.com:28023
-        <button onclick="copyAddress()" class="copy-btn" style="margin-left:15px;">Copy</button>
-      </div>
+        <button onclick="copyAddress()" class="copy-btn" style="margin-left:15px;">Copy Address</button>
+      </p>
     </div>
 
     <!-- Commands -->
     <div class="commands-section">
-      <div class="card command-card">
+      <div class="card">
         <h3>📜 Server Commands</h3>
         <ul class="command-list" id="normal-commands"></ul>
       </div>
-
-      <div class="card command-card">
+      <div class="card">
         <h3>👑 VIP Commands</h3>
         <ul class="command-list" id="vip-commands"></ul>
       </div>
     </div>
 
-    <!-- Map Downloads -->
-    <div class="card">
-      <h2 style="margin-top:0;">Available Map Downloads</h2>
-      <div class="maps-grid" id="maps-grid">Loading maps...</div>
-    </div>
+    <!-- Minigames Section -->
+    <h2 style="text-align:center; margin:50px 0 30px; color:var(--rust);">🕹️ Hangar Minigames</h2>
+    <div class="games-section">
 
-    <!-- Mini Game -->
-    <div class="mini-game">
-      <h2>🛠️ Rust Vehicle Memory Match</h2>
-      <p>Match the flying machines!</p>
-      <button onclick="startMemoryGame()" style="padding:12px 24px; background:var(--primary); color:#111; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-        Play Memory Game
-      </button>
-      <div id="memory-game" style="margin-top:20px; display:none;"></div>
+      <!-- Wordle -->
+      <div class="card game-container">
+        <h3>🟩 Rust Wordle</h3>
+        <div id="wordle-board" class="game-board"></div>
+        <input type="text" id="wordle-input" maxlength="5" style="margin-top:15px; padding:10px; font-size:1.1rem; width:200px; text-align:center;" placeholder="Type guess...">
+        <button onclick="submitWordleGuess()" style="margin-left:10px; padding:10px 16px;">Enter</button>
+        <p id="wordle-message" style="margin-top:10px; min-height:24px;"></p>
+      </div>
+
+      <!-- Memory Match -->
+      <div class="card game-container">
+        <h3>🛠️ Vehicle Memory Match</h3>
+        <div id="memory-grid" class="memory-grid"></div>
+        <button onclick="resetMemoryGame()" style="margin-top:15px; padding:8px 20px;">New Game</button>
+      </div>
+
+      <!-- Tic Tac Toe -->
+      <div class="card game-container">
+        <h3>✕ Rust Tic-Tac-Toe (X = Pilot • O = Heli)</h3>
+        <div id="ttt-board" class="tic-tac-toe"></div>
+        <p id="ttt-status" style="margin-top:15px; font-weight:bold;">X's turn (Pilot)</p>
+        <button onclick="resetTicTacToe()" style="margin-top:10px; padding:8px 20px;">New Game</button>
+      </div>
+
     </div>
 
     <!-- TikTok -->
@@ -309,49 +333,49 @@
   </div>
 
   <footer>
-    © 2026 Rustic Flight • Made for flyers who love chaos<br>
+    © 2026 Rustic Flight • Fly safe (or don't)<br>
     Contact: <a href="mailto:rusticflight@gmail.com" style="color:var(--primary);">rusticflight@gmail.com</a>
   </footer>
 
-  <div id="toast" class="toast">Copied to clipboard!</div>
+  <div id="toast" class="toast">Copied!</div>
 
   <script>
-    // Copy address
+    // Toast
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.opacity = 1;
+      setTimeout(() => t.style.opacity = 0, 2200);
+    }
+
     function copyAddress() {
       navigator.clipboard.writeText("connect play.rusticflight.com:28023");
       showToast("Server address copied!");
     }
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.style.opacity = 1;
-      setTimeout(() => toast.style.opacity = 0, 2500);
-    }
-
-    // Commands
-    const normalCommands = [
+    // Commands (same as before)
+    const normalCmds = [
       {cmd: "/lobby", desc: "Teleport to lobby"},
       {cmd: "/mini or /mymini", desc: "Spawn minicopter"},
-      {cmd: "/nomini", desc: "Despawn any helicopter"},
+      {cmd: "/nomini", desc: "Despawn helicopter"},
       {cmd: "/seats", desc: "Add seats to mini"},
-      {cmd: "/heli or /myheli", desc: "Spawn regular heli"},
+      {cmd: "/heli or /myheli", desc: "Spawn heli"},
       {cmd: "/hab", desc: "Hot Air Balloon"},
-      {cmd: "/attackheli", desc: "Spawn Attack Helicopter"},
-      {cmd: "/fix", desc: "Repair your vehicle"},
-      {cmd: "/nodamage", desc: "Mini takes no damage"},
-      {cmd: "/nocollision", desc: "Disable vehicle collision"},
-      {cmd: "/radio", desc: "Spawn radio on mini"},
-      {cmd: "/piano", desc: "Spawn piano on mini"},
-      {cmd: "/tpsave", desc: "Save teleport position"},
+      {cmd: "/attackheli", desc: "Attack Helicopter"},
+      {cmd: "/fix", desc: "Repair vehicle"},
+      {cmd: "/nodamage", desc: "No damage"},
+      {cmd: "/nocollision", desc: "No ramming"},
+      {cmd: "/radio", desc: "Spawn radio"},
+      {cmd: "/piano", desc: "Spawn piano"},
+      {cmd: "/tpsave", desc: "Save position"},
       {cmd: "/tp", desc: "Teleport to saved position"}
     ];
 
-    const vipCommands = [
-      {cmd: "/ch47", desc: "Spawn Chinook"},
-      {cmd: "/spawn fighterbus", desc: "Custom fighter plane"},
+    const vipCmds = [
+      {cmd: "/ch47", desc: "Chinook"},
+      {cmd: "/spawn fighterbus", desc: "Fighter plane"},
       {cmd: "/skins or /sb", desc: "Skin menu"},
-      {cmd: "/trail pink/fire/etc", desc: "Vehicle trails"},
+      {cmd: "/trail pink/fire", desc: "Vehicle trails"},
       {cmd: "/pe 0-3", desc: "Player effects"},
       {cmd: "/f15 /nof15", desc: "F15 Jet"},
       {cmd: "/bike /nobike", desc: "Motorbike"},
@@ -359,79 +383,190 @@
     ];
 
     function renderCommands() {
-      const normalList = document.getElementById('normal-commands');
-      normalCommands.forEach(item => {
+      const n = document.getElementById('normal-commands');
+      normalCmds.forEach(c => {
         const li = document.createElement('li');
-        li.innerHTML = `<span><strong>${item.cmd}</strong> — ${item.desc}</span>
-                        <button class="copy-btn" onclick="copyText('${item.cmd}')">Copy</button>`;
-        normalList.appendChild(li);
+        li.innerHTML = `<span><strong>${c.cmd}</strong> — ${c.desc}</span><button class="copy-btn" onclick="copyText('${c.cmd}')">Copy</button>`;
+        n.appendChild(li);
       });
-
-      const vipList = document.getElementById('vip-commands');
-      vipCommands.forEach(item => {
+      const v = document.getElementById('vip-commands');
+      vipCmds.forEach(c => {
         const li = document.createElement('li');
-        li.innerHTML = `<span><strong>${item.cmd}</strong> — ${item.desc}</span>
-                        <button class="copy-btn" onclick="copyText('${item.cmd}')">Copy</button>`;
-        vipList.appendChild(li);
+        li.innerHTML = `<span><strong>${c.cmd}</strong> — ${c.desc}</span><button class="copy-btn" onclick="copyText('${c.cmd}')">Copy</button>`;
+        v.appendChild(li);
       });
     }
-
     function copyText(text) {
       navigator.clipboard.writeText(text);
       showToast("Command copied!");
     }
 
-    // TikTok (your original videos)
-    const tiktokVideos = ["7504757782004944150","7504757112753442070","7497339945888646","7490649013289569558","7492591418259655958"];
-    let currentTikTok = 0;
-
+    // TikTok
+    const tiktoks = ["7504757782004944150","7504757112753442070","7497339945888646","7490649013289569558","7492591418259655958"];
+    let ttIndex = 0;
     function loadTikTok() {
-      const container = document.getElementById("tiktok-container");
-      container.innerHTML = `
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[currentTikTok]}" data-video-id="${tiktokVideos[currentTikTok]}" style="max-width: 325px;">
-          <section>Loading…</section>
-        </blockquote>`;
-      const script = document.createElement("script");
-      script.src = "https://www.tiktok.com/embed.js";
-      container.appendChild(script);
+      const cont = document.getElementById("tiktok-container");
+      cont.innerHTML = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktoks[ttIndex]}" data-video-id="${tiktoks[ttIndex]}" style="max-width:325px;"><section>Loading…</section></blockquote>`;
+      const s = document.createElement("script"); s.src = "https://www.tiktok.com/embed.js"; cont.appendChild(s);
+    }
+    function nextTikTok(e){ e.stopPropagation(); ttIndex = (ttIndex+1)%tiktoks.length; loadTikTok(); }
+    function prevTikTok(e){ e.stopPropagation(); ttIndex = (ttIndex-1+tiktoks.length)%tiktoks.length; loadTikTok(); }
+
+    // ==================== WORDLE ====================
+    const wordleWords = ["HELIC","MINI","ATTACK","CHINOOK","FLIGHT","PILOT","SCRAP","HOVER","CRASH","BOOST","JET","ROTOR"];
+    let wordleAnswer = wordleWords[Math.floor(Math.random()*wordleWords.length)];
+    let wordleGuesses = [];
+    let currentRow = 0;
+
+    function createWordleBoard() {
+      const board = document.getElementById('wordle-board');
+      board.innerHTML = '';
+      for (let i = 0; i < 30; i++) {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.id = `tile-${i}`;
+        board.appendChild(tile);
+      }
     }
 
-    function nextTikTok(e) { e.stopPropagation(); currentTikTok = (currentTikTok + 1) % tiktokVideos.length; loadTikTok(); }
-    function prevTikTok(e) { e.stopPropagation(); currentTikTok = (currentTikTok - 1 + tiktokVideos.length) % tiktokVideos.length; loadTikTok(); }
+    function submitWordleGuess() {
+      const input = document.getElementById('wordle-input').value.toUpperCase().trim();
+      if (input.length !== 5) {
+        document.getElementById('wordle-message').textContent = "Guess must be 5 letters!";
+        return;
+      }
+      if (wordleGuesses.length >= 6) return;
 
-    // Simple Memory Game (placeholder - you can expand it)
-    function startMemoryGame() {
-      alert("🛠️ Rust Vehicle Memory Match\n\nMatch pairs: Mini, Attack Heli, Chinook, F15, Hot Air Balloon...\n\n(This is a fun placeholder — I can make a full playable version if you want!)");
-      // You can ask me later for a full JS memory game with images
+      wordleGuesses.push(input);
+      const start = currentRow * 5;
+      for (let i = 0; i < 5; i++) {
+        const tile = document.getElementById(`tile-${start + i}`);
+        tile.textContent = input[i];
+        if (input[i] === wordleAnswer[i]) tile.style.background = '#00ff88';
+        else if (wordleAnswer.includes(input[i])) tile.style.background = '#ffcc00';
+        else tile.style.background = '#555';
+      }
+      currentRow++;
+      document.getElementById('wordle-input').value = '';
+
+      if (input === wordleAnswer) {
+        document.getElementById('wordle-message').innerHTML = `<strong style="color:#00ff88">Nice landing! You got it.</strong>`;
+      } else if (currentRow >= 6) {
+        document.getElementById('wordle-message').innerHTML = `Crashed... The word was <strong>${wordleAnswer}</strong>`;
+      }
     }
 
-    // Map downloads (your original fetch)
-    fetch("files.json")
-      .then(res => res.json())
-      .then(files => {
-        const container = document.getElementById("maps-grid");
-        container.innerHTML = "";
-        files.sort().reverse();
-        files.forEach(file => {
-          const name = file.split('/').pop();
-          const div = document.createElement('div');
-          div.className = 'map-item';
-          div.innerHTML = `
-            <a href="${file}" download style="color:var(--primary); font-weight:600;">${name}</a>
-            <div style="margin-top:8px; font-size:0.9rem; color:#aaa;">Map File</div>
-          `;
-          container.appendChild(div);
-        });
-      })
-      .catch(() => {
-        document.getElementById("maps-grid").innerHTML = "<p>Error loading maps.</p>";
+    // ==================== MEMORY MATCH ====================
+    const vehicles = ['🚁','🛩️','✈️','🛫','🚀','🪂','🛶','🛥️'];
+    let memoryCards = [...vehicles, ...vehicles];
+    let flipped = [], matched = [];
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function createMemoryGame() {
+      memoryCards = shuffle([...vehicles, ...vehicles]);
+      flipped = []; matched = [];
+      const grid = document.getElementById('memory-grid');
+      grid.innerHTML = '';
+      memoryCards.forEach((emoji, i) => {
+        const card = document.createElement('div');
+        card.className = 'memory-card';
+        card.dataset.index = i;
+        card.dataset.emoji = emoji;
+        card.onclick = () => flipCard(card);
+        grid.appendChild(card);
       });
+    }
 
-    // Initialize
+    function flipCard(card) {
+      if (flipped.length === 2 || card.classList.contains('flipped') || matched.includes(card)) return;
+      card.textContent = card.dataset.emoji;
+      card.classList.add('flipped');
+      flipped.push(card);
+
+      if (flipped.length === 2) {
+        if (flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
+          matched.push(...flipped);
+          flipped = [];
+          if (matched.length === memoryCards.length) {
+            setTimeout(() => alert("🎉 You cleared the hangar! Great memory, pilot!"), 300);
+          }
+        } else {
+          setTimeout(() => {
+            flipped.forEach(c => {
+              c.textContent = '';
+              c.classList.remove('flipped');
+            });
+            flipped = [];
+          }, 800);
+        }
+      }
+    }
+
+    function resetMemoryGame() {
+      createMemoryGame();
+    }
+
+    // ==================== TIC TAC TOE ====================
+    let tttBoard = Array(9).fill(null);
+    let tttCurrent = 'X';
+
+    function createTicTacToe() {
+      const board = document.getElementById('ttt-board');
+      board.innerHTML = '';
+      tttBoard = Array(9).fill(null);
+      tttCurrent = 'X';
+      document.getElementById('ttt-status').textContent = "X's turn (Pilot)";
+
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'ttt-cell';
+        cell.dataset.index = i;
+        cell.onclick = () => makeTttMove(i, cell);
+        board.appendChild(cell);
+      }
+    }
+
+    function makeTttMove(index, cell) {
+      if (tttBoard[index] || checkWinner()) return;
+      tttBoard[index] = tttCurrent;
+      cell.textContent = tttCurrent;
+
+      if (checkWinner()) {
+        document.getElementById('ttt-status').innerHTML = `<strong>${tttCurrent} wins!</strong>`;
+        return;
+      }
+      if (tttBoard.every(c => c)) {
+        document.getElementById('ttt-status').textContent = "It's a draw!";
+        return;
+      }
+
+      tttCurrent = tttCurrent === 'X' ? 'O' : 'X';
+      document.getElementById('ttt-status').textContent = `${tttCurrent}'s turn (${tttCurrent === 'X' ? 'Pilot' : 'Heli'})`;
+    }
+
+    function checkWinner() {
+      const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      return wins.some(combo => {
+        const [a,b,c] = combo;
+        return tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c];
+      });
+    }
+
+    function resetTicTacToe() {
+      createTicTacToe();
+    }
+
+    // Init everything
     renderCommands();
+    createWordleBoard();
+    createMemoryGame();
+    createTicTacToe();
     loadTikTok();
 
-    // Keep your original radio if you want to add it back later
+    console.log("%cRustic Flight website loaded with 3 real minigames! 🚁", "color:#00d4ff; font-size:14px;");
   </script>
 </body>
 </html>
