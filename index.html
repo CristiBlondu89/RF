@@ -3,256 +3,728 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rustic Flight - Minicopter PvP</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <title>Rustic Flight</title>
   <style>
-    :root {
-      --primary: #00d4ff;
-      --rust: #ff8c42;
-      --dark: #1c1c1c;
-      --card: #2a2a2a;
-    }
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--dark);
-      color: #eee;
-    }
-    header {
-      position: sticky;
-      top: 0;
-      background: rgba(28,28,28,0.95);
-      backdrop-filter: blur(8px);
-      z-index: 100;
-      border-bottom: 3px solid var(--primary);
-      padding: 15px 0;
-    }
-    .header-content {
-      max-width: 1200px;
-      margin: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-    }
-    .logo {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 1.8rem;
-      color: var(--primary);
-      text-shadow: 0 0 10px var(--primary);
+    html {
+      scroll-behavior: smooth;
     }
 
-    .hero {
-      height: 360px;
-      background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.8)), url('https://i.imgur.com/AMXXDyR.png') center/cover no-repeat;
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0, 179, 255, 0.12), transparent 25%),
+        radial-gradient(circle at 80% 10%, rgba(0, 230, 255, 0.08), transparent 20%),
+        linear-gradient(160deg, #1e1e1e 0%, #14171d 55%, #0f1115 100%);
+      background-attachment: fixed;
+      color: #f0f0f0;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px),
+        radial-gradient(circle, rgba(0,179,255,0.05) 1px, transparent 1px);
+      background-size: 120px 120px, 180px 180px;
+      background-position: 0 0, 40px 60px;
+      opacity: 0.2;
+      animation: drift 28s linear infinite;
+    }
+
+    @keyframes drift {
+      from { transform: translateY(0); }
+      to { transform: translateY(120px); }
+    }
+
+    header {
+      position: relative;
+      height: 280px;
+      background: url('https://i.imgur.com/AMXXDyR.png') no-repeat center center/cover;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(15,17,21,0.85));
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      text-align: center;
+      padding: 25px 20px 30px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(0, 179, 255, 0.3);
+      color: #dff7ff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 18px rgba(0, 179, 255, 0.18);
+      animation: floatBadge 4s ease-in-out infinite;
+    }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .hero-title {
+      margin: 14px 0 6px;
+      font-size: clamp(32px, 7vw, 56px);
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 20px rgba(0, 179, 255, 0.26);
+    }
+
+    .hero-subtitle {
+      margin: 0;
+      color: #d0dae3;
+      font-size: 14px;
+      max-width: 700px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .hero-button,
+    .join-btn,
+    .secondary-btn {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
+      gap: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 11px 18px;
+      font-weight: bold;
+      font-size: 14px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
     }
-    .hero h1 {
-      font-size: 3.2rem;
-      margin: 0;
-      text-shadow: 0 4px 20px rgba(0,212,255,0.6);
+
+    .hero-button,
+    .join-btn {
+      background: linear-gradient(135deg, #00b3ff, #00e6ff);
+      color: #111;
+      box-shadow: 0 0 20px rgba(0, 179, 255, 0.22);
+    }
+
+    .hero-button:hover,
+    .join-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 0 26px rgba(0, 179, 255, 0.32);
+    }
+
+    .secondary-btn {
+      background: rgba(255,255,255,0.08);
+      color: #e8f8ff;
+      border: 1px solid rgba(0, 179, 255, 0.22);
+      backdrop-filter: blur(6px);
+    }
+
+    .secondary-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.12);
+      box-shadow: 0 0 18px rgba(0, 179, 255, 0.14);
     }
 
     .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 30px 20px;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 25px;
-      margin-bottom: 35px;
-      border-left: 5px solid var(--primary);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
     }
 
     .vip-banner {
-      background: linear-gradient(135deg, #ff8c42, #ff5e00);
-      color: #111;
       text-align: center;
-      padding: 28px;
+      margin: 40px auto;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(0,179,255,0.12), rgba(0,230,255,0.05));
+      border: 1px solid rgba(0, 179, 255, 0.18);
       border-radius: 12px;
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin: 30px 0;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(6px);
     }
-    .vip-banner a { color: #111; text-decoration: none; }
 
-    /* Server Status */
-    .server-status { text-align: center; }
+    .vip-banner small {
+      display: block;
+      color: #b8c6d1;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
 
-    /* Commands */
-    .commands-section {
+    .vip-banner a {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00b3ff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .vip-banner a:hover {
+      color: #00e6ff;
+      text-shadow: 0 0 8px #00b3ff;
+    }
+
+    .quick-highlights {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 20px 0 30px;
     }
-    @media (max-width: 900px) { .commands-section { grid-template-columns: 1fr; } }
 
-    .command-list li {
-      padding: 10px 0;
-      border-bottom: 1px solid #444;
+    .highlight-card {
+      background: rgba(43, 43, 43, 0.88);
+      border-left: 4px solid #00b3ff;
+      border-radius: 10px;
+      padding: 16px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14);
+    }
+
+    .highlight-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.22), 0 0 14px rgba(0, 179, 255, 0.10);
+    }
+
+    .highlight-label {
+      font-size: 12px;
+      color: #9bb7c8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .highlight-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #f5fbff;
+      margin-bottom: 4px;
+    }
+
+    .highlight-sub {
+      font-size: 13px;
+      color: #afc1cf;
+    }
+
+    .server-status {
+      background: #2b2b2b;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+      margin: 40px 0;
+      transition: filter 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
+      border-left: 4px solid #00b3ff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .server-status::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, rgba(0, 179, 255, 0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    .server-status:hover {
+      filter: drop-shadow(0 0 6px #00b3ff);
+      transform: translateY(-4px);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+    }
+
+    .server-status h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 28px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .status-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(0, 179, 255, 0.18);
+      color: #cfe7f1;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .pulse-dot {
+      width: 9px;
+      height: 9px;
+      background: #00ff88;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(0,255,136,0.65);
+      animation: pulseDot 1.8s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      70% { transform: scale(1.35); opacity: 0.25; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    .server-status a[data-tsarvarServerId] {
+      display: none;
+    }
+
+    .server-status .tsarvar-widget {
+      color: #ddd;
+      font-size: 16px;
+      margin-bottom: 10px;
+      min-height: 22px;
+    }
+
+    .server-status .tsarvar-widget .status-online {
+      color: #00ff00;
+      font-weight: bold;
+    }
+
+    .server-status .tsarvar-widget .status-offline {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    .server-status .connect-instructions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #ddd;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .server-status .connect-instructions span {
+      white-space: nowrap;
+    }
+
+    .server-status .connect-instructions strong {
+      color: #00b3ff;
+    }
+
+    .copy-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .copy-button img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .copy-button:hover {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 6px #00b3ff);
+    }
+
+    .server-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .copy-feedback,
+    .live-players {
+      font-size: 13px;
+      min-height: 18px;
+      color: #8fdfff;
+    }
+
+    .live-players {
+      color: #b7c7d2;
+      margin-top: 4px;
+    }
+
+    .featured-video-card {
+      background: rgba(43, 43, 43, 0.88);
+      border-left: 4px solid #00b3ff;
+      border-radius: 8px;
+      padding: 18px;
+      margin: 22px 0 10px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14);
+    }
+
+    .featured-video-card h3 {
+      margin: 0 0 6px;
+      font-size: 20px;
+    }
+
+    .featured-video-card p {
+      margin: 0 0 12px;
+      color: #b6c8d4;
+      font-size: 14px;
+    }
+
+    .dropdown {
+      margin: 30px auto;
+      max-width: 900px;
+    }
+
+    .dropdown h3 {
+      background-color: #2b2b2b;
+      padding: 12px 20px;
+      margin: 0;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: background-color 0.3s ease, box-shadow 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.10);
     }
-    .copy-btn {
-      background: transparent;
-      border: 1px solid var(--primary);
-      color: var(--primary);
-      padding: 5px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .copy-btn:hover { background: var(--primary); color: #111; }
 
-    /* Minigames */
-    .games-section {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-      gap: 25px;
+    .dropdown h3:hover {
+      background-color: #333;
+      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.18);
+      transform: translateY(-2px);
     }
-    .game-container {
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
+
+    .dropdown .arrow {
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown.open .arrow {
+      transform: rotate(90deg);
+    }
+
+    .dropdown-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+      background-color: #1e1e1e;
+      padding: 0 20px;
+      border-left: 4px solid #00b3ff;
+      border-radius: 0 0 6px 6px;
+    }
+
+    .dropdown.open .dropdown-content {
+      max-height: 800px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .dropdown-content pre {
+      white-space: pre-wrap;
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .toggle-all {
       text-align: center;
+      margin-bottom: 20px;
     }
-    .game-board {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      max-width: 320px;
-      margin: 15px auto;
-    }
-    .tile {
-      width: 60px;
-      height: 60px;
-      border: 2px solid #555;
-      font-size: 1.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    .toggle-all button {
+      background-color: #00b3ff;
+      border: none;
+      color: #111;
+      padding: 8px 16px;
+      border-radius: 999px;
       font-weight: bold;
-    }
-    .memory-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      max-width: 340px;
-      margin: 20px auto;
-    }
-    .memory-card {
-      width: 70px;
-      height: 70px;
-      background: #333;
-      border: 3px solid var(--primary);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
       cursor: pointer;
-      transition: transform 0.3s;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .memory-card.flipped, .memory-card.matched {
-      transform: rotateY(180deg);
-      background: #444;
+
+    .toggle-all button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px rgba(0, 179, 255, 0.20);
     }
-    .tic-tac-toe {
-      display: grid;
-      grid-template-columns: repeat(3, 80px);
-      gap: 8px;
-      max-width: 260px;
-      margin: 20px auto;
+
+    ul {
+      list-style: none;
+      padding: 0;
     }
-    .ttt-cell {
-      width: 80px;
-      height: 80px;
-      background: #333;
-      font-size: 2.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border: 2px solid var(--rust);
+
+    li {
+      background: #2b2b2b;
+      margin: 10px 0;
+      padding: 15px;
+      border-left: 4px solid #00b3ff;
+      border-radius: 4px;
+      transition: filter 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.10);
+    }
+
+    li:hover {
+      filter: drop-shadow(0 0 6px #00b3ff);
+      transform: translateY(-3px);
+      box-shadow: 0 14px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .file-link {
+      color: #00b3ff;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .file-meta {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .latest-badge {
+      background: #00b3ff;
+      color: #111;
+      font-size: 12px;
+      margin-left: 8px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
     }
 
     .social-icons {
       display: flex;
       justify-content: center;
-      gap: 25px;
-      margin: 50px 0;
       flex-wrap: wrap;
+      gap: 20px;
+      margin: 30px 0;
     }
+
+    .social-icons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(0, 179, 255, 0.14);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 0 18px rgba(0, 179, 255, 0.16);
+    }
+
     .social-icons a img {
-      height: 48px;
-      transition: 0.3s;
+      height: 40px;
+      transition: transform 0.3s ease, filter 0.3s ease;
     }
+
     .social-icons a img:hover {
-      transform: scale(1.15);
-      filter: drop-shadow(0 0 12px var(--primary));
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 6px #00b3ff);
     }
 
     footer {
       text-align: center;
-      padding: 40px 20px;
-      background: #161616;
+      font-size: 12px;
+      padding: 20px;
       color: #777;
+      border-top: 1px solid #333;
     }
 
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--primary);
+    .radio-player {
+      background: #2b2b2b;
+      color: #f0f0f0;
+      padding: 15px;
+      border: 4px solid #00b3ff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      max-width: 900px;
+      margin: 0 auto 20px auto;
+      border-radius: 8px;
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .radio-player.playing {
+      box-shadow: 0 0 24px rgba(0, 179, 255, 0.20), 0 4px 8px rgba(0, 0, 0, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .radio-player h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #00b3ff;
+    }
+
+    .radio-status {
+      color: #b7c7d2;
+      font-size: 13px;
+      min-height: 18px;
+    }
+
+    .radio-player audio {
+      width: 200px;
+      margin: 0 10px;
+    }
+
+    .radio-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .radio-controls button {
+      background: #00b3ff;
+      border: none;
       color: #111;
-      padding: 14px 28px;
-      border-radius: 50px;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
       font-weight: bold;
-      box-shadow: 0 10px 30px rgba(0,212,255,0.5);
-      opacity: 0;
-      transition: all 0.4s;
-      z-index: 2000;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .radio-controls button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 16px rgba(0, 179, 255, 0.20);
+    }
+
+    .volume-control {
+      display: flex;
+      align-items: center;
+    }
+
+    .volume-control span {
+      font-size: 14px;
+      color: #ddd;
+    }
+
+    .volume-control input {
+      width: 100px;
+      margin-left: 10px;
+      accent-color: #00b3ff;
+    }
+
+    .visualizer {
+      width: 80%;
+      max-width: 600px;
+      height: 60px;
+      display: block;
+      margin-top: 15px;
+      border-radius: 4px;
+      background: #1e1e1e;
+      border: 1px solid #00b3ff;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        height: 300px;
+      }
+
+      .hero-actions,
+      .server-actions,
+      .server-status .connect-instructions,
+      .radio-controls {
+        flex-direction: column;
+      }
+
+      .hero-button,
+      .secondary-btn,
+      .join-btn {
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .copy-button {
+        margin-top: 4px;
+      }
     }
   </style>
 </head>
 <body>
-
   <header>
-    <div class="header-content">
-      <div class="logo">RUSTIC FLIGHT</div>
-      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank" style="color:var(--rust); font-weight:600;">GET VIP →</a>
+    <div class="hero-overlay">
+      <div class="hero-badge">
+        <span>🚁</span>
+        <span>Rustic Flight Control</span>
+      </div>
+      <h1 class="hero-title">Rustic Flight</h1>
+      <p class="hero-subtitle">Minicopter PvP, custom fun, attack helis, scrappy chaos, and all the flying madness in one place.</p>
+      <div class="hero-actions">
+        <a href="#server-status" class="hero-button">Join the Server</a>
+        <a href="#featured-video" class="secondary-btn">Watch Clips</a>
+      </div>
     </div>
   </header>
 
-  <div class="hero">
-    <div>
-      <h1>RUSTIC FLIGHT</h1>
-      <p>Minicopter • PvP • Attack Heli • Scrappy Chaos</p>
-    </div>
-  </div>
-
   <div class="container">
-
-    <!-- VIP -->
     <div class="vip-banner">
-      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">
-        GET VIP – Exclusive Vehicles, Trails, Jets & More!
-      </a>
+      <small>Support the server and unlock the fun stuff</small>
+      <a href="https://rustic-flight-training.tebex.io/package/4097649" target="_blank">Get VIP here</a>
     </div>
 
-    <!-- Server Status (kept your original Tsarvar) -->
-    <div class="card server-status">
-      <h2 style="color:var(--primary);">Server Status</h2>
-      <a href="https://tsarvar.com/servers/rust/45.43.163.77:28023" data-tsarvarServerId="514115">
-        Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy
-      </a>
+    <div class="quick-highlights">
+      <div class="highlight-card">
+        <div class="highlight-label">Server Address</div>
+        <div class="highlight-value">play.rusticflight.com</div>
+        <div class="highlight-sub">Port 28023</div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-label">Main Theme</div>
+        <div class="highlight-value">Minicopter PvP</div>
+        <div class="highlight-sub">Fast travel, fights, and custom chaos</div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-label">Featured Content</div>
+        <div class="highlight-value">TikTok Clips</div>
+        <div class="highlight-sub">Gameplay, stunts, crashes, and kills</div>
+      </div>
+    </div>
+
+    <div class="server-status" id="server-status">
+      <div class="status-kicker">
+        <span class="pulse-dot"></span>
+        <span>Flight Status</span>
+      </div>
+
+      <h3>Server Status</h3>
+      <a href="https://tsarvar.com/servers/rust/45.43.163.77:28023" data-tsarvarServerId="514115">Server Rustic Flight - Minicopter|PvP|Attackheli|Scrappy</a>
       <script type="text/javascript" charset="utf-8" src="https://widget.tsarvar.com/load.js?v=2"></script>
       <script type="text/javascript">
         (function(k){(window[k]||(window[k]=[])).push({
@@ -260,68 +732,103 @@
           serverId:514115,
           serverIp:'45.43.163.77',
           serverPort:28023,
-          color:'#11111a'
+          color:'#11111a',
+          players:true,
+          status:true
         });})('TsarvarWidgetQueue');
       </script>
-      <p style="margin-top:20px;">
-        <strong>Connect:</strong> play.rusticflight.com:28023
-        <button onclick="copyAddress()" class="copy-btn" style="margin-left:15px;">Copy Address</button>
-      </p>
+
+      <div class="connect-instructions">
+        <span>Press <strong>F1</strong> for console, then use the connect address:</span>
+      </div>
+
+      <div class="server-actions">
+        <button class="copy-button" onclick="copyServerAddress()" title="Copy connect command">
+          <img src="https://img.icons8.com/?size=50&id=cvB6JC7HJn9v&format=gif" alt="Copy Address">
+        </button>
+        <button class="join-btn" onclick="copyServerAddress()">JOIN SERVER</button>
+      </div>
+
+      <div class="copy-feedback" id="copy-feedback"></div>
+      <div class="live-players" id="live-players">Checking live player count...</div>
     </div>
 
-    <!-- Commands -->
-    <div class="commands-section">
-      <div class="card">
-        <h3>📜 Server Commands</h3>
-        <ul class="command-list" id="normal-commands"></ul>
-      </div>
-      <div class="card">
-        <h3>👑 VIP Commands</h3>
-        <ul class="command-list" id="vip-commands"></ul>
+    <div class="toggle-all">
+      <button onclick="toggleAllDropdowns()">Toggle All Commands</button>
+    </div>
+
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <h3>📜 Server Commands <span class="arrow">▶</span></h3>
+      <div class="dropdown-content">
+        <pre>
+/lobby - Teleports you back to lobby
+/mini, /mymini
+/nomini - Despawns any type of helicopter
+/seats - Adds seats to the mini
+/heli, /myheli
+/hab - Hot Air Balloon
+/attackheli
+/fix - Repairs your mini
+/nodamage - Mini takes no damage
+/nocollision - Vehicle can't be rammed
+/radio - Spawns radio on mini
+/piano - Spawns piano on mini
+/tpsave - Save teleport position
+/tp - Teleport to saved position
+/keyui - Key/mouse tracker UI
+
+Press R - Repair vehicle
+Press E - Show tracker
+        </pre>
       </div>
     </div>
 
-    <!-- Minigames Section -->
-    <h2 style="text-align:center; margin:50px 0 30px; color:var(--rust);">🕹️ Hangar Minigames</h2>
-    <div class="games-section">
-
-      <!-- Wordle -->
-      <div class="card game-container">
-        <h3>🟩 Rust Wordle</h3>
-        <div id="wordle-board" class="game-board"></div>
-        <input type="text" id="wordle-input" maxlength="5" style="margin-top:15px; padding:10px; font-size:1.1rem; width:200px; text-align:center;" placeholder="Type guess...">
-        <button onclick="submitWordleGuess()" style="margin-left:10px; padding:10px 16px;">Enter</button>
-        <p id="wordle-message" style="margin-top:10px; min-height:24px;"></p>
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <h3>👑 VIP Commands <span class="arrow">▶</span></h3>
+      <div class="dropdown-content">
+        <pre>
+/ch47 - Chinook
+/spawn fighterbus - Custom plane
+/skins or /sb - Modify skins
+/trail pink/fire/etc - Trails 1, 2, 3
+/pe 0–3 - Player effects
+/car /nocar - Sedan
+/mycar 2–4 - Modular car
+/sm /nosm - Snowmobile
+/horse /nohorse
+/f15 /nof15 - F15 Jet
+/pb /nopb - Pedalbike
+/bike /nobike - Motorbike
+/trains /notrains
+/workcart /noworkcart
+/rhib /rowboat
+        </pre>
       </div>
-
-      <!-- Memory Match -->
-      <div class="card game-container">
-        <h3>🛠️ Vehicle Memory Match</h3>
-        <div id="memory-grid" class="memory-grid"></div>
-        <button onclick="resetMemoryGame()" style="margin-top:15px; padding:8px 20px;">New Game</button>
-      </div>
-
-      <!-- Tic Tac Toe -->
-      <div class="card game-container">
-        <h3>✕ Rust Tic-Tac-Toe (X = Pilot • O = Heli)</h3>
-        <div id="ttt-board" class="tic-tac-toe"></div>
-        <p id="ttt-status" style="margin-top:15px; font-weight:bold;">X's turn (Pilot)</p>
-        <button onclick="resetTicTacToe()" style="margin-top:10px; padding:8px 20px;">New Game</button>
-      </div>
-
     </div>
 
-    <!-- TikTok -->
-    <div class="card">
-      <h2 style="text-align:center;">🎥 Watch Rustic Flight</h2>
-      <div style="text-align:center; margin:15px 0;">
-        <button onclick="prevTikTok(event)">⏮ Prev</button>
-        <button onclick="nextTikTok(event)">Next ⏭</button>
-      </div>
-      <div id="tiktok-container" style="display:flex;justify-content:center;"></div>
+    <h2>Available Map Downloads</h2>
+    <ul id="file-list">Loading maps...</ul>
+
+    <div class="featured-video-card" id="featured-video">
+      <h3>🔥 Featured Rustic Flight Clip</h3>
+      <p>A highlighted clip section so the page feels alive even before people open the full TikTok list.</p>
+      <div id="featured-tiktok" style="display:flex; justify-content:center; margin-top: 10px;"></div>
     </div>
 
-    <!-- Social Links -->
+    <div class="dropdown" onclick="toggleDropdown(this)">
+      <h3>🎥 Watch Rustic Flight <span class="arrow">▶</span></h3>
+      <div class="dropdown-content">
+        <div style="text-align:center; margin-bottom: 10px;">
+          <button onclick="prevTikTok(event)">⏮ Prev</button>
+          <button onclick="nextTikTok(event)">Next ⏭</button>
+        </div>
+        <div id="tiktok-container" style="margin-top: 20px;"></div>
+      </div>
+    </div>
+
+    <h2 style="text-align:center;">Play Wordle</h2>
+    <iframe src="wordle/index.html" width="100%" height="600" style="border:none;"></iframe>
+
     <div class="social-icons">
       <a href="https://discord.gg/cmTVfv644p" target="_blank"><img src="https://i.imgur.com/UGtiO9Q.png" alt="Discord"></a>
       <a href="https://www.instagram.com/rustic.flight/" target="_blank"><img src="https://i.imgur.com/xPou0lt.png" alt="Instagram"></a>
@@ -329,244 +836,257 @@
       <a href="https://x.com/RusticFlight" target="_blank"><img src="https://i.imgur.com/5KTeOdy.png" alt="Twitter"></a>
       <a href="https://www.youtube.com/@Rustic-Flight" target="_blank"><img src="https://i.imgur.com/9qm6UnN.png" alt="YouTube"></a>
     </div>
-
   </div>
 
   <footer>
-    © 2026 Rustic Flight • Fly safe (or don't)<br>
-    Contact: <a href="mailto:rusticflight@gmail.com" style="color:var(--primary);">rusticflight@gmail.com</a>
+    <div class="radio-player" id="radio-player">
+      <h3>Simulator Radio</h3>
+      <div class="radio-status" id="radio-status">Ready for takeoff</div>
+      <audio id="radio" src="https://simulatorradio.stream/stream" crossorigin="anonymous"></audio>
+      <div class="radio-controls">
+        <button id="play-pause">Play</button>
+        <div class="volume-control">
+          <span>Volume:</span>
+          <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
+        </div>
+      </div>
+      <canvas id="visualizer" class="visualizer"></canvas>
+    </div>
+    © 2026 Rustic Flight. Contact: <a href="mailto:rusticflight@gmail.com">rusticflight@gmail.com</a>
   </footer>
 
-  <div id="toast" class="toast">Copied!</div>
-
   <script>
-    // Toast
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.opacity = 1;
-      setTimeout(() => t.style.opacity = 0, 2200);
-    }
-
-    function copyAddress() {
+    function copyServerAddress() {
       navigator.clipboard.writeText("connect play.rusticflight.com:28023");
-      showToast("Server address copied!");
+
+      const feedback = document.getElementById("copy-feedback");
+      feedback.textContent = "Copied: connect play.rusticflight.com:28023 ✔";
+      clearTimeout(window.copyFeedbackTimeout);
+      window.copyFeedbackTimeout = setTimeout(() => {
+        feedback.textContent = "";
+      }, 1800);
+
+      const copyBtn = document.querySelector(".copy-button");
+      if (copyBtn) {
+        copyBtn.style.transform = "scale(1.2)";
+        setTimeout(() => {
+          copyBtn.style.transform = "";
+        }, 250);
+      }
     }
 
-    // Commands (same as before)
-    const normalCmds = [
-      {cmd: "/lobby", desc: "Teleport to lobby"},
-      {cmd: "/mini or /mymini", desc: "Spawn minicopter"},
-      {cmd: "/nomini", desc: "Despawn helicopter"},
-      {cmd: "/seats", desc: "Add seats to mini"},
-      {cmd: "/heli or /myheli", desc: "Spawn heli"},
-      {cmd: "/hab", desc: "Hot Air Balloon"},
-      {cmd: "/attackheli", desc: "Attack Helicopter"},
-      {cmd: "/fix", desc: "Repair vehicle"},
-      {cmd: "/nodamage", desc: "No damage"},
-      {cmd: "/nocollision", desc: "No ramming"},
-      {cmd: "/radio", desc: "Spawn radio"},
-      {cmd: "/piano", desc: "Spawn piano"},
-      {cmd: "/tpsave", desc: "Save position"},
-      {cmd: "/tp", desc: "Teleport to saved position"}
+    function toggleDropdown(el) {
+      el.classList.toggle("open");
+    }
+
+    function toggleAllDropdowns() {
+      document.querySelectorAll('.dropdown').forEach(drop => {
+        drop.classList.toggle('open');
+      });
+    }
+
+    const tiktokVideos = [
+      "7504757782004944150",
+      "7504757112753442070",
+      "7497339945888646",
+      "7490649013289569558",
+      "7492591418259655958"
     ];
+    let currentIndex = 0;
 
-    const vipCmds = [
-      {cmd: "/ch47", desc: "Chinook"},
-      {cmd: "/spawn fighterbus", desc: "Fighter plane"},
-      {cmd: "/skins or /sb", desc: "Skin menu"},
-      {cmd: "/trail pink/fire", desc: "Vehicle trails"},
-      {cmd: "/pe 0-3", desc: "Player effects"},
-      {cmd: "/f15 /nof15", desc: "F15 Jet"},
-      {cmd: "/bike /nobike", desc: "Motorbike"},
-      {cmd: "/rhib", desc: "RHIB Boat"}
-    ];
-
-    function renderCommands() {
-      const n = document.getElementById('normal-commands');
-      normalCmds.forEach(c => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span><strong>${c.cmd}</strong> — ${c.desc}</span><button class="copy-btn" onclick="copyText('${c.cmd}')">Copy</button>`;
-        n.appendChild(li);
-      });
-      const v = document.getElementById('vip-commands');
-      vipCmds.forEach(c => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span><strong>${c.cmd}</strong> — ${c.desc}</span><button class="copy-btn" onclick="copyText('${c.cmd}')">Copy</button>`;
-        v.appendChild(li);
-      });
-    }
-    function copyText(text) {
-      navigator.clipboard.writeText(text);
-      showToast("Command copied!");
+    function loadTikTok(index) {
+      const container = document.getElementById("tiktok-container");
+      container.innerHTML = `
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
+          <section>Loading…</section>
+        </blockquote>
+      `;
+      const script = document.createElement("script");
+      script.src = "https://www.tiktok.com/embed.js";
+      script.async = true;
+      script.onload = () => console.log("TikTok embed script loaded");
+      script.onerror = () => console.error("Failed to load TikTok embed script");
+      container.appendChild(script);
     }
 
-    // TikTok
-    const tiktoks = ["7504757782004944150","7504757112753442070","7497339945888646","7490649013289569558","7492591418259655958"];
-    let ttIndex = 0;
-    function loadTikTok() {
-      const cont = document.getElementById("tiktok-container");
-      cont.innerHTML = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktoks[ttIndex]}" data-video-id="${tiktoks[ttIndex]}" style="max-width:325px;"><section>Loading…</section></blockquote>`;
-      const s = document.createElement("script"); s.src = "https://www.tiktok.com/embed.js"; cont.appendChild(s);
+    function loadFeaturedTikTok(index) {
+      const container = document.getElementById("featured-tiktok");
+      container.innerHTML = `
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@rustic.flight/video/${tiktokVideos[index]}" data-video-id="${tiktokVideos[index]}" style="max-width: 325px; min-width: 300px;">
+          <section>Loading…</section>
+        </blockquote>
+      `;
+      const script = document.createElement("script");
+      script.src = "https://www.tiktok.com/embed.js";
+      script.async = true;
+      container.appendChild(script);
     }
-    function nextTikTok(e){ e.stopPropagation(); ttIndex = (ttIndex+1)%tiktoks.length; loadTikTok(); }
-    function prevTikTok(e){ e.stopPropagation(); ttIndex = (ttIndex-1+tiktoks.length)%tiktoks.length; loadTikTok(); }
 
-    // ==================== WORDLE ====================
-    const wordleWords = ["HELIC","MINI","ATTACK","CHINOOK","FLIGHT","PILOT","SCRAP","HOVER","CRASH","BOOST","JET","ROTOR"];
-    let wordleAnswer = wordleWords[Math.floor(Math.random()*wordleWords.length)];
-    let wordleGuesses = [];
-    let currentRow = 0;
+    function nextTikTok(event) {
+      event.stopPropagation();
+      currentIndex = (currentIndex + 1) % tiktokVideos.length;
+      loadTikTok(currentIndex);
+    }
 
-    function createWordleBoard() {
-      const board = document.getElementById('wordle-board');
-      board.innerHTML = '';
-      for (let i = 0; i < 30; i++) {
-        const tile = document.createElement('div');
-        tile.className = 'tile';
-        tile.id = `tile-${i}`;
-        board.appendChild(tile);
+    function prevTikTok(event) {
+      event.stopPropagation();
+      currentIndex = (currentIndex - 1 + tiktokVideos.length) % tiktokVideos.length;
+      loadTikTok(currentIndex);
+    }
+
+    loadTikTok(currentIndex);
+    loadFeaturedTikTok(0);
+
+    function cleanTsarvarWidget() {
+      const widget = document.querySelector('.server-status .tsarvar-widget');
+      if (widget) {
+        const branding = widget.querySelectorAll('a[href*="tsarvar.com"]:not([data-tsarvarServerId])');
+        branding.forEach(el => el.remove());
       }
     }
 
-    function submitWordleGuess() {
-      const input = document.getElementById('wordle-input').value.toUpperCase().trim();
-      if (input.length !== 5) {
-        document.getElementById('wordle-message').textContent = "Guess must be 5 letters!";
-        return;
-      }
-      if (wordleGuesses.length >= 6) return;
+    const observer = new MutationObserver(() => {
+      cleanTsarvarWidget();
+    });
+    observer.observe(document.querySelector('.server-status'), { childList: true, subtree: true });
 
-      wordleGuesses.push(input);
-      const start = currentRow * 5;
-      for (let i = 0; i < 5; i++) {
-        const tile = document.getElementById(`tile-${start + i}`);
-        tile.textContent = input[i];
-        if (input[i] === wordleAnswer[i]) tile.style.background = '#00ff88';
-        else if (wordleAnswer.includes(input[i])) tile.style.background = '#ffcc00';
-        else tile.style.background = '#555';
-      }
-      currentRow++;
-      document.getElementById('wordle-input').value = '';
+    async function updatePlayers() {
+      const livePlayers = document.getElementById("live-players");
+      try {
+        const res = await fetch("https://api.battlemetrics.com/servers?filter[game]=rust&filter[search]=45.43.163.77:28023");
+        const data = await res.json();
 
-      if (input === wordleAnswer) {
-        document.getElementById('wordle-message').innerHTML = `<strong style="color:#00ff88">Nice landing! You got it.</strong>`;
-      } else if (currentRow >= 6) {
-        document.getElementById('wordle-message').innerHTML = `Crashed... The word was <strong>${wordleAnswer}</strong>`;
-      }
-    }
-
-    // ==================== MEMORY MATCH ====================
-    const vehicles = ['🚁','🛩️','✈️','🛫','🚀','🪂','🛶','🛥️'];
-    let memoryCards = [...vehicles, ...vehicles];
-    let flipped = [], matched = [];
-
-    function shuffle(array) {
-      return array.sort(() => Math.random() - 0.5);
-    }
-
-    function createMemoryGame() {
-      memoryCards = shuffle([...vehicles, ...vehicles]);
-      flipped = []; matched = [];
-      const grid = document.getElementById('memory-grid');
-      grid.innerHTML = '';
-      memoryCards.forEach((emoji, i) => {
-        const card = document.createElement('div');
-        card.className = 'memory-card';
-        card.dataset.index = i;
-        card.dataset.emoji = emoji;
-        card.onclick = () => flipCard(card);
-        grid.appendChild(card);
-      });
-    }
-
-    function flipCard(card) {
-      if (flipped.length === 2 || card.classList.contains('flipped') || matched.includes(card)) return;
-      card.textContent = card.dataset.emoji;
-      card.classList.add('flipped');
-      flipped.push(card);
-
-      if (flipped.length === 2) {
-        if (flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
-          matched.push(...flipped);
-          flipped = [];
-          if (matched.length === memoryCards.length) {
-            setTimeout(() => alert("🎉 You cleared the hangar! Great memory, pilot!"), 300);
-          }
+        if (data && data.data && data.data.length > 0) {
+          const server = data.data[0];
+          const players = server.attributes.players ?? "?";
+          const maxPlayers = server.attributes.maxPlayers ?? "?";
+          livePlayers.textContent = `Live players: ${players} / ${maxPlayers}`;
         } else {
-          setTimeout(() => {
-            flipped.forEach(c => {
-              c.textContent = '';
-              c.classList.remove('flipped');
-            });
-            flipped = [];
-          }, 800);
+          livePlayers.textContent = "Live players currently unavailable";
         }
+      } catch (err) {
+        livePlayers.textContent = "Live players currently unavailable";
       }
     }
 
-    function resetMemoryGame() {
-      createMemoryGame();
-    }
+    updatePlayers();
+    setInterval(updatePlayers, 30000);
 
-    // ==================== TIC TAC TOE ====================
-    let tttBoard = Array(9).fill(null);
-    let tttCurrent = 'X';
-
-    function createTicTacToe() {
-      const board = document.getElementById('ttt-board');
-      board.innerHTML = '';
-      tttBoard = Array(9).fill(null);
-      tttCurrent = 'X';
-      document.getElementById('ttt-status').textContent = "X's turn (Pilot)";
-
-      for (let i = 0; i < 9; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'ttt-cell';
-        cell.dataset.index = i;
-        cell.onclick = () => makeTttMove(i, cell);
-        board.appendChild(cell);
-      }
-    }
-
-    function makeTttMove(index, cell) {
-      if (tttBoard[index] || checkWinner()) return;
-      tttBoard[index] = tttCurrent;
-      cell.textContent = tttCurrent;
-
-      if (checkWinner()) {
-        document.getElementById('ttt-status').innerHTML = `<strong>${tttCurrent} wins!</strong>`;
-        return;
-      }
-      if (tttBoard.every(c => c)) {
-        document.getElementById('ttt-status').textContent = "It's a draw!";
-        return;
-      }
-
-      tttCurrent = tttCurrent === 'X' ? 'O' : 'X';
-      document.getElementById('ttt-status').textContent = `${tttCurrent}'s turn (${tttCurrent === 'X' ? 'Pilot' : 'Heli'})`;
-    }
-
-    function checkWinner() {
-      const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      return wins.some(combo => {
-        const [a,b,c] = combo;
-        return tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c];
+    fetch("files.json")
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch files.json");
+        return res.json();
+      })
+      .then(files => {
+        const list = document.getElementById("file-list");
+        list.innerHTML = '';
+        if (!files || files.length === 0) {
+          list.innerHTML = '<li>No maps available.</li>';
+          return;
+        }
+        files.sort().reverse();
+        const latest = files[0];
+        files.forEach((file) => {
+          fetch(file)
+            .then(resp => {
+              if (!resp.ok) throw new Error(`Failed to fetch file: ${file}`);
+              const contentLength = resp.headers.get("Content-Length");
+              const lastModified = resp.headers.get("Last-Modified");
+              const sizeKB = contentLength ? (parseInt(contentLength) / 1024).toFixed(1) : "Unknown";
+              const modified = lastModified ? new Date(lastModified).toLocaleString() : "Unknown";
+              const li = document.createElement('li');
+              const fileName = file.split('/').pop();
+              li.innerHTML = `
+                <a class="file-link" href="${file}" download>${fileName}</a>
+                ${file === latest ? '<span class="latest-badge">Latest</span>' : ''}
+                <div class="file-meta">Uploaded: ${modified} · Size: ${sizeKB} KB</div>
+              `;
+              list.appendChild(li);
+            })
+            .catch(err => {
+              const li = document.createElement('li');
+              li.innerHTML = `Error loading file: ${file}`;
+              list.appendChild(li);
+            });
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        const list = document.getElementById("file-list");
+        list.innerHTML = '<li>Error loading map files. Please try again later.</li>';
       });
+
+    const radio = document.getElementById('radio');
+    const playPauseBtn = document.getElementById('play-pause');
+    const volumeControl = document.getElementById('volume');
+    const radioPlayer = document.getElementById('radio-player');
+    const radioStatus = document.getElementById('radio-status');
+    let isPlaying = false;
+
+    let audioContext, analyser, source, dataArray;
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
+
+    function initVisualizer() {
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        source = audioContext.createMediaElementSource(radio);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        analyser.fftSize = 64;
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        drawVisualizer();
+      } catch (err) {
+        console.error('Error initializing visualizer:', err);
+        canvas.style.display = 'none';
+      }
     }
 
-    function resetTicTacToe() {
-      createTicTacToe();
+    function drawVisualizer() {
+      if (!isPlaying) return;
+      requestAnimationFrame(drawVisualizer);
+      analyser.getByteFrequencyData(dataArray);
+      ctx.fillStyle = '#1e1e1e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = (canvas.width / dataArray.length) * 1.5;
+      let x = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
+        ctx.fillStyle = '#00b3ff';
+        ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+        x += barWidth;
+      }
     }
 
-    // Init everything
-    renderCommands();
-    createWordleBoard();
-    createMemoryGame();
-    createTicTacToe();
-    loadTikTok();
+    playPauseBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        radio.pause();
+        playPauseBtn.textContent = 'Play';
+        radioStatus.textContent = 'Ready for takeoff';
+        radioPlayer.classList.remove('playing');
+        isPlaying = false;
+      } else {
+        radio.play().then(() => {
+          playPauseBtn.textContent = 'Pause';
+          radioStatus.textContent = 'Now broadcasting Simulator Radio';
+          radioPlayer.classList.add('playing');
+          isPlaying = true;
+          if (!audioContext) initVisualizer();
+          else if (audioContext.state === 'suspended') audioContext.resume();
+        }).catch(err => {
+          console.error('Error playing audio:', err);
+          radioStatus.textContent = 'Playback blocked - tap Play again if needed';
+        });
+      }
+    });
 
-    console.log("%cRustic Flight website loaded with 3 real minigames! 🚁", "color:#00d4ff; font-size:14px;");
+    volumeControl.addEventListener('input', () => {
+      radio.volume = volumeControl.value;
+    });
   </script>
 </body>
 </html>
