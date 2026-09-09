@@ -1030,9 +1030,14 @@ function renderWorkers() {
       document.createElement("button");
 
     button.className =
-      "workerRow";
+  "workerRow";
 
-
+if (
+  selectedWorker &&
+  selectedWorker.id === worker.id
+) {
+  button.classList.add("selected");
+}
     const currentStatus =
       worker.status || "off";
 
@@ -1085,6 +1090,8 @@ function selectWorker(worker) {
   resetInactivityTimer();
 
   selectedWorker = worker;
+
+  renderWorkers();
 
   currentPin = "";
 
@@ -1574,6 +1581,7 @@ function returnToWorkerList() {
   stopShiftTimer();
 
   selectedWorker = null;
+  renderWorkers();
   currentPin = "";
   currentWorkerStatus = null;
   currentShift = null;
