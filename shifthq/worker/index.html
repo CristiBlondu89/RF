@@ -944,6 +944,34 @@ async function loadWorkers(code) {
     }
   );
 }
+  async function refreshWorkers() {
+
+  if (!companyCode || selectedWorker) {
+    return;
+  }
+
+  try {
+
+    const result =
+      await loadWorkers(companyCode);
+
+    applyCompanyResult(result);
+
+  } catch (error) {
+
+    console.error(
+      "Failed to refresh workers:",
+      error
+    );
+
+  }
+}
+
+
+setInterval(
+  refreshWorkers,
+  30000
+);
 
 
 function applyCompanyResult(result) {
