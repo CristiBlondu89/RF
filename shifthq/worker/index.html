@@ -66,6 +66,11 @@
       margin-bottom: 14px;
     }
 
+    input:focus {
+      outline: none;
+      border-color: #111;
+    }
+
     button {
       width: 100%;
       border: 0;
@@ -96,146 +101,604 @@
       background: #fdecec;
       color: #9b1c1c;
     }
+
+    .dashboard {
+      text-align: center;
+    }
+
+    .dashboard h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .dashboard p {
+      color: #666;
+      margin: 0 0 24px;
+    }
+
+    .logoutButton {
+      margin-top: 14px;
+      background: #f0f2f5;
+      color: #111;
+    }
   </style>
 </head>
 
 <body>
+
   <div class="card">
+
     <h1>ShiftHQ</h1>
-    <div class="subtitle">Worker activation</div>
 
-    <div id="status" class="status">
-      Checking your invitation...
-    </div>
+    <!-- NORMAL WORKER LOGIN -->
 
-    <div id="activationForm" class="hidden">
-      <label for="pin">Choose a 4-digit PIN</label>
+    <div id="loginSection" class="hidden">
+
+      <div class="subtitle">
+        Worker login
+      </div>
+
+      <div id="loginStatus" class="status">
+        Enter your company details and PIN.
+      </div>
+
+      <label for="companyCode">
+        Company code
+      </label>
 
       <input
-        id="pin"
+        id="companyCode"
+        type="text"
+        autocomplete="organization"
+        autocapitalize="characters"
+        placeholder="SHIFT001"
+      />
+
+      <label for="email">
+        Email
+      </label>
+
+      <input
+        id="email"
+        type="email"
+        autocomplete="email"
+        placeholder="worker@example.com"
+      />
+
+      <label for="loginPin">
+        4-digit PIN
+      </label>
+
+      <input
+        id="loginPin"
         type="password"
         inputmode="numeric"
+        autocomplete="current-password"
         maxlength="4"
         placeholder="••••"
       />
 
-      <label for="confirmPin">Confirm PIN</label>
-
-      <input
-        id="confirmPin"
-        type="password"
-        inputmode="numeric"
-        maxlength="4"
-        placeholder="••••"
-      />
-
-      <button id="activateButton">
-        Activate worker account
+      <button id="loginButton">
+        Sign in
       </button>
+
     </div>
+
+
+    <!-- INVITATION ACTIVATION -->
+
+    <div id="activationSection" class="hidden">
+
+      <div class="subtitle">
+        Worker activation
+      </div>
+
+      <div id="activationStatus" class="status">
+        Checking your invitation...
+      </div>
+
+      <div id="activationForm" class="hidden">
+
+        <label for="pin">
+          Choose a 4-digit PIN
+        </label>
+
+        <input
+          id="pin"
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          placeholder="••••"
+        />
+
+        <label for="confirmPin">
+          Confirm PIN
+        </label>
+
+        <input
+          id="confirmPin"
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          placeholder="••••"
+        />
+
+        <button id="activateButton">
+          Activate worker account
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- LOGGED-IN WORKER -->
+
+    <div id="dashboardSection" class="dashboard hidden">
+
+      <div class="subtitle">
+        Worker dashboard
+      </div>
+
+      <h2 id="workerTitle">
+        You're signed in
+      </h2>
+
+      <p id="workerEmail"></p>
+
+      <div class="status success">
+        Worker session active
+      </div>
+
+      <button id="logoutButton" class="logoutButton">
+        Sign out
+      </button>
+
+    </div>
+
   </div>
 
+
   <script>
-    const SUPABASE_URL = "https://diqxssqucdylekeexaxk.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
+    const SUPABASE_URL =
+      "https://diqxssqucdylekeexaxk.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
+
 
     const supabaseClient = supabase.createClient(
       SUPABASE_URL,
       SUPABASE_ANON_KEY
     );
 
-    const statusBox = document.getElementById("status");
-    const activationForm = document.getElementById("activationForm");
-    const activateButton = document.getElementById("activateButton");
 
-    function showStatus(message, type = "") {
-      statusBox.textContent = message;
-      statusBox.className = "status";
+    const loginSection =
+      document.getElementById("loginSection");
+
+    const activationSection =
+      document.getElementById("activationSection");
+
+    const dashboardSection =
+      document.getElementById("dashboardSection");
+
+
+    const loginStatus =
+      document.getElementById("loginStatus");
+
+    const activationStatus =
+      document.getElementById("activationStatus");
+
+
+    const loginButton =
+      document.getElementById("loginButton");
+
+    const activateButton =
+      document.getElementById("activateButton");
+
+    const logoutButton =
+      document.getElementById("logoutButton");
+
+    const activationForm =
+      document.getElementById("activationForm");
+
+
+    function showLoginStatus(message, type = "") {
+      loginStatus.textContent = message;
+      loginStatus.className = "status";
 
       if (type) {
-        statusBox.classList.add(type);
+        loginStatus.classList.add(type);
       }
     }
 
+
+    function showActivationStatus(message, type = "") {
+      activationStatus.textContent = message;
+      activationStatus.className = "status";
+
+      if (type) {
+        activationStatus.classList.add(type);
+      }
+    }
+
+
+    function showLogin() {
+      activationSection.classList.add("hidden");
+      dashboardSection.classList.add("hidden");
+
+      loginSection.classList.remove("hidden");
+    }
+
+
+    function showDashboard(session) {
+      loginSection.classList.add("hidden");
+      activationSection.classList.add("hidden");
+
+      dashboardSection.classList.remove("hidden");
+
+      document.getElementById("workerEmail").textContent =
+        session.user.email || "";
+    }
+
+
+    // --------------------------------------------------
+    // WORKER PIN LOGIN
+    // --------------------------------------------------
+
+    loginButton.addEventListener("click", async () => {
+
+      const companyCode =
+        document.getElementById("companyCode")
+          .value
+          .trim()
+          .toUpperCase();
+
+      const email =
+        document.getElementById("email")
+          .value
+          .trim()
+          .toLowerCase();
+
+      const pin =
+        document.getElementById("loginPin")
+          .value
+          .trim();
+
+
+      if (!companyCode) {
+        showLoginStatus(
+          "Enter your company code.",
+          "error"
+        );
+        return;
+      }
+
+
+      if (!email) {
+        showLoginStatus(
+          "Enter your email address.",
+          "error"
+        );
+        return;
+      }
+
+
+      if (!/^[0-9]{4}$/.test(pin)) {
+        showLoginStatus(
+          "PIN must be exactly 4 digits.",
+          "error"
+        );
+        return;
+      }
+
+
+      loginButton.disabled = true;
+
+      showLoginStatus("Signing in...");
+
+
+      try {
+
+        const response = await fetch(
+          `${SUPABASE_URL}/functions/v1/worker-login`,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": SUPABASE_ANON_KEY
+            },
+
+            body: JSON.stringify({
+              company_code: companyCode,
+              email: email,
+              pin: pin
+            })
+          }
+        );
+
+
+        const result = await response.json();
+
+
+        if (!response.ok) {
+
+          showLoginStatus(
+            result.error ||
+            "Could not sign in.",
+            "error"
+          );
+
+          loginButton.disabled = false;
+          return;
+        }
+
+
+        if (!result.token_hash) {
+
+          showLoginStatus(
+            "The server did not return a login token.",
+            "error"
+          );
+
+          loginButton.disabled = false;
+          return;
+        }
+
+
+        // Exchange the one-time server token
+        // for a normal Supabase Auth session.
+
+        const {
+          data,
+          error
+        } = await supabaseClient.auth.verifyOtp({
+          token_hash: result.token_hash,
+          type: "magiclink"
+        });
+
+
+        if (error || !data.session) {
+
+          showLoginStatus(
+            error?.message ||
+            "Could not create your session.",
+            "error"
+          );
+
+          loginButton.disabled = false;
+          return;
+        }
+
+
+        // PIN no longer needed in the page.
+
+        document.getElementById("loginPin").value = "";
+
+
+        showDashboard(data.session);
+
+      } catch (error) {
+
+        console.error(error);
+
+        showLoginStatus(
+          "Could not connect to ShiftHQ.",
+          "error"
+        );
+
+        loginButton.disabled = false;
+      }
+
+    });
+
+
+    // --------------------------------------------------
+    // WORKER ACTIVATION
+    // --------------------------------------------------
+
+    activateButton.addEventListener("click", async () => {
+
+      const pin =
+        document.getElementById("pin")
+          .value
+          .trim();
+
+      const confirmPin =
+        document.getElementById("confirmPin")
+          .value
+          .trim();
+
+
+      if (!/^[0-9]{4}$/.test(pin)) {
+
+        showActivationStatus(
+          "PIN must be exactly 4 digits.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (pin !== confirmPin) {
+
+        showActivationStatus(
+          "The two PINs do not match.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      activateButton.disabled = true;
+
+      showActivationStatus(
+        "Activating your account..."
+      );
+
+
+      const {
+        error
+      } = await supabaseClient.rpc(
+        "accept_worker_invitation",
+        {
+          p_invite_token:
+            window.shiftHQInviteToken,
+
+          p_pin: pin
+        }
+      );
+
+
+      if (error) {
+
+        showActivationStatus(
+          error.message,
+          "error"
+        );
+
+        activateButton.disabled = false;
+        return;
+      }
+
+
+      showActivationStatus(
+        "Your ShiftHQ worker account is active.",
+        "success"
+      );
+
+
+      activationForm.classList.add("hidden");
+
+    });
+
+
+    // --------------------------------------------------
+    // SIGN OUT
+    // --------------------------------------------------
+
+    logoutButton.addEventListener("click", async () => {
+
+      await supabaseClient.auth.signOut();
+
+      document.getElementById("companyCode").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("loginPin").value = "";
+
+      showLoginStatus(
+        "Enter your company details and PIN."
+      );
+
+      loginButton.disabled = false;
+
+      showLogin();
+
+    });
+
+
+    // --------------------------------------------------
+    // INITIALISE PAGE
+    // --------------------------------------------------
+
     async function initialise() {
-      const params = new URLSearchParams(window.location.search);
-      const inviteToken = params.get("invite");
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const inviteToken =
+        params.get("invite");
+
 
       const {
         data: { session },
         error
       } = await supabaseClient.auth.getSession();
 
+
       if (error) {
-        showStatus("Could not verify your login.", "error");
-        return;
-      }
 
-      if (!session) {
-        showStatus(
-          "Your invitation login has not been completed yet.",
+        showLogin();
+
+        showLoginStatus(
+          "Could not verify your login.",
           "error"
         );
+
         return;
       }
 
-      if (!inviteToken) {
-        showStatus(
-          "Your ShiftHQ invitation token is missing.",
-          "error"
+
+      /*
+        INVITATION MODE
+
+        An invite URL always gets priority, even if
+        Supabase already has a session in this browser.
+      */
+
+      if (inviteToken) {
+
+        activationSection.classList.remove("hidden");
+
+        loginSection.classList.add("hidden");
+        dashboardSection.classList.add("hidden");
+
+
+        if (!session) {
+
+          showActivationStatus(
+            "Your invitation login has not been completed yet.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        window.shiftHQInviteToken =
+          inviteToken;
+
+
+        showActivationStatus(
+          `Signed in as ${session.user.email}. Choose your worker PIN below.`
         );
+
+
+        activationForm.classList.remove("hidden");
+
         return;
       }
 
-      window.shiftHQInviteToken = inviteToken;
 
-      showStatus(
-        `Signed in as ${session.user.email}. Choose your worker PIN below.`
-      );
+      /*
+        EXISTING SESSION
 
-      activationForm.classList.remove("hidden");
+        If this browser already has a worker Supabase
+        session, don't ask for the PIN again.
+      */
+
+      if (session) {
+
+        showDashboard(session);
+
+        return;
+      }
+
+
+      // No invitation and no existing session:
+      // show normal PIN login.
+
+      showLogin();
+
     }
 
-    activateButton.addEventListener("click", async () => {
-      const pin = document.getElementById("pin").value.trim();
-      const confirmPin = document.getElementById("confirmPin").value.trim();
-
-      if (!/^[0-9]{4}$/.test(pin)) {
-        showStatus("PIN must be exactly 4 digits.", "error");
-        return;
-      }
-
-      if (pin !== confirmPin) {
-        showStatus("The two PINs do not match.", "error");
-        return;
-      }
-
-      activateButton.disabled = true;
-      showStatus("Activating your account...");
-
-      const { data, error } = await supabaseClient.rpc(
-        "accept_worker_invitation",
-        {
-          p_invite_token: window.shiftHQInviteToken,
-          p_pin: pin
-        }
-      );
-
-      if (error) {
-        showStatus(error.message, "error");
-        activateButton.disabled = false;
-        return;
-      }
-
-      showStatus(
-        "Your ShiftHQ worker account is active.",
-        "success"
-      );
-
-      activationForm.classList.add("hidden");
-    });
 
     initialise();
   </script>
+
 </body>
 </html>
