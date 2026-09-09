@@ -1,0 +1,11 @@
+{
+  "name": "ShiftHQ Kiosk",
+  "short_name": "ShiftHQ",
+  "description": "ShiftHQ employee time clock",
+  "start_url": "/shifthq/worker/",
+  "scope": "/shifthq/worker/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#07111f",
+  "theme_color": "#07111f"
+}
