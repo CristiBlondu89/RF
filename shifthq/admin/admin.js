@@ -1,5 +1,4 @@
-
-    const SUPABASE_URL =
+const SUPABASE_URL =
       "https://diqxssqucdylekeexaxk.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
@@ -28,6 +27,9 @@
     let liveTimerInterval = null;
 
     let timesheetsInitialized = false;
+
+    let selectedShiftId = null;
+    let selectedShift = null;
 
 
     /* ============================================
@@ -1330,7 +1332,6 @@
         return;
       }
 
-
       rows.innerHTML =
         timesheets
           .map(shift => {
@@ -2229,6 +2230,16 @@ element.textContent =
   const modal = document.getElementById("shiftDetailsModal");
   const content = document.getElementById("shiftDetailsContent");
   const workerElement = document.getElementById("shiftDetailsWorker");
+  const editButton = document.getElementById("editShiftButton");
+
+  selectedShiftId = shiftId;
+  selectedShift = null;
+
+  if (editButton) {
+    editButton.disabled = true;
+    editButton.textContent = "Edit shift";
+    editButton.onclick = startEditShift;
+  }
 
   modal.classList.remove("hidden");
   workerElement.textContent = "Loading…";
@@ -2262,6 +2273,12 @@ element.textContent =
   }
 
   const shift = data[0];
+
+  selectedShift = shift;
+
+  if (editButton) {
+    editButton.disabled = false;
+  }
 
   const breaks = data.filter(
     row => row.break_id
@@ -2456,11 +2473,172 @@ element.textContent =
 }
 
 
+function toDateTimeLocalValue(value) {
+
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const offset = date.getTimezoneOffset() * 60000;
+
+  return new Date(date.getTime() - offset)
+    .toISOString()
+    .slice(0, 16);
+}
+
+
+function startEditShift() {
+
+  if (!selectedShift || !selectedShiftId) {
+    return;
+  }
+
+  const content =
+    document.getElementById("shiftDetailsContent");
+
+  const editButton =
+    document.getElementById("editShiftButton");
+
+  if (editButton) {
+    editButton.disabled = true;
+  }
+
+  content.innerHTML = `
+    <div class="shiftEditForm">
+      <div class="shiftEditField">
+        <label for="editShiftClockIn">Clock in</label>
+        <input
+          id="editShiftClockIn"
+          type="datetime-local"
+          value="${escapeHtml(toDateTimeLocalValue(selectedShift.clock_in))}"
+        >
+      </div>
+
+      <div class="shiftEditField">
+        <label for="editShiftClockOut">Clock out</label>
+        <input
+          id="editShiftClockOut"
+          type="datetime-local"
+          value="${escapeHtml(toDateTimeLocalValue(selectedShift.clock_out))}"
+        >
+      </div>
+
+      <div class="shiftEditField shiftEditFieldFull">
+        <label for="editShiftNote">Note</label>
+        <textarea
+          id="editShiftNote"
+          rows="4"
+          placeholder="No note"
+        >${escapeHtml(selectedShift.note || "")}</textarea>
+      </div>
+
+      <div id="editShiftMessage" class="message"></div>
+
+      <div class="shiftEditActions">
+        <button
+          class="shiftEditCancelButton"
+          type="button"
+          onclick="cancelEditShift()"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="saveShiftButton"
+          class="shiftEditSaveButton"
+          type="button"
+          onclick="saveShiftChanges()"
+        >
+          Save changes
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+
+async function cancelEditShift() {
+
+  if (selectedShiftId) {
+    await openShiftDetails(selectedShiftId);
+  }
+}
+
+
+async function saveShiftChanges() {
+
+  if (!selectedShiftId) {
+    return;
+  }
+
+  const clockInValue =
+    document.getElementById("editShiftClockIn").value;
+
+  const clockOutValue =
+    document.getElementById("editShiftClockOut").value;
+
+  const note =
+    document.getElementById("editShiftNote").value.trim();
+
+  const button =
+    document.getElementById("saveShiftButton");
+
+  if (!clockInValue) {
+    showMessage("editShiftMessage", "Clock in is required.");
+    return;
+  }
+
+  const clockIn = new Date(clockInValue);
+  const clockOut = clockOutValue ? new Date(clockOutValue) : null;
+
+  if (clockOut && clockOut <= clockIn) {
+    showMessage(
+      "editShiftMessage",
+      "Clock out must be after clock in."
+    );
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Saving…";
+  clearMessage("editShiftMessage");
+
+  const { error } = await sb.rpc(
+    "admin_update_shift",
+    {
+      p_shift_id: selectedShiftId,
+      p_clock_in: clockIn.toISOString(),
+      p_clock_out: clockOut ? clockOut.toISOString() : null,
+      p_note: note || null
+    }
+  );
+
+  if (error) {
+    console.error("Update shift:", error);
+    showMessage("editShiftMessage", error.message || "Could not save shift.");
+    button.disabled = false;
+    button.textContent = "Save changes";
+    return;
+  }
+
+  await loadTimesheets();
+  await openShiftDetails(selectedShiftId);
+}
+
+
 function closeShiftDetails() {
 
   const modal =
     document.getElementById("shiftDetailsModal");
 
   modal.classList.add("hidden");
-}
 
+  selectedShiftId = null;
+  selectedShift = null;
+}
