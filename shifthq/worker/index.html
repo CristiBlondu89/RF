@@ -730,10 +730,6 @@
       color: #ff8b8b;
     }
 
-    /* ==================================================
-       CURRENT SHIFT
-    ================================================== */
-
     .shiftBox {
       background: #152130;
 
@@ -776,10 +772,6 @@
 
       font-size: 14px;
     }
-
-    /* ==================================================
-       ACTION BUTTONS
-    ================================================== */
 
     .actionButtons {
       display: grid;
@@ -867,10 +859,6 @@
       font-size: 14px;
     }
 
-    /* ==================================================
-       BACK BUTTON
-    ================================================== */
-
     .backButton {
       margin-top: 14px;
 
@@ -892,6 +880,151 @@
         rgba(255,255,255,0.05);
 
       color: white;
+    }
+
+    /* ==================================================
+       SHIFT COMPLETE SUMMARY
+    ================================================== */
+
+    .summaryPanel {
+      width: 100%;
+      max-width: 620px;
+
+      text-align: center;
+    }
+
+    .summaryCheck {
+      width: 74px;
+      height: 74px;
+
+      margin: 0 auto 18px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 38px;
+      font-weight: 800;
+
+      background:
+        rgba(72,199,116,0.16);
+
+      color: #78e59b;
+
+      border:
+        1px solid
+        rgba(72,199,116,0.22);
+    }
+
+    .summaryTitle {
+      font-size: 38px;
+      font-weight: 780;
+
+      margin-bottom: 6px;
+    }
+
+    .summaryName {
+      color: var(--muted);
+
+      font-size: 20px;
+
+      margin-bottom: 28px;
+    }
+
+    .summaryCard {
+      background: #152130;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 24px;
+
+      padding: 8px 24px;
+
+      margin-bottom: 18px;
+    }
+
+    .summaryRow {
+      display: flex;
+
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding: 16px 2px;
+
+      border-bottom:
+        1px solid var(--border);
+
+      font-size: 17px;
+    }
+
+    .summaryRow:last-child {
+      border-bottom: 0;
+    }
+
+    .summaryLabel {
+      color: var(--muted);
+    }
+
+    .summaryValue {
+      font-weight: 700;
+
+      font-variant-numeric:
+        tabular-nums;
+    }
+
+    .summaryRow.worked {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    .summaryRow.worked .summaryLabel {
+      color: white;
+
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .summaryRow.worked .summaryValue {
+      color: #78e59b;
+
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .summaryDone {
+      width: 100%;
+
+      min-height: 72px;
+
+      border: 0;
+
+      border-radius: 18px;
+
+      background: white;
+
+      color: #101820;
+
+      font-size: 21px;
+      font-weight: 760;
+    }
+
+    .summaryDone:hover {
+      background: #f1f4f7;
+    }
+
+    .summaryCountdown {
+      min-height: 22px;
+
+      margin-top: 14px;
+
+      color: var(--muted);
+
+      font-size: 14px;
     }
 
     /* ==================================================
@@ -946,15 +1079,41 @@
       .actionButton {
         min-height: 64px;
       }
+
+      .summaryCheck {
+        width: 58px;
+        height: 58px;
+
+        font-size: 30px;
+
+        margin-bottom: 10px;
+      }
+
+      .summaryTitle {
+        font-size: 30px;
+      }
+
+      .summaryName {
+        margin-bottom: 14px;
+      }
+
+      .summaryRow {
+        padding: 10px 2px;
+      }
+
+      .summaryRow.worked {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+
+      .summaryDone {
+        min-height: 58px;
+      }
     }
   </style>
 </head>
 
 <body>
-
-<!-- ==================================================
-     ONE-TIME COMPANY SETUP
-================================================== -->
 
 <div id="setupScreen" class="hidden">
 
@@ -997,10 +1156,6 @@
 
 </div>
 
-
-<!-- ==================================================
-     KIOSK
-================================================== -->
 
 <div
   id="kioskScreen"
@@ -1078,8 +1233,6 @@
 
     <div class="mainContent">
 
-      <!-- WELCOME -->
-
       <div
         id="welcomePanel"
         class="welcome"
@@ -1095,8 +1248,6 @@
 
       </div>
 
-
-      <!-- PIN -->
 
       <div
         id="pinPanel"
@@ -1172,8 +1323,6 @@
       </div>
 
 
-      <!-- ACTION PANEL -->
-
       <div
         id="actionPanel"
         class="actionPanel hidden"
@@ -1231,6 +1380,98 @@
 
       </div>
 
+
+      <div
+        id="summaryPanel"
+        class="summaryPanel hidden"
+      >
+
+        <div class="summaryCheck">
+          ✓
+        </div>
+
+        <div class="summaryTitle">
+          Shift complete
+        </div>
+
+        <div
+          id="summaryWorkerName"
+          class="summaryName"
+        ></div>
+
+        <div class="summaryCard">
+
+          <div class="summaryRow">
+            <div class="summaryLabel">
+              Clocked in
+            </div>
+
+            <div
+              id="summaryClockIn"
+              class="summaryValue"
+            ></div>
+          </div>
+
+          <div class="summaryRow">
+            <div class="summaryLabel">
+              Clocked out
+            </div>
+
+            <div
+              id="summaryClockOut"
+              class="summaryValue"
+            ></div>
+          </div>
+
+          <div class="summaryRow">
+            <div class="summaryLabel">
+              Total shift
+            </div>
+
+            <div
+              id="summaryTotalShift"
+              class="summaryValue"
+            ></div>
+          </div>
+
+          <div class="summaryRow">
+            <div class="summaryLabel">
+              Breaks
+            </div>
+
+            <div
+              id="summaryBreaks"
+              class="summaryValue"
+            ></div>
+          </div>
+
+          <div class="summaryRow worked">
+            <div class="summaryLabel">
+              Total worked
+            </div>
+
+            <div
+              id="summaryWorked"
+              class="summaryValue"
+            ></div>
+          </div>
+
+        </div>
+
+        <button
+          id="summaryDoneButton"
+          class="summaryDone"
+        >
+          Done
+        </button>
+
+        <div
+          id="summaryCountdown"
+          class="summaryCountdown"
+        ></div>
+
+      </div>
+
     </div>
 
   </main>
@@ -1240,23 +1481,12 @@
 
 <script>
 
-/* ==================================================
-   CONFIG
-================================================== */
-
 const SUPABASE_URL =
   "https://diqxssqucdylekeexaxk.supabase.co";
 
-/*
-  KEEP YOUR EXISTING PUBLISHABLE KEY HERE.
-*/
 const SUPABASE_KEY =
   "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
 
-
-/* ==================================================
-   STATE
-================================================== */
 
 let companyCode = null;
 let company = null;
@@ -1271,12 +1501,11 @@ let currentShift = null;
 let shiftTimerInterval = null;
 let inactivityTimer = null;
 
+let summaryTimeout = null;
+let summaryCountdownInterval = null;
+
 let pinVerificationInProgress = false;
 
-
-/* ==================================================
-   ELEMENTS
-================================================== */
 
 const setupScreen =
   document.getElementById("setupScreen");
@@ -1310,17 +1539,16 @@ const workerSearch =
   document.getElementById("workerSearch");
 
 const welcomePanel =
-  document.getElementById(
-    "welcomePanel"
-  );
+  document.getElementById("welcomePanel");
 
 const pinPanel =
   document.getElementById("pinPanel");
 
 const actionPanel =
-  document.getElementById(
-    "actionPanel"
-  );
+  document.getElementById("actionPanel");
+
+const summaryPanel =
+  document.getElementById("summaryPanel");
 
 const selectedWorkerName =
   document.getElementById(
@@ -1367,10 +1595,41 @@ const topTime =
 const topDate =
   document.getElementById("topDate");
 
+const summaryWorkerName =
+  document.getElementById(
+    "summaryWorkerName"
+  );
 
-/* ==================================================
-   API
-================================================== */
+const summaryClockIn =
+  document.getElementById(
+    "summaryClockIn"
+  );
+
+const summaryClockOut =
+  document.getElementById(
+    "summaryClockOut"
+  );
+
+const summaryTotalShift =
+  document.getElementById(
+    "summaryTotalShift"
+  );
+
+const summaryBreaks =
+  document.getElementById(
+    "summaryBreaks"
+  );
+
+const summaryWorked =
+  document.getElementById(
+    "summaryWorked"
+  );
+
+const summaryCountdown =
+  document.getElementById(
+    "summaryCountdown"
+  );
+
 
 async function postFunction(
   functionName,
@@ -1419,10 +1678,6 @@ async function postFunction(
 }
 
 
-/* ==================================================
-   CLOCK
-================================================== */
-
 function updateTopClock() {
 
   const now =
@@ -1457,10 +1712,6 @@ setInterval(
   1000
 );
 
-
-/* ==================================================
-   COMPANY SETUP
-================================================== */
 
 async function submitCompanySetup() {
 
@@ -1554,10 +1805,6 @@ setupCompanyCode.addEventListener(
 );
 
 
-/* ==================================================
-   LOAD WORKERS
-================================================== */
-
 async function loadWorkers(code) {
 
   return await postFunction(
@@ -1612,23 +1859,11 @@ async function refreshWorkers(
 }
 
 
-/*
-  Keep sidebar statuses fresh.
-*/
-
 setInterval(
   () => refreshWorkers(false),
   15000
 );
 
-
-/*
-  Safari may suspend timers while
-  the page is in the background.
-
-  Refresh immediately when the
-  kiosk becomes visible again.
-*/
 
 document.addEventListener(
   "visibilitychange",
@@ -1694,10 +1929,6 @@ function applyCompanyResult(result) {
 
 }
 
-
-/* ==================================================
-   WORKER LIST
-================================================== */
 
 function initials(name) {
 
@@ -1841,10 +2072,6 @@ workerSearch.addEventListener(
 );
 
 
-/* ==================================================
-   SELECT WORKER
-================================================== */
-
 function selectWorker(worker) {
 
   resetInactivityTimer();
@@ -1878,16 +2105,16 @@ function selectWorker(worker) {
     "hidden"
   );
 
+  summaryPanel.classList.add(
+    "hidden"
+  );
+
   pinPanel.classList.remove(
     "hidden"
   );
 
 }
 
-
-/* ==================================================
-   PIN INPUT
-================================================== */
 
 function handlePinKey(key) {
 
@@ -1957,10 +2184,6 @@ document
 
   });
 
-
-/*
-  Physical keyboard / numpad support.
-*/
 
 document.addEventListener(
   "keydown",
@@ -2052,10 +2275,6 @@ function setKeypadDisabled(
 }
 
 
-/* ==================================================
-   VERIFY WORKER
-================================================== */
-
 async function verifySelectedWorker() {
 
   if (
@@ -2141,10 +2360,6 @@ async function verifySelectedWorker() {
 }
 
 
-/* ==================================================
-   ACTION PANEL
-================================================== */
-
 function showActionPanel(
   worker,
   status,
@@ -2163,6 +2378,10 @@ function showActionPanel(
   );
 
   welcomePanel.classList.add(
+    "hidden"
+  );
+
+  summaryPanel.classList.add(
     "hidden"
   );
 
@@ -2324,10 +2543,6 @@ function createActionButton(
 }
 
 
-/* ==================================================
-   CLOCK ACTION
-================================================== */
-
 async function performAction(
   action,
   button
@@ -2343,11 +2558,6 @@ async function performAction(
 
   resetInactivityTimer();
 
-
-  /*
-    Disable every action button so a
-    worker cannot double-tap an action.
-  */
 
   const allButtons =
     actionButtons.querySelectorAll(
@@ -2403,6 +2613,23 @@ async function performAction(
     );
 
 
+    refreshWorkers(true);
+
+
+    if (
+      action === "clock_out" &&
+      result.summary
+    ) {
+
+      showSummaryPanel(
+        result.worker,
+        result.summary
+      );
+
+      return;
+    }
+
+
     showActionPanel(
       result.worker,
       currentWorkerStatus,
@@ -2412,13 +2639,6 @@ async function performAction(
 
     actionMessage.textContent =
       actionMessageFor(action);
-
-
-    /*
-      Pull fresh server state too.
-    */
-
-    refreshWorkers(true);
 
 
     setTimeout(
@@ -2447,8 +2667,194 @@ async function performAction(
 
 
 /* ==================================================
-   LOCAL WORKER STATUS
+   SUMMARY SCREEN
 ================================================== */
+
+function showSummaryPanel(
+  worker,
+  summary
+) {
+
+  clearTimeout(
+    inactivityTimer
+  );
+
+  stopShiftTimer();
+
+  stopSummaryTimers();
+
+
+  welcomePanel.classList.add(
+    "hidden"
+  );
+
+  pinPanel.classList.add(
+    "hidden"
+  );
+
+  actionPanel.classList.add(
+    "hidden"
+  );
+
+  summaryPanel.classList.remove(
+    "hidden"
+  );
+
+
+  summaryWorkerName.textContent =
+    worker?.name ||
+    selectedWorker?.name ||
+    "Worker";
+
+
+  summaryClockIn.textContent =
+    formatClockTime(
+      summary.clock_in
+    );
+
+
+  summaryClockOut.textContent =
+    formatClockTime(
+      summary.clock_out
+    );
+
+
+  summaryTotalShift.textContent =
+    formatDuration(
+      summary.total_shift_seconds
+    );
+
+
+  summaryBreaks.textContent =
+    formatDuration(
+      summary.total_break_seconds
+    );
+
+
+  summaryWorked.textContent =
+    formatDuration(
+      summary.worked_seconds
+    );
+
+
+  startSummaryCountdown();
+
+}
+
+
+function startSummaryCountdown() {
+
+  stopSummaryTimers();
+
+
+  let secondsLeft = 7;
+
+
+  updateSummaryCountdown(
+    secondsLeft
+  );
+
+
+  summaryCountdownInterval =
+    setInterval(
+      () => {
+
+        secondsLeft -= 1;
+
+
+        if (
+          secondsLeft <= 0
+        ) {
+
+          stopSummaryTimers();
+
+          returnToWorkerList();
+
+          return;
+        }
+
+
+        updateSummaryCountdown(
+          secondsLeft
+        );
+
+      },
+      1000
+    );
+
+
+  summaryTimeout =
+    setTimeout(
+      () => {
+
+        stopSummaryTimers();
+
+        returnToWorkerList();
+
+      },
+      7000
+    );
+
+}
+
+
+function updateSummaryCountdown(
+  seconds
+) {
+
+  summaryCountdown.textContent =
+    `Returning to worker list in ${seconds} second${seconds === 1 ? "" : "s"}.`;
+
+}
+
+
+function stopSummaryTimers() {
+
+  if (
+    summaryCountdownInterval
+  ) {
+
+    clearInterval(
+      summaryCountdownInterval
+    );
+
+    summaryCountdownInterval =
+      null;
+
+  }
+
+
+  if (
+    summaryTimeout
+  ) {
+
+    clearTimeout(
+      summaryTimeout
+    );
+
+    summaryTimeout =
+      null;
+
+  }
+
+}
+
+
+document
+  .getElementById(
+    "summaryDoneButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      stopSummaryTimers();
+
+      returnToWorkerList();
+
+    }
+  );
+
 
 function updateLocalWorkerStatus(
   workerId,
@@ -2474,10 +2880,6 @@ function updateLocalWorkerStatus(
 
 }
 
-
-/* ==================================================
-   SHIFT TIMER
-================================================== */
 
 function startShiftTimer(
   clockIn
@@ -2575,13 +2977,11 @@ function stopShiftTimer() {
 }
 
 
-/* ==================================================
-   RETURN / TIMEOUT
-================================================== */
-
 async function returnToWorkerList() {
 
   stopShiftTimer();
+
+  stopSummaryTimers();
 
 
   selectedWorker = null;
@@ -2604,12 +3004,18 @@ async function returnToWorkerList() {
 
   actionMessage.textContent = "";
 
+  summaryCountdown.textContent = "";
+
 
   pinPanel.classList.add(
     "hidden"
   );
 
   actionPanel.classList.add(
+    "hidden"
+  );
+
+  summaryPanel.classList.add(
     "hidden"
   );
 
@@ -2623,11 +3029,6 @@ async function returnToWorkerList() {
   resetInactivityTimer();
 
 
-  /*
-    Refresh server state whenever
-    we return to the worker list.
-  */
-
   await refreshWorkers(false);
 
 }
@@ -2638,6 +3039,15 @@ function resetInactivityTimer() {
   clearTimeout(
     inactivityTimer
   );
+
+
+  if (
+    !summaryPanel.classList.contains(
+      "hidden"
+    )
+  ) {
+    return;
+  }
 
 
   inactivityTimer =
@@ -2683,10 +3093,6 @@ document.addEventListener(
 );
 
 
-/* ==================================================
-   CHANGE COMPANY
-================================================== */
-
 document
   .getElementById(
     "changeCompanyButton"
@@ -2716,10 +3122,6 @@ document
     }
   );
 
-
-/* ==================================================
-   HELPERS
-================================================== */
 
 function normalizeStatus(status) {
 
@@ -2782,6 +3184,77 @@ function actionMessageFor(action) {
 }
 
 
+function formatClockTime(value) {
+
+  if (!value) {
+    return "—";
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+    return "—";
+  }
+
+
+  return date.toLocaleTimeString(
+    [],
+    {
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+  );
+
+}
+
+
+function formatDuration(seconds) {
+
+  const safeSeconds =
+    Math.max(
+      0,
+      Number(seconds) || 0
+    );
+
+
+  const hours =
+    Math.floor(
+      safeSeconds / 3600
+    );
+
+
+  const minutes =
+    Math.floor(
+      (safeSeconds % 3600) / 60
+    );
+
+
+  if (hours > 0) {
+
+    return `${hours}h ${minutes}m`;
+
+  }
+
+
+  if (minutes > 0) {
+
+    return `${minutes}m`;
+
+  }
+
+
+  return "< 1m";
+
+}
+
+
 function escapeHtml(value) {
 
   return String(value)
@@ -2793,10 +3266,6 @@ function escapeHtml(value) {
 
 }
 
-
-/* ==================================================
-   SHOW KIOSK
-================================================== */
 
 function showKiosk() {
 
@@ -2820,6 +3289,11 @@ function showKiosk() {
   );
 
 
+  summaryPanel.classList.add(
+    "hidden"
+  );
+
+
   welcomePanel.classList.remove(
     "hidden"
   );
@@ -2829,10 +3303,6 @@ function showKiosk() {
 
 }
 
-
-/* ==================================================
-   INITIALISE
-================================================== */
 
 async function initialise() {
 
@@ -2905,10 +3375,6 @@ async function initialise() {
 }
 
 
-/* ==================================================
-   SERVICE WORKER
-================================================== */
-
 if (
   "serviceWorker" in navigator
 ) {
@@ -2942,10 +3408,6 @@ if (
 
 }
 
-
-/* ==================================================
-   START
-================================================== */
 
 initialise();
 
