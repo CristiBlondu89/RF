@@ -1052,6 +1052,14 @@
       background: #fafbfc;
     }
 
+    .timesheetRow {
+      cursor: pointer;
+    }
+
+    .timesheetRow:hover {
+      background: #f5f7f9 !important;
+    }
+
     .timesheetWorker {
       font-weight: 700;
     }
@@ -1209,6 +1217,169 @@
       }
 
     }
+      .shiftModal {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .shiftModal.hidden {
+        display: none;
+      }
+      .shiftModalBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.shiftModalCard {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 680px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+}
+
+.shiftModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 26px;
+  border-bottom: 1px solid #e8ecf0;
+}
+
+.shiftModalTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.shiftModalSubtitle {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.shiftModalClose {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.shiftModalClose:hover {
+  background: #e5e7eb;
+}
+
+.shiftModalContent {
+  padding: 26px;
+}
+
+.shiftDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.shiftDetailBox {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fafbfc;
+}
+
+.shiftDetailLabel {
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.shiftDetailValue {
+  font-size: 17px;
+  font-weight: 750;
+  color: #111827;
+}
+
+.shiftDetailSection {
+  margin-top: 24px;
+}
+
+.shiftDetailSectionTitle {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.shiftBreakRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eef1f4;
+}
+
+.shiftBreakRow:last-child {
+  border-bottom: 0;
+}
+
+.shiftBreakTime {
+  font-weight: 700;
+  color: #111827;
+}
+
+.shiftBreakDuration {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.shiftDetailEmpty {
+  padding: 14px 0;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.shiftNoteBox {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #374151;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 650px) {
+  .shiftDetailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .shiftModal {
+    padding: 12px;
+  }
+
+  .shiftModalHeader,
+  .shiftModalContent {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}       
   </style>
 </head>
 
@@ -1946,6 +2117,64 @@
       </div>
 
     </main>
+
+  </div>
+
+
+   <!-- ==========================================
+       SHIFT DETAILS MODAL
+  =========================================== -->
+
+  <div
+    id="shiftDetailsModal"
+    class="shiftModal hidden"
+  >
+
+    <div
+      class="shiftModalBackdrop"
+      onclick="closeShiftDetails()"
+    ></div>
+
+    <div class="shiftModalCard">
+
+      <div class="shiftModalHeader">
+
+        <div>
+          <div class="shiftModalTitle">
+            Shift details
+          </div>
+
+          <div
+            id="shiftDetailsWorker"
+            class="shiftModalSubtitle"
+          >
+            —
+          </div>
+        </div>
+
+        <button
+          class="shiftModalClose"
+          onclick="closeShiftDetails()"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div
+        id="shiftDetailsContent"
+        class="shiftModalContent"
+      >
+
+        <div class="emptyState">
+          Loading shift…
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
@@ -3318,8 +3547,11 @@
 
 
             return `
-              <tr>
-
+              <tr
+                class="timesheetRow"
+                data-shift-id="${escapeHtml(shift.shift_id)}"
+                onclick="openShiftDetails('${escapeHtml(shift.shift_id)}')"
+              >
                 <td class="timesheetWorker">
                   ${escapeHtml(
                     shift.worker_name ||
@@ -3487,16 +3719,16 @@
 
       if (start === end) {
 
-        element.textContent =
-          formatter.format(
-            startDate
-          );
+  element.textContent =
+    formatter.format(
+      startDate
+    );
 
-        return;
-      }
+  return;
+}
 
 
-      element.textContent =
+element.textContent =
         formatter.format(
           startDate
         )
