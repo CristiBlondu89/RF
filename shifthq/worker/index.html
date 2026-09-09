@@ -3,18 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShiftHQ Worker</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>ShiftHQ Kiosk</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg: #0f1722;
+      --panel: #152130;
+      --panel2: #1b2a3b;
+      --border: rgba(255,255,255,0.08);
+      --text: #ffffff;
+      --muted: #9cadbd;
+      --accent: #ffffff;
+      --green: #48c774;
+      --amber: #f5b942;
+      --red: #ff5b5b;
+      --grey: #718096;
+    }
 
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f7fa;
-      color: #111;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* -------------------------------------------------- */
+    /* SETUP */
+    /* -------------------------------------------------- */
+
+    #setupScreen {
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -22,307 +59,623 @@
       padding: 24px;
     }
 
-    .card {
+    .setupCard {
       width: 100%;
-      max-width: 420px;
-      background: white;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+      max-width: 480px;
+      background: var(--panel);
+      padding: 34px;
+      border-radius: 26px;
+      border: 1px solid var(--border);
     }
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: 30px;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .subtitle {
-      color: #666;
-      margin-bottom: 28px;
-    }
-
-    .status {
-      padding: 14px;
-      border-radius: 14px;
-      background: #f0f2f5;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .success {
-      background: #eaf8ee;
-      color: #176b31;
-    }
-
-    .error {
-      background: #fdecec;
-      color: #9b1c1c;
-    }
-
-    .breakStatus {
-      background: #fff5dd;
-      color: #825b00;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
+    .logo {
+      font-size: 36px;
+      font-weight: 800;
       margin-bottom: 8px;
     }
 
-    input {
+    .setupSubtitle {
+      color: var(--muted);
+      margin-bottom: 30px;
+    }
+
+    .setupCard label {
+      display: block;
+      font-weight: 650;
+      margin-bottom: 8px;
+    }
+
+    .setupCard input {
       width: 100%;
-      padding: 16px;
-      border: 1px solid #d8d8d8;
+      padding: 17px;
+      border: 1px solid var(--border);
       border-radius: 14px;
-      font-size: 18px;
+      background: #0f1925;
+      color: white;
+      outline: none;
+      font-size: 19px;
       margin-bottom: 14px;
     }
 
-    input:focus {
-      outline: none;
-      border-color: #111;
-    }
-
-    button {
+    .setupButton {
       width: 100%;
       border: 0;
       border-radius: 14px;
-      padding: 16px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      background: #111;
-      color: white;
-      margin-top: 10px;
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    .secondaryButton {
-      background: #f0f2f5;
+      padding: 17px;
+      font-size: 18px;
+      font-weight: 750;
+      background: white;
       color: #111;
     }
 
-    .clockOutButton {
-      background: #fdecec;
-      color: #9b1c1c;
+    .setupStatus {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
-    .hidden {
-      display: none !important;
+    .setupStatus.error {
+      color: #ff8b8b;
     }
 
-    .workerInfo {
+    /* -------------------------------------------------- */
+    /* KIOSK */
+    /* -------------------------------------------------- */
+
+    #kioskScreen {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 390px 1fr;
+    }
+
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebarHeader {
+      padding: 24px 22px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      font-size: 29px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .companyName {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .searchWrap {
+      position: relative;
+    }
+
+    .searchInput {
+      width: 100%;
+      background: #0f1925;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 14px;
+      color: white;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .workerList {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .workerRow {
+      display: grid;
+      grid-template-columns: 46px 18px 1fr;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 15px 18px;
+      background: transparent;
+      color: white;
+      border: 0;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .workerRow:active,
+    .workerRow.selected {
+      background: var(--panel2);
+    }
+
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #223247;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .statusDot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--grey);
+    }
+
+    .statusDot.off {
+      background: var(--red);
+    }
+
+    .statusDot.working {
+      background: var(--green);
+    }
+
+    .statusDot.on_break {
+      background: var(--amber);
+    }
+
+    .workerName {
+      font-size: 17px;
+      font-weight: 650;
+    }
+
+    .workerSub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+      text-transform: capitalize;
+    }
+
+    .sidebarFooter {
+      padding: 16px 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .changeCompany {
+      width: 100%;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    /* -------------------------------------------------- */
+    /* MAIN */
+    /* -------------------------------------------------- */
+
+    .main {
+      position: relative;
+      background:
+        radial-gradient(circle at top right, rgba(72,94,120,0.18), transparent 35%),
+        #0f1722;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 32px;
+    }
+
+    .mainCompany {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .topClock {
+      text-align: right;
+    }
+
+    .topTime {
+      font-size: 34px;
+      font-weight: 720;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .topDate {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .mainContent {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .welcome {
+      text-align: center;
+      max-width: 650px;
+    }
+
+    .welcomeTitle {
+      font-size: 34px;
+      font-weight: 760;
+      margin-bottom: 10px;
+    }
+
+    .welcomeText {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    /* -------------------------------------------------- */
+    /* PIN */
+    /* -------------------------------------------------- */
+
+    .pinPanel {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
+
+    .selectedName {
+      font-size: 34px;
+      font-weight: 760;
+      margin-bottom: 8px;
+    }
+
+    .selectedHint {
+      color: var(--muted);
+      margin-bottom: 25px;
+    }
+
+    .pinDots {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .pinDot {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #8ca0b5;
+      border-radius: 50%;
+    }
+
+    .pinDot.filled {
+      background: white;
+      border-color: white;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 96px);
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .key {
+      height: 76px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #172434;
+      color: white;
+      font-size: 30px;
+      font-weight: 650;
+    }
+
+    .key:active {
+      transform: scale(0.97);
+      background: #223247;
+    }
+
+    .pinError {
+      min-height: 22px;
+      color: #ff7d7d;
+      margin-top: 20px;
+      font-size: 15px;
+    }
+
+    /* -------------------------------------------------- */
+    /* ACTIONS */
+    /* -------------------------------------------------- */
+
+    .actionPanel {
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .actionName {
+      font-size: 38px;
+      font-weight: 780;
+      margin-bottom: 8px;
+    }
+
+    .statusBadge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 9px 17px;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      background: #253447;
+      color: white;
+    }
+
+    .statusBadge.working {
+      background: rgba(72,199,116,0.16);
+      color: #78e59b;
+    }
+
+    .statusBadge.on_break {
+      background: rgba(245,185,66,0.16);
+      color: #ffd070;
+    }
+
+    .statusBadge.off {
+      background: rgba(255,91,91,0.13);
+      color: #ff8b8b;
+    }
+
+    .shiftBox {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 27px;
       margin-bottom: 24px;
     }
 
-    .workerEmail {
-      color: #666;
-      margin-top: 5px;
-      word-break: break-word;
+    .shiftLabel {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 6px;
     }
 
-    .timeBox {
-      text-align: center;
-      background: #f5f7fa;
-      border-radius: 20px;
-      padding: 24px 16px;
-      margin: 20px 0;
-    }
-
-    .timeLabel {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
-
-    .timer {
-      font-size: 42px;
-      line-height: 1.1;
-      font-weight: 750;
+    .shiftTime {
+      font-size: 52px;
+      font-weight: 780;
       font-variant-numeric: tabular-nums;
-      letter-spacing: -1px;
     }
 
-    .clockedInAt {
-      color: #777;
-      font-size: 13px;
-      margin-top: 8px;
+    .clockInText {
+      color: var(--muted);
+      margin-top: 7px;
     }
 
-    .dashboardStatus {
-      text-align: center;
-      font-weight: 600;
+    .actionButtons {
+      display: grid;
+      gap: 14px;
+    }
+
+    .actionButton {
+      width: 100%;
+      min-height: 76px;
+      border: 0;
+      border-radius: 18px;
+      font-size: 23px;
+      font-weight: 780;
+      background: white;
+      color: #111;
+    }
+
+    .actionButton.secondary {
+      background: #243347;
+      color: white;
+    }
+
+    .actionButton.danger {
+      background: rgba(255,91,91,0.15);
+      color: #ff8d8d;
+      border: 1px solid rgba(255,91,91,0.2);
+    }
+
+    .actionMessage {
+      min-height: 24px;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+
+    .backButton {
+      margin-top: 22px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    @media (max-width: 850px) {
+      #kioskScreen {
+        grid-template-columns: 320px 1fr;
+      }
+
+      .keypad {
+        grid-template-columns: repeat(3, 82px);
+      }
+
+      .key {
+        height: 68px;
+      }
     }
   </style>
 </head>
 
 <body>
-<div class="card">
 
-  <h1>ShiftHQ</h1>
+<!-- ==================================================== -->
+<!-- ONE-TIME COMPANY SETUP -->
+<!-- ==================================================== -->
 
-  <!-- LOGIN -->
-  <div id="loginSection" class="hidden">
-
-    <div class="subtitle">Worker login</div>
-
-    <div id="loginStatus" class="status">
-      Enter your company details and PIN.
+<div id="setupScreen" class="hidden">
+  <div class="setupCard">
+    <div class="logo">ShiftHQ</div>
+    <div class="setupSubtitle">
+      Set up this device as a company kiosk.
     </div>
 
-    <label for="companyCode">Company code</label>
+    <label for="setupCompanyCode">Company code</label>
+
     <input
-      id="companyCode"
+      id="setupCompanyCode"
       type="text"
       autocapitalize="characters"
       placeholder="SHIFT001"
     />
 
-    <label for="email">Email</label>
-    <input
-      id="email"
-      type="email"
-      autocomplete="email"
-      placeholder="worker@example.com"
-    />
+    <button id="setupButton" class="setupButton">
+      Set up kiosk
+    </button>
 
-    <label for="loginPin">4-digit PIN</label>
-    <input
-      id="loginPin"
-      type="password"
-      inputmode="numeric"
-      maxlength="4"
-      placeholder="••••"
-    />
-
-    <button id="loginButton">Sign in</button>
-
+    <div id="setupStatus" class="setupStatus"></div>
   </div>
+</div>
 
 
-  <!-- ACTIVATION -->
-  <div id="activationSection" class="hidden">
+<!-- ==================================================== -->
+<!-- KIOSK -->
+<!-- ==================================================== -->
 
-    <div class="subtitle">Worker activation</div>
+<div id="kioskScreen" class="hidden">
 
-    <div id="activationStatus" class="status">
-      Checking your invitation...
+  <aside class="sidebar">
+
+    <div class="sidebarHeader">
+      <div class="brand">ShiftHQ</div>
+      <div id="sidebarCompanyName" class="companyName"></div>
+
+      <input
+        id="workerSearch"
+        class="searchInput"
+        type="text"
+        placeholder="Search worker"
+      />
     </div>
 
-    <div id="activationForm" class="hidden">
+    <div id="workerList" class="workerList"></div>
 
-      <label for="pin">Choose a 4-digit PIN</label>
-
-      <input
-        id="pin"
-        type="password"
-        inputmode="numeric"
-        maxlength="4"
-        placeholder="••••"
-      />
-
-      <label for="confirmPin">Confirm PIN</label>
-
-      <input
-        id="confirmPin"
-        type="password"
-        inputmode="numeric"
-        maxlength="4"
-        placeholder="••••"
-      />
-
-      <button id="activateButton">
-        Activate worker account
+    <div class="sidebarFooter">
+      <button id="changeCompanyButton" class="changeCompany">
+        Change company
       </button>
-
-    </div>
-  </div>
-
-
-  <!-- WORKER DASHBOARD -->
-  <div id="dashboardSection" class="hidden">
-
-    <div class="subtitle">Worker dashboard</div>
-
-    <div class="workerInfo">
-      <h2 id="workerName">Worker</h2>
-      <div id="workerEmail" class="workerEmail"></div>
     </div>
 
-    <div
-      id="dashboardStatus"
-      class="status dashboardStatus">
-      Loading shift...
+  </aside>
+
+
+  <main class="main">
+
+    <div class="topbar">
+      <div id="mainCompanyName" class="mainCompany"></div>
+
+      <div class="topClock">
+        <div id="topTime" class="topTime"></div>
+        <div id="topDate" class="topDate"></div>
+      </div>
     </div>
 
 
-    <div id="timeBox" class="timeBox hidden">
+    <div class="mainContent">
 
-      <div class="timeLabel">
-        Current shift
+      <!-- WELCOME -->
+
+      <div id="welcomePanel" class="welcome">
+        <div class="welcomeTitle">
+          Select your name
+        </div>
+
+        <div class="welcomeText">
+          Choose yourself from the worker list to continue.
+        </div>
       </div>
 
-      <div id="shiftTimer" class="timer">
-        00:00:00
+
+      <!-- PIN PANEL -->
+
+      <div id="pinPanel" class="pinPanel hidden">
+
+        <div id="selectedWorkerName" class="selectedName"></div>
+
+        <div class="selectedHint">
+          Enter your 4-digit PIN
+        </div>
+
+        <div class="pinDots">
+          <div class="pinDot"></div>
+          <div class="pinDot"></div>
+          <div class="pinDot"></div>
+          <div class="pinDot"></div>
+        </div>
+
+        <div class="keypad">
+          <button class="key" data-key="1">1</button>
+          <button class="key" data-key="2">2</button>
+          <button class="key" data-key="3">3</button>
+
+          <button class="key" data-key="4">4</button>
+          <button class="key" data-key="5">5</button>
+          <button class="key" data-key="6">6</button>
+
+          <button class="key" data-key="7">7</button>
+          <button class="key" data-key="8">8</button>
+          <button class="key" data-key="9">9</button>
+
+          <button class="key" data-key="clear">C</button>
+          <button class="key" data-key="0">0</button>
+          <button class="key" data-key="back">⌫</button>
+        </div>
+
+        <div id="pinError" class="pinError"></div>
+
+        <button id="cancelPinButton" class="backButton">
+          Cancel
+        </button>
+
       </div>
 
-      <div
-        id="clockedInAt"
-        class="clockedInAt">
+
+      <!-- ACTION PANEL -->
+
+      <div id="actionPanel" class="actionPanel hidden">
+
+        <div id="actionWorkerName" class="actionName"></div>
+
+        <div id="actionStatusBadge" class="statusBadge"></div>
+
+        <div id="shiftBox" class="shiftBox hidden">
+
+          <div class="shiftLabel">
+            Current shift
+          </div>
+
+          <div id="shiftTime" class="shiftTime">
+            00:00:00
+          </div>
+
+          <div id="clockInText" class="clockInText"></div>
+
+        </div>
+
+        <div id="actionButtons" class="actionButtons"></div>
+
+        <div id="actionMessage" class="actionMessage"></div>
+
+        <button id="backToWorkersButton" class="backButton">
+          Back to workers
+        </button>
+
       </div>
 
     </div>
 
-
-    <!-- OFF -->
-    <button
-      id="clockInButton"
-      class="hidden">
-      Clock In
-    </button>
-
-
-    <!-- WORKING -->
-    <button
-      id="startBreakButton"
-      class="secondaryButton hidden">
-      Start Break
-    </button>
-
-
-    <!-- ON BREAK -->
-    <button
-      id="endBreakButton"
-      class="hidden">
-      End Break
-    </button>
-
-
-    <!-- WORKING OR BREAK -->
-    <button
-      id="clockOutButton"
-      class="clockOutButton hidden">
-      Clock Out
-    </button>
-
-
-    <button
-      id="logoutButton"
-      class="secondaryButton">
-      Sign out
-    </button>
-
-  </div>
+  </main>
 
 </div>
 
@@ -331,326 +684,152 @@
 const SUPABASE_URL =
   "https://diqxssqucdylekeexaxk.supabase.co";
 
-const SUPABASE_ANON_KEY =
+const SUPABASE_KEY =
   "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
 
-const supabaseClient =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
 
+let companyCode = null;
+let company = null;
+let workers = [];
 
-let currentCompanyId = null;
+let selectedWorker = null;
+let currentPin = "";
+
+let currentWorkerStatus = null;
 let currentShift = null;
-let timerInterval = null;
+
+let shiftTimerInterval = null;
+let inactivityTimer = null;
 
 
-/* -------------------------------------------------------
+/* =======================================================
    ELEMENTS
-------------------------------------------------------- */
+======================================================= */
 
-const loginSection =
-  document.getElementById("loginSection");
+const setupScreen =
+  document.getElementById("setupScreen");
 
-const activationSection =
-  document.getElementById("activationSection");
+const kioskScreen =
+  document.getElementById("kioskScreen");
 
-const dashboardSection =
-  document.getElementById("dashboardSection");
+const setupCompanyCode =
+  document.getElementById("setupCompanyCode");
 
-const loginStatus =
-  document.getElementById("loginStatus");
+const setupButton =
+  document.getElementById("setupButton");
 
-const activationStatus =
-  document.getElementById("activationStatus");
+const setupStatus =
+  document.getElementById("setupStatus");
 
-const dashboardStatus =
-  document.getElementById("dashboardStatus");
+const sidebarCompanyName =
+  document.getElementById("sidebarCompanyName");
 
-const activationForm =
-  document.getElementById("activationForm");
+const mainCompanyName =
+  document.getElementById("mainCompanyName");
 
-const loginButton =
-  document.getElementById("loginButton");
+const workerList =
+  document.getElementById("workerList");
 
-const activateButton =
-  document.getElementById("activateButton");
+const workerSearch =
+  document.getElementById("workerSearch");
 
-const clockInButton =
-  document.getElementById("clockInButton");
+const welcomePanel =
+  document.getElementById("welcomePanel");
 
-const startBreakButton =
-  document.getElementById("startBreakButton");
+const pinPanel =
+  document.getElementById("pinPanel");
 
-const endBreakButton =
-  document.getElementById("endBreakButton");
+const actionPanel =
+  document.getElementById("actionPanel");
 
-const clockOutButton =
-  document.getElementById("clockOutButton");
+const selectedWorkerName =
+  document.getElementById("selectedWorkerName");
 
-const logoutButton =
-  document.getElementById("logoutButton");
+const pinError =
+  document.getElementById("pinError");
 
-const timeBox =
-  document.getElementById("timeBox");
+const actionWorkerName =
+  document.getElementById("actionWorkerName");
 
-const shiftTimer =
-  document.getElementById("shiftTimer");
+const actionStatusBadge =
+  document.getElementById("actionStatusBadge");
 
-const clockedInAt =
-  document.getElementById("clockedInAt");
+const shiftBox =
+  document.getElementById("shiftBox");
 
+const shiftTime =
+  document.getElementById("shiftTime");
 
-/* -------------------------------------------------------
-   STATUS HELPERS
-------------------------------------------------------- */
+const clockInText =
+  document.getElementById("clockInText");
 
-function showLoginStatus(message, type = "") {
-  loginStatus.textContent = message;
-  loginStatus.className = "status";
+const actionButtons =
+  document.getElementById("actionButtons");
 
-  if (type) {
-    loginStatus.classList.add(type);
-  }
-}
+const actionMessage =
+  document.getElementById("actionMessage");
 
+const topTime =
+  document.getElementById("topTime");
 
-function showActivationStatus(message, type = "") {
-  activationStatus.textContent = message;
-  activationStatus.className = "status";
-
-  if (type) {
-    activationStatus.classList.add(type);
-  }
-}
+const topDate =
+  document.getElementById("topDate");
 
 
-function showDashboardStatus(message, type = "") {
-  dashboardStatus.textContent = message;
-  dashboardStatus.className =
-    "status dashboardStatus";
+/* =======================================================
+   API HELPER
+======================================================= */
 
-  if (type) {
-    dashboardStatus.classList.add(type);
-  }
-}
+async function postFunction(
+  functionName,
+  body
+) {
 
+  const response = await fetch(
+    `${SUPABASE_URL}/functions/v1/${functionName}`,
+    {
+      method: "POST",
 
-function hideShiftButtons() {
-  clockInButton.classList.add("hidden");
-  startBreakButton.classList.add("hidden");
-  endBreakButton.classList.add("hidden");
-  clockOutButton.classList.add("hidden");
-}
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY
+      },
 
-
-function setButtonsDisabled(disabled) {
-  clockInButton.disabled = disabled;
-  startBreakButton.disabled = disabled;
-  endBreakButton.disabled = disabled;
-  clockOutButton.disabled = disabled;
-}
-
-
-/* -------------------------------------------------------
-   TIMER
-------------------------------------------------------- */
-
-function stopTimer() {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-}
-
-
-function formatDuration(seconds) {
-  const hours =
-    Math.floor(seconds / 3600);
-
-  const minutes =
-    Math.floor((seconds % 3600) / 60);
-
-  const secs =
-    Math.floor(seconds % 60);
-
-  return (
-    String(hours).padStart(2, "0") +
-    ":" +
-    String(minutes).padStart(2, "0") +
-    ":" +
-    String(secs).padStart(2, "0")
+      body: JSON.stringify(body)
+    }
   );
-}
 
 
-function startTimer(clockIn) {
-  stopTimer();
+  let data = {};
 
-  const start =
-    new Date(clockIn).getTime();
-
-  function update() {
-    const seconds =
-      Math.max(
-        0,
-        Math.floor(
-          (Date.now() - start) / 1000
-        )
-      );
-
-    shiftTimer.textContent =
-      formatDuration(seconds);
-  }
-
-  update();
-
-  timerInterval =
-    setInterval(update, 1000);
-}
+  try {
+    data = await response.json();
+  } catch (_) {}
 
 
-/* -------------------------------------------------------
-   COMPANY
-------------------------------------------------------- */
-
-async function loadWorkerCompany() {
-
-  const {
-    data: { user }
-  } = await supabaseClient.auth.getUser();
-
-  if (!user) {
+  if (!response.ok) {
     throw new Error(
-      "Worker session is missing."
+      data.error || "Request failed."
     );
   }
 
-
-  /*
-    RLS should only expose companies/memberships
-    the signed-in worker is allowed to see.
-  */
-
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("company_members")
-    .select(`
-      company_id,
-      role,
-      active,
-      companies (
-        id,
-        name,
-        company_code
-      )
-    `)
-    .eq("user_id", user.id)
-    .eq("role", "worker")
-    .eq("active", true)
-    .limit(1)
-    .maybeSingle();
-
-
-  if (error) {
-    throw error;
-  }
-
-
-  if (!data) {
-    throw new Error(
-      "No active worker company was found."
-    );
-  }
-
-
-  currentCompanyId =
-    data.company_id;
 
   return data;
 }
 
 
-/* -------------------------------------------------------
-   LOAD CURRENT SHIFT STATUS
-------------------------------------------------------- */
+/* =======================================================
+   CLOCK / DATE
+======================================================= */
 
-async function refreshShiftStatus() {
+function updateTopClock() {
 
-  if (!currentCompanyId) {
-    return;
-  }
-
-  setButtonsDisabled(true);
-
-  const {
-    data,
-    error
-  } = await supabaseClient.rpc(
-    "get_worker_shift_status",
-    {
-      p_company_id:
-        currentCompanyId
-    }
-  );
+  const now =
+    new Date();
 
 
-  if (error) {
-    showDashboardStatus(
-      error.message,
-      "error"
-    );
-
-    setButtonsDisabled(false);
-    return;
-  }
-
-
-  const shift =
-    data && data.length
-      ? data[0]
-      : null;
-
-
-  currentShift = shift;
-
-  hideShiftButtons();
-
-
-  if (!shift || shift.status === "off") {
-
-    stopTimer();
-
-    timeBox.classList.add("hidden");
-
-    showDashboardStatus(
-      "Not working"
-    );
-
-    clockInButton.classList.remove(
-      "hidden"
-    );
-
-    setButtonsDisabled(false);
-    return;
-  }
-
-
-  timeBox.classList.remove("hidden");
-
-  startTimer(shift.clock_in);
-
-
-  const clockInDate =
-    new Date(shift.clock_in);
-
-
-  clockedInAt.textContent =
-    "Clocked in at " +
-    clockInDate.toLocaleTimeString(
+  topTime.textContent =
+    now.toLocaleTimeString(
       [],
       {
         hour: "2-digit",
@@ -659,467 +838,477 @@ async function refreshShiftStatus() {
     );
 
 
-  if (shift.status === "on_break") {
-
-    showDashboardStatus(
-      "On break",
-      "breakStatus"
+  topDate.textContent =
+    now.toLocaleDateString(
+      [],
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      }
     );
-
-    endBreakButton.classList.remove(
-      "hidden"
-    );
-
-    clockOutButton.classList.remove(
-      "hidden"
-    );
-
-  } else {
-
-    showDashboardStatus(
-      "Working",
-      "success"
-    );
-
-    startBreakButton.classList.remove(
-      "hidden"
-    );
-
-    clockOutButton.classList.remove(
-      "hidden"
-    );
-  }
-
-
-  setButtonsDisabled(false);
 }
 
 
-/* -------------------------------------------------------
-   RPC ACTION
-------------------------------------------------------- */
-
-async function runShiftAction(
-  functionName,
-  loadingMessage
-) {
-
-  setButtonsDisabled(true);
-
-  showDashboardStatus(
-    loadingMessage
-  );
-
-
-  const {
-    error
-  } = await supabaseClient.rpc(
-    functionName,
-    {
-      p_company_id:
-        currentCompanyId
-    }
-  );
-
-
-  if (error) {
-
-    showDashboardStatus(
-      error.message,
-      "error"
-    );
-
-    setButtonsDisabled(false);
-    return;
-  }
-
-
-  await refreshShiftStatus();
-}
-
-
-/* -------------------------------------------------------
-   CLOCK BUTTONS
-------------------------------------------------------- */
-
-clockInButton.addEventListener(
-  "click",
-  async () => {
-
-    await runShiftAction(
-      "worker_clock_in",
-      "Clocking in..."
-    );
-
-  }
+setInterval(
+  updateTopClock,
+  1000
 );
 
 
-startBreakButton.addEventListener(
+/* =======================================================
+   COMPANY SETUP
+======================================================= */
+
+setupButton.addEventListener(
   "click",
   async () => {
 
-    await runShiftAction(
-      "worker_start_break",
-      "Starting break..."
-    );
-
-  }
-);
-
-
-endBreakButton.addEventListener(
-  "click",
-  async () => {
-
-    await runShiftAction(
-      "worker_end_break",
-      "Ending break..."
-    );
-
-  }
-);
-
-
-clockOutButton.addEventListener(
-  "click",
-  async () => {
-
-    await runShiftAction(
-      "worker_clock_out",
-      "Clocking out..."
-    );
-
-  }
-);
-
-
-/* -------------------------------------------------------
-   LOGIN
-------------------------------------------------------- */
-
-loginButton.addEventListener(
-  "click",
-  async () => {
-
-    const companyCode =
-      document
-        .getElementById("companyCode")
+    const code =
+      setupCompanyCode
         .value
         .trim()
         .toUpperCase();
 
-    const email =
-      document
-        .getElementById("email")
-        .value
-        .trim()
-        .toLowerCase();
 
-    const pin =
-      document
-        .getElementById("loginPin")
-        .value
-        .trim();
+    if (!code) {
+      setupStatus.textContent =
+        "Enter the company code.";
 
+      setupStatus.className =
+        "setupStatus error";
 
-    if (!companyCode) {
-      showLoginStatus(
-        "Enter your company code.",
-        "error"
-      );
       return;
     }
 
 
-    if (!email) {
-      showLoginStatus(
-        "Enter your email address.",
-        "error"
-      );
-      return;
-    }
+    setupButton.disabled = true;
 
+    setupStatus.textContent =
+      "Loading company...";
 
-    if (!/^[0-9]{4}$/.test(pin)) {
-      showLoginStatus(
-        "PIN must be exactly 4 digits.",
-        "error"
-      );
-      return;
-    }
-
-
-    loginButton.disabled = true;
-
-    showLoginStatus("Signing in...");
+    setupStatus.className =
+      "setupStatus";
 
 
     try {
 
-      const response = await fetch(
-        `${SUPABASE_URL}/functions/v1/worker-login`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            "apikey":
-              SUPABASE_ANON_KEY
-          },
-
-          body: JSON.stringify({
-            company_code:
-              companyCode,
-
-            email:
-              email,
-
-            pin:
-              pin
-          })
-        }
-      );
-
-
       const result =
-        await response.json();
+        await loadWorkers(code);
 
 
-      if (!response.ok) {
-
-        showLoginStatus(
-          result.error ||
-          "Could not sign in.",
-          "error"
-        );
-
-        loginButton.disabled = false;
-        return;
-      }
-
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient.auth.verifyOtp({
-          token_hash:
-            result.token_hash,
-
-          type:
-            "magiclink"
-        });
-
-
-      if (error || !data.session) {
-
-        showLoginStatus(
-          error?.message ||
-          "Could not create your session.",
-          "error"
-        );
-
-        loginButton.disabled = false;
-        return;
-      }
-
-
-      /*
-        We already know the company ID because the
-        server verified the company code + PIN.
-      */
-
-      currentCompanyId =
-        result.company_id;
-
-
-      document
-        .getElementById("loginPin")
-        .value = "";
-
-
-      await showDashboard(
-        data.session
+      localStorage.setItem(
+        "shifthq_kiosk_company",
+        code
       );
+
+
+      companyCode = code;
+
+      applyCompanyResult(result);
+
+      showKiosk();
 
     } catch (error) {
 
-      console.error(error);
+      setupStatus.textContent =
+        error.message;
 
-      showLoginStatus(
-        "Could not connect to ShiftHQ.",
-        "error"
-      );
+      setupStatus.className =
+        "setupStatus error";
 
-      loginButton.disabled = false;
     }
+
+
+    setupButton.disabled = false;
 
   }
 );
 
 
-/* -------------------------------------------------------
-   ACTIVATION
-------------------------------------------------------- */
+/* =======================================================
+   LOAD WORKERS
+======================================================= */
 
-activateButton.addEventListener(
-  "click",
-  async () => {
+async function loadWorkers(code) {
 
-    const pin =
-      document
-        .getElementById("pin")
-        .value
-        .trim();
-
-    const confirmPin =
-      document
-        .getElementById("confirmPin")
-        .value
-        .trim();
-
-
-    if (!/^[0-9]{4}$/.test(pin)) {
-
-      showActivationStatus(
-        "PIN must be exactly 4 digits.",
-        "error"
-      );
-
-      return;
+  return await postFunction(
+    "kiosk-workers",
+    {
+      company_code: code
     }
+  );
+}
 
 
-    if (pin !== confirmPin) {
+function applyCompanyResult(result) {
 
-      showActivationStatus(
-        "The two PINs do not match.",
-        "error"
-      );
+  company = result.company;
+  workers = result.workers || [];
 
-      return;
-    }
+  sidebarCompanyName.textContent =
+    company.name;
+
+  mainCompanyName.textContent =
+    company.name;
+
+  renderWorkers();
+}
 
 
-    activateButton.disabled = true;
+/* =======================================================
+   WORKER LIST
+======================================================= */
 
-    showActivationStatus(
-      "Activating your account..."
+function initials(name) {
+
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0])
+    .join("")
+    .toUpperCase();
+}
+
+
+function renderWorkers() {
+
+  workerList.innerHTML = "";
+
+  const query =
+    workerSearch
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const filtered =
+    workers.filter(worker =>
+      worker.name
+        .toLowerCase()
+        .includes(query)
     );
 
 
-    const {
-      error
-    } = await supabaseClient.rpc(
-      "accept_worker_invitation",
-      {
-        p_invite_token:
-          window.shiftHQInviteToken,
+  filtered.forEach(worker => {
 
-        p_pin:
-          pin
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "workerRow";
+
+
+    const currentStatus =
+      worker.status || "off";
+
+
+    button.innerHTML = `
+      <div class="avatar">
+        ${initials(worker.name)}
+      </div>
+
+      <div class="statusDot ${currentStatus}">
+      </div>
+
+      <div>
+        <div class="workerName">
+          ${escapeHtml(worker.name)}
+        </div>
+
+        <div class="workerSub">
+          ${formatStatus(currentStatus)}
+        </div>
+      </div>
+    `;
+
+
+    button.addEventListener(
+      "click",
+      () => selectWorker(worker)
+    );
+
+
+    workerList.appendChild(button);
+
+  });
+
+}
+
+
+workerSearch.addEventListener(
+  "input",
+  renderWorkers
+);
+
+
+/* =======================================================
+   SELECT WORKER
+======================================================= */
+
+function selectWorker(worker) {
+
+  resetInactivityTimer();
+
+  selectedWorker = worker;
+
+  currentPin = "";
+
+  selectedWorkerName.textContent =
+    worker.name;
+
+  pinError.textContent = "";
+
+  updatePinDots();
+
+  welcomePanel.classList.add("hidden");
+  actionPanel.classList.add("hidden");
+  pinPanel.classList.remove("hidden");
+}
+
+
+/* =======================================================
+   PIN KEYPAD
+======================================================= */
+
+document
+  .querySelectorAll(".key")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      async () => {
+
+        resetInactivityTimer();
+
+        const key =
+          button.dataset.key;
+
+
+        if (key === "clear") {
+          currentPin = "";
+        }
+
+        else if (key === "back") {
+          currentPin =
+            currentPin.slice(0, -1);
+        }
+
+        else if (
+          /^[0-9]$/.test(key) &&
+          currentPin.length < 4
+        ) {
+          currentPin += key;
+        }
+
+
+        updatePinDots();
+
+
+        if (currentPin.length === 4) {
+          await verifySelectedWorker();
+        }
+
       }
     );
 
+  });
 
-    if (error) {
 
-      showActivationStatus(
-        error.message,
-        "error"
+function updatePinDots() {
+
+  const dots =
+    document.querySelectorAll(
+      ".pinDot"
+    );
+
+
+  dots.forEach(
+    (dot, index) => {
+
+      dot.classList.toggle(
+        "filled",
+        index < currentPin.length
       );
 
-      activateButton.disabled = false;
-      return;
     }
-
-
-    showActivationStatus(
-      "Your ShiftHQ worker account is active.",
-      "success"
-    );
-
-    activationForm.classList.add(
-      "hidden"
-    );
-
-  }
-);
-
-
-/* -------------------------------------------------------
-   DASHBOARD
-------------------------------------------------------- */
-
-async function showDashboard(session) {
-
-  loginSection.classList.add(
-    "hidden"
   );
-
-  activationSection.classList.add(
-    "hidden"
-  );
-
-  dashboardSection.classList.remove(
-    "hidden"
-  );
+}
 
 
-  document
-    .getElementById("workerEmail")
-    .textContent =
-      session.user.email || "";
+/* =======================================================
+   VERIFY WORKER
+======================================================= */
 
+async function verifySelectedWorker() {
 
-  showDashboardStatus(
-    "Loading shift..."
-  );
+  pinError.textContent =
+    "Checking PIN...";
 
 
   try {
 
-    /*
-      After a fresh PIN login we already have the
-      company ID.
+    const result =
+      await postFunction(
+        "kiosk-action",
+        {
+          company_id:
+            company.id,
 
-      After reopening the website with an existing
-      session, we retrieve it from membership.
-    */
+          worker_id:
+            selectedWorker.id,
 
-    if (!currentCompanyId) {
+          pin:
+            currentPin,
 
-      const membership =
-        await loadWorkerCompany();
-
-
-      const companyName =
-        membership.companies?.name;
-
-
-      if (companyName) {
-        document
-          .getElementById("workerName")
-          .textContent =
-            companyName;
-      }
-
-    }
+          action:
+            "status"
+        }
+      );
 
 
-    await refreshShiftStatus();
+    currentWorkerStatus =
+      result.status;
+
+    currentShift =
+      result.shift;
+
+
+    showActionPanel(
+      result.worker,
+      result.status,
+      result.shift
+    );
+
 
   } catch (error) {
 
-    console.error(error);
+    currentPin = "";
 
-    showDashboardStatus(
-      error.message ||
-      "Could not load worker account.",
-      "error"
+    updatePinDots();
+
+    pinError.textContent =
+      error.message;
+
+  }
+
+}
+
+
+/* =======================================================
+   ACTION PANEL
+======================================================= */
+
+function showActionPanel(
+  worker,
+  status,
+  shift
+) {
+
+  resetInactivityTimer();
+
+  pinPanel.classList.add("hidden");
+  welcomePanel.classList.add("hidden");
+  actionPanel.classList.remove("hidden");
+
+
+  actionWorkerName.textContent =
+    worker.name;
+
+
+  actionStatusBadge.textContent =
+    formatStatus(status);
+
+  actionStatusBadge.className =
+    `statusBadge ${status}`;
+
+
+  actionButtons.innerHTML = "";
+
+  actionMessage.textContent = "";
+
+
+  stopShiftTimer();
+
+
+  if (shift?.clock_in) {
+
+    shiftBox.classList.remove(
+      "hidden"
+    );
+
+
+    const clockIn =
+      new Date(
+        shift.clock_in
+      );
+
+
+    clockInText.textContent =
+      "Clocked in at " +
+      clockIn.toLocaleTimeString(
+        [],
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+
+
+    startShiftTimer(
+      shift.clock_in
+    );
+
+  } else {
+
+    shiftBox.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (status === "off") {
+
+    createActionButton(
+      "Clock In",
+      "clock_in"
+    );
+
+  }
+
+
+  if (status === "working") {
+
+    createActionButton(
+      "Start Break",
+      "start_break",
+      "secondary"
+    );
+
+
+    createActionButton(
+      "Clock Out",
+      "clock_out",
+      "danger"
+    );
+
+  }
+
+
+  if (status === "on_break") {
+
+    createActionButton(
+      "End Break",
+      "end_break"
+    );
+
+
+    createActionButton(
+      "Clock Out",
+      "clock_out",
+      "danger"
     );
 
   }
@@ -1127,154 +1316,473 @@ async function showDashboard(session) {
 }
 
 
-/* -------------------------------------------------------
-   SIGN OUT
-------------------------------------------------------- */
+function createActionButton(
+  label,
+  action,
+  style = ""
+) {
 
-logoutButton.addEventListener(
-  "click",
-  async () => {
-
-    stopTimer();
-
-    await supabaseClient.auth.signOut();
-
-    currentCompanyId = null;
-    currentShift = null;
+  const button =
+    document.createElement("button");
 
 
-    dashboardSection.classList.add(
-      "hidden"
+  button.textContent =
+    label;
+
+
+  button.className =
+    `actionButton ${style}`;
+
+
+  button.addEventListener(
+    "click",
+    async () => {
+
+      await performAction(
+        action,
+        button
+      );
+
+    }
+  );
+
+
+  actionButtons.appendChild(button);
+
+}
+
+
+/* =======================================================
+   PERFORM CLOCK ACTION
+======================================================= */
+
+async function performAction(
+  action,
+  button
+) {
+
+  resetInactivityTimer();
+
+  button.disabled = true;
+
+  actionMessage.textContent =
+    "Please wait...";
+
+
+  try {
+
+    const result =
+      await postFunction(
+        "kiosk-action",
+        {
+          company_id:
+            company.id,
+
+          worker_id:
+            selectedWorker.id,
+
+          pin:
+            currentPin,
+
+          action:
+            action
+        }
+      );
+
+
+    currentWorkerStatus =
+      result.status;
+
+    currentShift =
+      result.shift;
+
+
+    updateLocalWorkerStatus(
+      selectedWorker.id,
+      result.status
     );
 
-    activationSection.classList.add(
-      "hidden"
-    );
 
-    loginSection.classList.remove(
-      "hidden"
-    );
-
-
-    document
-      .getElementById("companyCode")
-      .value = "";
-
-    document
-      .getElementById("email")
-      .value = "";
-
-    document
-      .getElementById("loginPin")
-      .value = "";
-
-
-    showLoginStatus(
-      "Enter your company details and PIN."
+    showActionPanel(
+      result.worker,
+      result.status,
+      result.shift
     );
 
 
-    loginButton.disabled = false;
+    actionMessage.textContent =
+      actionMessageFor(action);
+
+
+    /*
+      Return to worker list shortly after
+      completing an action.
+    */
+
+    setTimeout(
+      () => returnToWorkerList(),
+      2500
+    );
+
+
+  } catch (error) {
+
+    actionMessage.textContent =
+      error.message;
+
+    button.disabled = false;
 
   }
+
+}
+
+
+/* =======================================================
+   LOCAL STATUS DOT
+======================================================= */
+
+function updateLocalWorkerStatus(
+  workerId,
+  status
+) {
+
+  const worker =
+    workers.find(
+      item => item.id === workerId
+    );
+
+
+  if (worker) {
+    worker.status = status;
+  }
+
+
+  renderWorkers();
+}
+
+
+/* =======================================================
+   TIMER
+======================================================= */
+
+function startShiftTimer(clockIn) {
+
+  stopShiftTimer();
+
+
+  const start =
+    new Date(clockIn).getTime();
+
+
+  function update() {
+
+    const seconds =
+      Math.max(
+        0,
+        Math.floor(
+          (Date.now() - start) / 1000
+        )
+      );
+
+
+    const hours =
+      Math.floor(
+        seconds / 3600
+      );
+
+
+    const minutes =
+      Math.floor(
+        (seconds % 3600) / 60
+      );
+
+
+    const secs =
+      seconds % 60;
+
+
+    shiftTime.textContent =
+      String(hours).padStart(2, "0")
+      + ":"
+      + String(minutes).padStart(2, "0")
+      + ":"
+      + String(secs).padStart(2, "0");
+  }
+
+
+  update();
+
+  shiftTimerInterval =
+    setInterval(update, 1000);
+}
+
+
+function stopShiftTimer() {
+
+  if (shiftTimerInterval) {
+
+    clearInterval(
+      shiftTimerInterval
+    );
+
+    shiftTimerInterval = null;
+
+  }
+
+}
+
+
+/* =======================================================
+   RETURN / TIMEOUT
+======================================================= */
+
+function returnToWorkerList() {
+
+  stopShiftTimer();
+
+  selectedWorker = null;
+  currentPin = "";
+  currentWorkerStatus = null;
+  currentShift = null;
+
+  updatePinDots();
+
+  pinError.textContent = "";
+  actionMessage.textContent = "";
+
+  pinPanel.classList.add("hidden");
+  actionPanel.classList.add("hidden");
+  welcomePanel.classList.remove("hidden");
+
+  resetInactivityTimer();
+}
+
+
+function resetInactivityTimer() {
+
+  clearTimeout(
+    inactivityTimer
+  );
+
+
+  inactivityTimer =
+    setTimeout(
+      () => {
+
+        if (
+          selectedWorker
+        ) {
+          returnToWorkerList();
+        }
+
+      },
+      20000
+    );
+
+}
+
+
+document
+  .getElementById(
+    "cancelPinButton"
+  )
+  .addEventListener(
+    "click",
+    returnToWorkerList
+  );
+
+
+document
+  .getElementById(
+    "backToWorkersButton"
+  )
+  .addEventListener(
+    "click",
+    returnToWorkerList
+  );
+
+
+document.addEventListener(
+  "pointerdown",
+  resetInactivityTimer
 );
 
 
-/* -------------------------------------------------------
+/* =======================================================
+   CHANGE COMPANY
+======================================================= */
+
+document
+  .getElementById(
+    "changeCompanyButton"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      const confirmed =
+        confirm(
+          "Remove this kiosk's company setup?"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      localStorage.removeItem(
+        "shifthq_kiosk_company"
+      );
+
+
+      location.reload();
+
+    }
+  );
+
+
+/* =======================================================
+   HELPERS
+======================================================= */
+
+function formatStatus(status) {
+
+  switch (status) {
+
+    case "working":
+      return "Working";
+
+    case "on_break":
+      return "On break";
+
+    default:
+      return "Clocked out";
+
+  }
+
+}
+
+
+function actionMessageFor(action) {
+
+  switch (action) {
+
+    case "clock_in":
+      return "You are clocked in.";
+
+    case "clock_out":
+      return "You are clocked out.";
+
+    case "start_break":
+      return "Break started.";
+
+    case "end_break":
+      return "Break ended.";
+
+    default:
+      return "Done.";
+
+  }
+
+}
+
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/* =======================================================
    INITIALISE
-------------------------------------------------------- */
+======================================================= */
 
 async function initialise() {
 
-  const params =
-    new URLSearchParams(
-      window.location.search
+  updateTopClock();
+
+  const savedCode =
+    localStorage.getItem(
+      "shifthq_kiosk_company"
     );
 
-  const inviteToken =
-    params.get("invite");
 
+  if (!savedCode) {
 
-  const {
-    data: { session },
-    error
-  } =
-    await supabaseClient.auth.getSession();
-
-
-  if (error) {
-
-    loginSection.classList.remove(
+    setupScreen.classList.remove(
       "hidden"
-    );
-
-    showLoginStatus(
-      "Could not verify your login.",
-      "error"
     );
 
     return;
   }
 
 
-  /*
-    INVITATION ACTIVATION
-  */
+  try {
 
-  if (inviteToken) {
-
-    activationSection.classList.remove(
-      "hidden"
-    );
+    companyCode =
+      savedCode;
 
 
-    if (!session) {
-
-      showActivationStatus(
-        "Your invitation login has not been completed yet.",
-        "error"
+    const result =
+      await loadWorkers(
+        savedCode
       );
 
-      return;
-    }
 
-
-    window.shiftHQInviteToken =
-      inviteToken;
-
-
-    showActivationStatus(
-      `Signed in as ${session.user.email}. Choose your worker PIN below.`
+    applyCompanyResult(
+      result
     );
 
 
-    activationForm.classList.remove(
+    showKiosk();
+
+
+  } catch (error) {
+
+    localStorage.removeItem(
+      "shifthq_kiosk_company"
+    );
+
+
+    setupStatus.textContent =
+      error.message;
+
+
+    setupStatus.className =
+      "setupStatus error";
+
+
+    setupScreen.classList.remove(
       "hidden"
     );
 
-    return;
   }
 
-
-  /*
-    EXISTING WORKER SESSION
-  */
-
-  if (session) {
-
-    await showDashboard(session);
-
-    return;
-  }
+}
 
 
-  /*
-    LOGGED OUT
-  */
+function showKiosk() {
 
-  loginSection.classList.remove(
+  setupScreen.classList.add(
     "hidden"
   );
+
+  kioskScreen.classList.remove(
+    "hidden"
+  );
+
+  welcomePanel.classList.remove(
+    "hidden"
+  );
+
+  resetInactivityTimer();
 
 }
 
