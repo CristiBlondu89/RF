@@ -1,1 +1,3112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
 
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ShiftHQ PRO</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-soft: #f8fafb;
+      --sidebar: #0f1722;
+      --sidebar-soft: #172231;
+
+      --text: #111827;
+      --muted: #718096;
+      --border: #e5e9ee;
+
+      --green: #32b768;
+      --green-soft: #eaf8ef;
+
+      --yellow: #e6a82d;
+      --yellow-soft: #fff6df;
+
+      --red: #eb5757;
+      --red-soft: #feeeee;
+
+      --blue: #2563eb;
+      --blue-soft: #edf3ff;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ============================================
+       LOGIN
+    ============================================ */
+
+    #loginScreen {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 30px;
+    }
+
+    .loginCard {
+      width: 100%;
+      max-width: 440px;
+
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: 24px;
+
+      padding: 34px;
+
+      box-shadow:
+        0 20px 60px
+        rgba(15, 23, 34, 0.08);
+    }
+
+    .loginLogo {
+      font-size: 34px;
+      font-weight: 800;
+
+      letter-spacing: -1px;
+    }
+
+    .proBadge {
+      display: inline-flex;
+
+      margin-left: 7px;
+
+      padding: 4px 7px;
+
+      border-radius: 7px;
+
+      background: #111827;
+      color: white;
+
+      font-size: 11px;
+      font-weight: 800;
+
+      vertical-align: middle;
+
+      letter-spacing: 0.5px;
+    }
+
+    .loginSubtitle {
+      margin-top: 7px;
+      margin-bottom: 28px;
+
+      color: var(--muted);
+    }
+
+    label {
+      display: block;
+
+      margin-bottom: 7px;
+
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    input {
+      width: 100%;
+
+      border: 1px solid #d7dde4;
+      border-radius: 12px;
+
+      padding: 13px 14px;
+
+      outline: none;
+
+      background: white;
+
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #8d99a8;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(17,24,39,0.04);
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .primaryButton {
+      width: 100%;
+
+      border: 0;
+      border-radius: 12px;
+
+      padding: 14px 18px;
+
+      background: #111827;
+      color: white;
+
+      font-weight: 750;
+      font-size: 15px;
+    }
+
+    .primaryButton:hover {
+      background: #1d2939;
+    }
+
+    .primaryButton:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+
+    .message {
+      display: none;
+
+      margin-top: 16px;
+
+      padding: 12px 14px;
+
+      border-radius: 10px;
+
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .message.error {
+      display: block;
+
+      background: var(--red-soft);
+      color: #a43737;
+    }
+
+    .message.success {
+      display: block;
+
+      background: var(--green-soft);
+      color: #227747;
+    }
+
+    .message.info {
+      display: block;
+
+      background: var(--blue-soft);
+      color: #315b9d;
+    }
+
+    /* ============================================
+       APP
+    ============================================ */
+
+    #adminApp {
+      min-height: 100vh;
+
+      display: grid;
+
+      grid-template-columns:
+        245px
+        minmax(0, 1fr);
+    }
+
+    /* ============================================
+       SIDEBAR
+    ============================================ */
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+
+      height: 100vh;
+
+      background: var(--sidebar);
+      color: white;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebarBrand {
+      padding: 25px 22px 22px;
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,0.07);
+    }
+
+    .sidebarLogo {
+      font-size: 25px;
+      font-weight: 800;
+
+      letter-spacing: -0.7px;
+    }
+
+    .sidebarPro {
+      color: #91a1b3;
+
+      font-size: 11px;
+      font-weight: 750;
+
+      margin-top: 2px;
+
+      letter-spacing: 1px;
+    }
+
+    .sidebarCompany {
+      margin: 18px 14px 8px;
+
+      padding: 13px 12px;
+
+      border-radius: 11px;
+
+      background:
+        rgba(255,255,255,0.055);
+    }
+
+    .sidebarCompanyLabel {
+      color: #8293a6;
+
+      font-size: 11px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.6px;
+
+      margin-bottom: 5px;
+    }
+
+    .sidebarCompanyName {
+      font-size: 14px;
+      font-weight: 650;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .navigation {
+      padding: 10px 12px;
+
+      flex: 1;
+    }
+
+    .navButton {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+
+      gap: 11px;
+
+      padding: 11px 12px;
+
+      margin-bottom: 3px;
+
+      border: 0;
+      border-radius: 9px;
+
+      background: transparent;
+      color: #aebbc8;
+
+      text-align: left;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .navButton:hover {
+      background:
+        rgba(255,255,255,0.05);
+
+      color: white;
+    }
+
+    .navButton.active {
+      background:
+        rgba(255,255,255,0.09);
+
+      color: white;
+    }
+
+    .navIcon {
+      width: 22px;
+
+      text-align: center;
+
+      font-size: 16px;
+    }
+
+    .sidebarBottom {
+      padding: 14px;
+
+      border-top:
+        1px solid
+        rgba(255,255,255,0.07);
+    }
+
+    .adminIdentity {
+      padding: 8px 8px 14px;
+    }
+
+    .adminName {
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .adminEmail {
+      color: #8192a5;
+
+      font-size: 12px;
+
+      margin-top: 3px;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .signOutButton {
+      width: 100%;
+
+      padding: 10px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.09);
+
+      border-radius: 9px;
+
+      background: transparent;
+      color: #aebbc8;
+
+      font-weight: 600;
+    }
+
+    .signOutButton:hover {
+      color: white;
+
+      background:
+        rgba(255,255,255,0.05);
+    }
+
+    /* ============================================
+       CONTENT
+    ============================================ */
+
+    .content {
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 70px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding: 0 32px;
+
+      background: white;
+
+      border-bottom:
+        1px solid var(--border);
+    }
+
+    .pageTitle {
+      font-size: 19px;
+      font-weight: 750;
+    }
+
+    .topCompany {
+      color: var(--muted);
+
+      font-size: 14px;
+    }
+
+    .pageContent {
+      padding: 30px 32px 50px;
+
+      max-width: 1500px;
+    }
+
+    .pageSection {
+      display: none;
+    }
+
+    .pageSection.active {
+      display: block;
+    }
+
+    .welcomeHeading {
+      font-size: 29px;
+      font-weight: 780;
+
+      letter-spacing: -0.7px;
+
+      margin-bottom: 5px;
+    }
+
+    .welcomeSub {
+      color: var(--muted);
+
+      font-size: 15px;
+
+      margin-bottom: 28px;
+    }
+
+    /* ============================================
+       STAT CARDS
+    ============================================ */
+
+    .stats {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 16px;
+
+      margin-bottom: 28px;
+    }
+
+    .statCard {
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: 16px;
+
+      padding: 20px;
+    }
+
+    .statTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 14px;
+    }
+
+    .statLabel {
+      color: var(--muted);
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .statDot {
+      width: 10px;
+      height: 10px;
+
+      border-radius: 50%;
+    }
+
+    .statDot.working {
+      background: var(--green);
+    }
+
+    .statDot.on_break {
+      background: var(--yellow);
+    }
+
+    .statDot.off {
+      background: var(--red);
+    }
+
+    .statNumber {
+      font-size: 34px;
+      font-weight: 780;
+
+      letter-spacing: -1px;
+    }
+
+    /* ============================================
+       CARDS
+    ============================================ */
+
+    .sectionCard {
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: 16px;
+
+      margin-bottom: 22px;
+
+      overflow: hidden;
+    }
+
+    .sectionHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding: 20px 22px;
+
+      border-bottom:
+        1px solid var(--border);
+    }
+
+    .sectionTitle {
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .sectionSubtitle {
+      color: var(--muted);
+
+      font-size: 13px;
+
+      margin-top: 3px;
+    }
+
+    .refreshButton {
+      border: 1px solid var(--border);
+
+      border-radius: 9px;
+
+      padding: 8px 12px;
+
+      background: white;
+
+      color: #4b5563;
+
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .refreshButton:hover {
+      background: #f8fafb;
+    }
+
+    /* ============================================
+       LIVE WORKERS
+    ============================================ */
+
+    .liveWorker {
+      display: grid;
+
+      grid-template-columns:
+        44px
+        minmax(170px, 1fr)
+        160px
+        170px;
+
+      align-items: center;
+
+      gap: 16px;
+
+      padding: 16px 22px;
+
+      border-bottom:
+        1px solid var(--border);
+    }
+
+    .liveWorker:last-child {
+      border-bottom: 0;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #edf1f5;
+
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .workerPrimary {
+      min-width: 0;
+    }
+
+    .workerName {
+      font-size: 15px;
+      font-weight: 700;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .workerDetail {
+      color: var(--muted);
+
+      font-size: 13px;
+
+      margin-top: 4px;
+    }
+
+    .statusPill {
+      justify-self: start;
+
+      display: inline-flex;
+      align-items: center;
+
+      gap: 7px;
+
+      padding: 6px 10px;
+
+      border-radius: 999px;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .statusPill.working {
+      color: #257849;
+      background: var(--green-soft);
+    }
+
+    .statusPill.on_break {
+      color: #986d14;
+      background: var(--yellow-soft);
+    }
+
+    .statusPill.off {
+      color: #a13b3b;
+      background: var(--red-soft);
+    }
+
+    .miniDot {
+      width: 7px;
+      height: 7px;
+
+      border-radius: 50%;
+
+      background: currentColor;
+    }
+
+    .workerTimer {
+      text-align: right;
+
+      font-variant-numeric:
+        tabular-nums;
+    }
+
+    .timerValue {
+      font-size: 17px;
+      font-weight: 720;
+    }
+
+    .timerLabel {
+      color: var(--muted);
+
+      font-size: 11px;
+
+      margin-top: 3px;
+    }
+
+    .emptyState {
+      padding: 40px 22px;
+
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 14px;
+    }
+
+    /* ============================================
+       WORKERS PAGE
+    ============================================ */
+
+    .workersTop {
+      display: flex;
+
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 20px;
+
+      margin-bottom: 22px;
+    }
+
+    .pageHeading {
+      font-size: 28px;
+      font-weight: 780;
+
+      letter-spacing: -0.6px;
+    }
+
+    .pageDescription {
+      color: var(--muted);
+
+      margin-top: 4px;
+
+      font-size: 14px;
+    }
+
+    .inviteButton {
+      border: 0;
+      border-radius: 10px;
+
+      padding: 11px 16px;
+
+      background: #111827;
+      color: white;
+
+      font-weight: 700;
+
+      white-space: nowrap;
+    }
+
+    .inviteForm {
+      padding: 20px 22px;
+
+      background: #fafbfc;
+
+      border-bottom:
+        1px solid var(--border);
+    }
+
+    .inviteGrid {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        auto;
+
+      gap: 12px;
+
+      align-items: end;
+    }
+
+    .inviteGrid .field {
+      margin: 0;
+    }
+
+    .sendInvite {
+      height: 45px;
+
+      border: 0;
+      border-radius: 10px;
+
+      padding: 0 18px;
+
+      background: var(--blue);
+      color: white;
+
+      font-weight: 700;
+
+      white-space: nowrap;
+    }
+
+    .sendInvite:disabled {
+      opacity: 0.55;
+    }
+
+    .memberRow {
+      display: grid;
+
+      grid-template-columns:
+        44px
+        minmax(180px, 1fr)
+        minmax(180px, 1fr)
+        100px;
+
+      align-items: center;
+
+      gap: 16px;
+
+      padding: 15px 22px;
+
+      border-bottom:
+        1px solid var(--border);
+    }
+
+    .memberRow:last-child {
+      border-bottom: 0;
+    }
+
+    .memberEmail {
+      color: var(--muted);
+
+      font-size: 14px;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .activePill {
+      justify-self: start;
+
+      padding: 5px 9px;
+
+      border-radius: 999px;
+
+      background: var(--green-soft);
+      color: #257849;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .inactivePill {
+      justify-self: start;
+
+      padding: 5px 9px;
+
+      border-radius: 999px;
+
+      background: var(--red-soft);
+      color: #a13b3b;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* ============================================
+       COMPANY INFO
+    ============================================ */
+
+    .companyInfoGrid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 16px;
+
+      padding: 22px;
+    }
+
+    .infoBox {
+      padding: 17px;
+
+      background: var(--surface-soft);
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .infoLabel {
+      color: var(--muted);
+
+      font-size: 12px;
+      font-weight: 650;
+
+      margin-bottom: 7px;
+    }
+
+    .infoValue {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    /* ============================================
+       PLACEHOLDERS
+    ============================================ */
+
+    .placeholder {
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: 16px;
+
+      padding: 60px 30px;
+
+      text-align: center;
+    }
+
+    .placeholderTitle {
+      font-size: 22px;
+      font-weight: 750;
+
+      margin-bottom: 7px;
+    }
+
+    .placeholderText {
+      color: var(--muted);
+
+      font-size: 14px;
+    }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+
+    @media (max-width: 900px) {
+
+      #adminApp {
+        grid-template-columns:
+          200px
+          minmax(0, 1fr);
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .liveWorker {
+        grid-template-columns:
+          42px
+          minmax(0, 1fr)
+          120px;
+      }
+
+      .workerTimer {
+        grid-column: 2 / 4;
+
+        text-align: left;
+      }
+
+      .inviteGrid {
+        grid-template-columns: 1fr;
+      }
+
+      .memberRow {
+        grid-template-columns:
+          42px
+          minmax(0, 1fr)
+          100px;
+      }
+
+      .memberEmail {
+        grid-column: 2 / 4;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==========================================
+       LOGIN
+  =========================================== -->
+
+  <div id="loginScreen">
+
+    <div class="loginCard">
+
+      <div class="loginLogo">
+        ShiftHQ
+        <span class="proBadge">
+          PRO
+        </span>
+      </div>
+
+      <div class="loginSubtitle">
+        Sign in to manage your company.
+      </div>
+
+      <div class="field">
+        <label for="email">
+          Email
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          placeholder="admin@example.com"
+        >
+      </div>
+
+      <div class="field">
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Password"
+        >
+      </div>
+
+      <button
+        id="loginButton"
+        class="primaryButton"
+      >
+        Sign in
+      </button>
+
+      <div
+        id="loginMessage"
+        class="message"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================
+       ADMIN APP
+  =========================================== -->
+
+  <div
+    id="adminApp"
+    class="hidden"
+  >
+
+    <aside class="sidebar">
+
+      <div class="sidebarBrand">
+
+        <div class="sidebarLogo">
+          ShiftHQ
+        </div>
+
+        <div class="sidebarPro">
+          PRO ADMIN
+        </div>
+
+      </div>
+
+
+      <div class="sidebarCompany">
+
+        <div class="sidebarCompanyLabel">
+          Company
+        </div>
+
+        <div
+          id="sidebarCompanyName"
+          class="sidebarCompanyName"
+        >
+          —
+        </div>
+
+      </div>
+
+
+      <nav class="navigation">
+
+        <button
+          class="navButton active"
+          data-page="dashboard"
+        >
+          <span class="navIcon">⌂</span>
+          Dashboard
+        </button>
+
+        <button
+          class="navButton"
+          data-page="workers"
+        >
+          <span class="navIcon">♙</span>
+          Workers
+        </button>
+
+        <button
+          class="navButton"
+          data-page="timesheets"
+        >
+          <span class="navIcon">◷</span>
+          Timesheets
+        </button>
+
+        <button
+          class="navButton"
+          data-page="reports"
+        >
+          <span class="navIcon">▥</span>
+          Reports
+        </button>
+
+        <button
+          class="navButton"
+          data-page="settings"
+        >
+          <span class="navIcon">⚙</span>
+          Settings
+        </button>
+
+      </nav>
+
+
+      <div class="sidebarBottom">
+
+        <div class="adminIdentity">
+
+          <div
+            id="adminName"
+            class="adminName"
+          >
+            Admin
+          </div>
+
+          <div
+            id="adminEmail"
+            class="adminEmail"
+          ></div>
+
+        </div>
+
+        <button
+          id="logoutButton"
+          class="signOutButton"
+        >
+          Sign out
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <main class="content">
+
+      <header class="topbar">
+
+        <div
+          id="topPageTitle"
+          class="pageTitle"
+        >
+          Dashboard
+        </div>
+
+        <div
+          id="topCompanyName"
+          class="topCompany"
+        ></div>
+
+      </header>
+
+
+      <div class="pageContent">
+
+        <!-- DASHBOARD -->
+
+        <section
+          id="page-dashboard"
+          class="pageSection active"
+        >
+
+          <div
+            id="welcomeHeading"
+            class="welcomeHeading"
+          >
+            Dashboard
+          </div>
+
+          <div class="welcomeSub">
+            Here's what's happening with your team right now.
+          </div>
+
+
+          <div class="stats">
+
+            <div class="statCard">
+
+              <div class="statTop">
+
+                <div class="statLabel">
+                  Working
+                </div>
+
+                <div class="statDot working"></div>
+
+              </div>
+
+              <div
+                id="workingCount"
+                class="statNumber"
+              >
+                0
+              </div>
+
+            </div>
+
+
+            <div class="statCard">
+
+              <div class="statTop">
+
+                <div class="statLabel">
+                  On break
+                </div>
+
+                <div class="statDot on_break"></div>
+
+              </div>
+
+              <div
+                id="breakCount"
+                class="statNumber"
+              >
+                0
+              </div>
+
+            </div>
+
+
+            <div class="statCard">
+
+              <div class="statTop">
+
+                <div class="statLabel">
+                  Clocked out
+                </div>
+
+                <div class="statDot off"></div>
+
+              </div>
+
+              <div
+                id="offCount"
+                class="statNumber"
+              >
+                0
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="sectionCard">
+
+            <div class="sectionHeader">
+
+              <div>
+
+                <div class="sectionTitle">
+                  Live workforce
+                </div>
+
+                <div class="sectionSubtitle">
+                  Current status of active workers
+                </div>
+
+              </div>
+
+              <button
+                id="refreshLiveButton"
+                class="refreshButton"
+              >
+                Refresh
+              </button>
+
+            </div>
+
+            <div id="liveWorkers">
+              <div class="emptyState">
+                Loading workers…
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="sectionCard">
+
+            <div class="sectionHeader">
+
+              <div>
+
+                <div class="sectionTitle">
+                  Company
+                </div>
+
+                <div class="sectionSubtitle">
+                  Quick company information
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="companyInfoGrid">
+
+              <div class="infoBox">
+
+                <div class="infoLabel">
+                  COMPANY NAME
+                </div>
+
+                <div
+                  id="dashboardCompanyName"
+                  class="infoValue"
+                >
+                  —
+                </div>
+
+              </div>
+
+              <div class="infoBox">
+
+                <div class="infoLabel">
+                  KIOSK CODE
+                </div>
+
+                <div
+                  id="dashboardCompanyCode"
+                  class="infoValue"
+                >
+                  —
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- WORKERS -->
+
+        <section
+          id="page-workers"
+          class="pageSection"
+        >
+
+          <div class="workersTop">
+
+            <div>
+
+              <div class="pageHeading">
+                Workers
+              </div>
+
+              <div class="pageDescription">
+                Manage the people who can clock in for this company.
+              </div>
+
+            </div>
+
+            <button
+              id="toggleInviteButton"
+              class="inviteButton"
+            >
+              + Invite worker
+            </button>
+
+          </div>
+
+
+          <div class="sectionCard">
+
+            <div
+              id="inviteForm"
+              class="inviteForm hidden"
+            >
+
+              <div class="inviteGrid">
+
+                <div class="field">
+
+                  <label for="workerName">
+                    Worker name
+                  </label>
+
+                  <input
+                    id="workerName"
+                    type="text"
+                    placeholder="John Smith"
+                  >
+
+                </div>
+
+                <div class="field">
+
+                  <label for="workerEmail">
+                    Worker email
+                  </label>
+
+                  <input
+                    id="workerEmail"
+                    type="email"
+                    placeholder="worker@example.com"
+                  >
+
+                </div>
+
+                <button
+                  id="sendInviteButton"
+                  class="sendInvite"
+                >
+                  Send invitation
+                </button>
+
+              </div>
+
+              <div
+                id="inviteMessage"
+                class="message"
+              ></div>
+
+            </div>
+
+
+            <div class="sectionHeader">
+
+              <div>
+
+                <div class="sectionTitle">
+                  Team members
+                </div>
+
+                <div
+                  id="workerCountText"
+                  class="sectionSubtitle"
+                >
+                  Loading…
+                </div>
+
+              </div>
+
+            </div>
+
+            <div id="membersList">
+
+              <div class="emptyState">
+                Loading workers…
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- TIMESHEETS -->
+
+        <section
+          id="page-timesheets"
+          class="pageSection"
+        >
+
+          <div class="placeholder">
+
+            <div class="placeholderTitle">
+              Timesheets
+            </div>
+
+            <div class="placeholderText">
+              Shift history, breaks and manual corrections will go here next.
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- REPORTS -->
+
+        <section
+          id="page-reports"
+          class="pageSection"
+        >
+
+          <div class="placeholder">
+
+            <div class="placeholderTitle">
+              Reports
+            </div>
+
+            <div class="placeholderText">
+              Pay periods, worked hours and exports will go here.
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- SETTINGS -->
+
+        <section
+          id="page-settings"
+          class="pageSection"
+        >
+
+          <div class="placeholder">
+
+            <div class="placeholderTitle">
+              Settings
+            </div>
+
+            <div class="placeholderText">
+              Company and kiosk settings will go here.
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://diqxssqucdylekeexaxk.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
+
+
+    const sb =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
+
+
+    let companyId = null;
+    let company = null;
+
+    let currentUser = null;
+
+    let liveWorkers = [];
+    let members = [];
+
+    let liveLoadedAt =
+      Date.now();
+
+    let liveTimerInterval = null;
+
+
+    /* ============================================
+       MESSAGES
+    ============================================ */
+
+    function showMessage(
+      elementId,
+      text,
+      type = "error"
+    ) {
+
+      const element =
+        document.getElementById(
+          elementId
+        );
+
+
+      element.textContent =
+        text;
+
+
+      element.className =
+        "message " + type;
+
+    }
+
+
+    function clearMessage(
+      elementId
+    ) {
+
+      const element =
+        document.getElementById(
+          elementId
+        );
+
+
+      element.textContent = "";
+
+      element.className =
+        "message";
+
+    }
+
+
+    /* ============================================
+       LOGIN
+    ============================================ */
+
+    async function login() {
+
+      clearMessage(
+        "loginMessage"
+      );
+
+
+      const email =
+        document
+          .getElementById("email")
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById("password")
+          .value;
+
+
+      const button =
+        document.getElementById(
+          "loginButton"
+        );
+
+
+      if (
+        !email ||
+        !password
+      ) {
+
+        showMessage(
+          "loginMessage",
+          "Enter your email and password."
+        );
+
+        return;
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Signing in…";
+
+
+      const {
+        data,
+        error
+      } =
+        await sb.auth
+          .signInWithPassword({
+            email,
+            password
+          });
+
+
+      button.disabled = false;
+
+      button.textContent =
+        "Sign in";
+
+
+      if (error) {
+
+        showMessage(
+          "loginMessage",
+          error.message
+        );
+
+        return;
+      }
+
+
+      await loadAdmin(
+        data.user
+      );
+
+    }
+
+
+    /* ============================================
+       LOAD ADMIN COMPANY
+    ============================================ */
+
+    async function loadAdmin(user) {
+
+      if (!user) {
+
+        showLogin();
+
+        return;
+      }
+
+
+      currentUser = user;
+
+
+      const {
+        data,
+        error
+      } =
+        await sb
+          .from("company_members")
+          .select(`
+            company_id,
+            role,
+            active,
+            companies (
+              id,
+              name,
+              company_code
+            ),
+            profiles (
+              full_name,
+              email
+            )
+          `)
+          .eq(
+            "user_id",
+            user.id
+          )
+          .eq(
+            "role",
+            "admin"
+          )
+          .eq(
+            "active",
+            true
+          )
+          .limit(1)
+          .maybeSingle();
+
+
+      if (error) {
+
+        await sb.auth.signOut();
+
+        showLogin();
+
+        showMessage(
+          "loginMessage",
+          "Company access could not be loaded: " +
+          error.message
+        );
+
+        return;
+      }
+
+
+      if (!data) {
+
+        await sb.auth.signOut();
+
+        showLogin();
+
+        showMessage(
+          "loginMessage",
+          "This account is not an active company admin."
+        );
+
+        return;
+      }
+
+
+      companyId =
+        data.company_id;
+
+
+      company =
+        data.companies;
+
+
+      const profile =
+        data.profiles || {};
+
+
+      document.getElementById(
+        "sidebarCompanyName"
+      ).textContent =
+        company?.name || "Company";
+
+
+      document.getElementById(
+        "topCompanyName"
+      ).textContent =
+        company?.name || "Company";
+
+
+      document.getElementById(
+        "dashboardCompanyName"
+      ).textContent =
+        company?.name || "Company";
+
+
+      document.getElementById(
+        "dashboardCompanyCode"
+      ).textContent =
+        company?.company_code || "—";
+
+
+      document.getElementById(
+        "adminName"
+      ).textContent =
+        profile.full_name?.trim() ||
+        "Admin";
+
+
+      document.getElementById(
+        "adminEmail"
+      ).textContent =
+        profile.email ||
+        user.email ||
+        "";
+
+
+      showAdmin();
+
+
+      await Promise.all([
+        loadLiveWorkers(),
+        loadMembers()
+      ]);
+
+    }
+
+
+    /* ============================================
+       LIVE WORKFORCE
+    ============================================ */
+
+    async function loadLiveWorkers() {
+
+      if (!companyId) {
+        return;
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await sb.rpc(
+          "get_admin_live_workers",
+          {
+            p_company_id:
+              companyId
+          }
+        );
+
+
+      if (error) {
+
+        console.error(
+          "Live workers:",
+          error
+        );
+
+        document.getElementById(
+          "liveWorkers"
+        ).innerHTML = `
+          <div class="emptyState">
+            Could not load live workforce.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      liveWorkers =
+        Array.isArray(data)
+          ? data
+          : [];
+
+
+      liveLoadedAt =
+        Date.now();
+
+
+      renderLiveWorkers();
+
+      updateStats();
+
+      startLiveTimer();
+
+    }
+
+
+    function renderLiveWorkers() {
+
+      const container =
+        document.getElementById(
+          "liveWorkers"
+        );
+
+
+      if (!liveWorkers.length) {
+
+        container.innerHTML = `
+          <div class="emptyState">
+            No active workers found.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      container.innerHTML =
+        liveWorkers
+          .map(worker => {
+
+            const status =
+              normalizeStatus(
+                worker.shift_status
+              );
+
+
+            let detail = "";
+
+            if (
+              status === "working" &&
+              worker.clock_in
+            ) {
+
+              detail =
+                "Clocked in " +
+                formatClockTime(
+                  worker.clock_in
+                );
+
+            } else if (
+              status === "on_break" &&
+              worker.break_start
+            ) {
+
+              detail =
+                "Break started " +
+                formatClockTime(
+                  worker.break_start
+                );
+
+            } else {
+
+              detail =
+                worker.worker_email ||
+                "Worker";
+
+            }
+
+
+            return `
+              <div
+                class="liveWorker"
+                data-worker-id="${escapeHtml(
+                  worker.worker_id
+                )}"
+              >
+
+                <div class="avatar">
+                  ${escapeHtml(
+                    initials(
+                      worker.worker_name
+                    )
+                  )}
+                </div>
+
+                <div class="workerPrimary">
+
+                  <div class="workerName">
+                    ${escapeHtml(
+                      worker.worker_name
+                    )}
+                  </div>
+
+                  <div class="workerDetail">
+                    ${escapeHtml(detail)}
+                  </div>
+
+                </div>
+
+                <div
+                  class="statusPill ${status}"
+                >
+
+                  <span class="miniDot"></span>
+
+                  ${escapeHtml(
+                    formatStatus(status)
+                  )}
+
+                </div>
+
+                <div class="workerTimer">
+
+                  <div
+                    class="timerValue"
+                    data-live-timer
+                  >
+                    ${formatWorkerTimer(
+                      worker
+                    )}
+                  </div>
+
+                  <div class="timerLabel">
+                    ${
+                      status === "on_break"
+                        ? "current break"
+                        : status === "working"
+                          ? "worked today"
+                          : "not working"
+                    }
+                  </div>
+
+                </div>
+
+              </div>
+            `;
+
+          })
+          .join("");
+
+    }
+
+
+    function updateStats() {
+
+      let working = 0;
+      let onBreak = 0;
+      let off = 0;
+
+
+      liveWorkers.forEach(
+        worker => {
+
+          const status =
+            normalizeStatus(
+              worker.shift_status
+            );
+
+
+          if (
+            status === "working"
+          ) {
+            working += 1;
+          } else if (
+            status === "on_break"
+          ) {
+            onBreak += 1;
+          } else {
+            off += 1;
+          }
+
+        }
+      );
+
+
+      document.getElementById(
+        "workingCount"
+      ).textContent =
+        working;
+
+
+      document.getElementById(
+        "breakCount"
+      ).textContent =
+        onBreak;
+
+
+      document.getElementById(
+        "offCount"
+      ).textContent =
+        off;
+
+    }
+
+
+    function startLiveTimer() {
+
+      if (liveTimerInterval) {
+
+        clearInterval(
+          liveTimerInterval
+        );
+
+      }
+
+
+      liveTimerInterval =
+        setInterval(
+          updateLiveTimers,
+          1000
+        );
+
+    }
+
+
+    function updateLiveTimers() {
+
+      const elapsed =
+        Math.max(
+          0,
+          Math.floor(
+            (
+              Date.now() -
+              liveLoadedAt
+            ) / 1000
+          )
+        );
+
+
+      liveWorkers.forEach(
+        worker => {
+
+          const row =
+            document.querySelector(
+              `[data-worker-id="${CSS.escape(
+                worker.worker_id
+              )}"]`
+            );
+
+
+          if (!row) {
+            return;
+          }
+
+
+          const timer =
+            row.querySelector(
+              "[data-live-timer]"
+            );
+
+
+          if (!timer) {
+            return;
+          }
+
+
+          const status =
+            normalizeStatus(
+              worker.shift_status
+            );
+
+
+          if (
+            status === "working"
+          ) {
+
+            timer.textContent =
+              formatTimer(
+                (
+                  Number(
+                    worker.worked_seconds
+                  ) || 0
+                )
+                +
+                elapsed
+              );
+
+          } else if (
+            status === "on_break"
+          ) {
+
+            timer.textContent =
+              formatTimer(
+                (
+                  Number(
+                    worker.current_break_seconds
+                  ) || 0
+                )
+                +
+                elapsed
+              );
+
+          } else {
+
+            timer.textContent =
+              "—";
+
+          }
+
+        }
+      );
+
+    }
+
+
+    function formatWorkerTimer(
+      worker
+    ) {
+
+      const status =
+        normalizeStatus(
+          worker.shift_status
+        );
+
+
+      if (
+        status === "working"
+      ) {
+
+        return formatTimer(
+          worker.worked_seconds
+        );
+
+      }
+
+
+      if (
+        status === "on_break"
+      ) {
+
+        return formatTimer(
+          worker.current_break_seconds
+        );
+
+      }
+
+
+      return "—";
+
+    }
+
+
+    /* ============================================
+       MEMBERS
+    ============================================ */
+
+    async function loadMembers() {
+
+      if (!companyId) {
+        return;
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await sb
+          .from("company_members")
+          .select(`
+            id,
+            user_id,
+            role,
+            active,
+            joined_at,
+            profiles (
+              full_name,
+              email
+            )
+          `)
+          .eq(
+            "company_id",
+            companyId
+          )
+          .order(
+            "joined_at",
+            {
+              ascending: true
+            }
+          );
+
+
+      if (error) {
+
+        console.error(
+          "Members:",
+          error
+        );
+
+        document.getElementById(
+          "membersList"
+        ).innerHTML = `
+          <div class="emptyState">
+            Could not load team members.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      members =
+        Array.isArray(data)
+          ? data
+          : [];
+
+
+      renderMembers();
+
+    }
+
+
+    function renderMembers() {
+
+      const workers =
+        members.filter(
+          member =>
+            member.role === "worker"
+        );
+
+
+      document.getElementById(
+        "workerCountText"
+      ).textContent =
+        `${workers.length} worker${
+          workers.length === 1
+            ? ""
+            : "s"
+        }`;
+
+
+      const container =
+        document.getElementById(
+          "membersList"
+        );
+
+
+      if (!workers.length) {
+
+        container.innerHTML = `
+          <div class="emptyState">
+            No workers yet.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      container.innerHTML =
+        workers
+          .map(member => {
+
+            const profile =
+              member.profiles || {};
+
+
+            const name =
+              profile.full_name?.trim() ||
+              "Worker";
+
+
+            const email =
+              profile.email ||
+              "No email";
+
+
+            return `
+              <div class="memberRow">
+
+                <div class="avatar">
+                  ${escapeHtml(
+                    initials(name)
+                  )}
+                </div>
+
+                <div class="workerName">
+                  ${escapeHtml(name)}
+                </div>
+
+                <div class="memberEmail">
+                  ${escapeHtml(email)}
+                </div>
+
+                <div
+                  class="${
+                    member.active
+                      ? "activePill"
+                      : "inactivePill"
+                  }"
+                >
+                  ${
+                    member.active
+                      ? "Active"
+                      : "Inactive"
+                  }
+                </div>
+
+              </div>
+            `;
+
+          })
+          .join("");
+
+    }
+
+
+    /* ============================================
+       INVITATIONS
+    ============================================ */
+
+    async function sendInvitation() {
+
+      clearMessage(
+        "inviteMessage"
+      );
+
+
+      const workerName =
+        document
+          .getElementById(
+            "workerName"
+          )
+          .value
+          .trim();
+
+
+      const workerEmail =
+        document
+          .getElementById(
+            "workerEmail"
+          )
+          .value
+          .trim();
+
+
+      const button =
+        document.getElementById(
+          "sendInviteButton"
+        );
+
+
+      if (!workerEmail) {
+
+        showMessage(
+          "inviteMessage",
+          "Enter the worker's email address."
+        );
+
+        return;
+      }
+
+
+      if (!companyId) {
+
+        showMessage(
+          "inviteMessage",
+          "No company is loaded."
+        );
+
+        return;
+      }
+
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await sb.auth.getSession();
+
+
+      if (!session) {
+
+        showMessage(
+          "inviteMessage",
+          "Your admin session has expired. Sign in again."
+        );
+
+        return;
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Sending…";
+
+
+      showMessage(
+        "inviteMessage",
+        "Creating invitation…",
+        "info"
+      );
+
+
+      try {
+
+        const response =
+          await fetch(
+            SUPABASE_URL +
+            "/functions/v1/invite-worker",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "Authorization":
+                  "Bearer " +
+                  session.access_token,
+
+                "apikey":
+                  SUPABASE_PUBLISHABLE_KEY
+              },
+
+              body:
+                JSON.stringify({
+                  company_id:
+                    companyId,
+
+                  email:
+                    workerEmail,
+
+                  full_name:
+                    workerName || null
+                })
+            }
+          );
+
+
+        const result =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            result.error ||
+            "Invitation failed."
+          );
+
+        }
+
+
+        showMessage(
+          "inviteMessage",
+          "Invitation sent successfully.",
+          "success"
+        );
+
+
+        document.getElementById(
+          "workerName"
+        ).value = "";
+
+
+        document.getElementById(
+          "workerEmail"
+        ).value = "";
+
+
+        await loadMembers();
+
+
+      } catch (error) {
+
+        showMessage(
+          "inviteMessage",
+          error.message ||
+          "Invitation failed."
+        );
+
+
+      } finally {
+
+        button.disabled = false;
+
+        button.textContent =
+          "Send invitation";
+
+      }
+
+    }
+
+
+    /* ============================================
+       NAVIGATION
+    ============================================ */
+
+    function showPage(pageName) {
+
+      document
+        .querySelectorAll(
+          ".pageSection"
+        )
+        .forEach(section => {
+
+          section.classList.remove(
+            "active"
+          );
+
+        });
+
+
+      const target =
+        document.getElementById(
+          "page-" + pageName
+        );
+
+
+      if (target) {
+
+        target.classList.add(
+          "active"
+        );
+
+      }
+
+
+      document
+        .querySelectorAll(
+          ".navButton"
+        )
+        .forEach(button => {
+
+          button.classList.toggle(
+            "active",
+            button.dataset.page ===
+              pageName
+          );
+
+        });
+
+
+      const titles = {
+        dashboard: "Dashboard",
+        workers: "Workers",
+        timesheets: "Timesheets",
+        reports: "Reports",
+        settings: "Settings"
+      };
+
+
+      document.getElementById(
+        "topPageTitle"
+      ).textContent =
+        titles[pageName] ||
+        "ShiftHQ PRO";
+
+
+      if (
+        pageName === "dashboard"
+      ) {
+
+        loadLiveWorkers();
+
+      }
+
+
+      if (
+        pageName === "workers"
+      ) {
+
+        loadMembers();
+
+      }
+
+    }
+
+
+    document
+      .querySelectorAll(
+        ".navButton"
+      )
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            showPage(
+              button.dataset.page
+            );
+
+          }
+        );
+
+      });
+
+
+    /* ============================================
+       UTILITIES
+    ============================================ */
+
+    function normalizeStatus(
+      status
+    ) {
+
+      if (
+        status === "working" ||
+        status === "on_break"
+      ) {
+
+        return status;
+
+      }
+
+
+      return "off";
+
+    }
+
+
+    function formatStatus(
+      status
+    ) {
+
+      switch (
+        normalizeStatus(status)
+      ) {
+
+        case "working":
+          return "Working";
+
+        case "on_break":
+          return "On break";
+
+        default:
+          return "Clocked out";
+
+      }
+
+    }
+
+
+    function initials(name) {
+
+      return String(name || "?")
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(part => part[0])
+        .join("")
+        .toUpperCase();
+
+    }
+
+
+    function formatClockTime(
+      value
+    ) {
+
+      if (!value) {
+        return "—";
+      }
+
+
+      const date =
+        new Date(value);
+
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return "—";
+      }
+
+
+      return date.toLocaleTimeString(
+        [],
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+
+    }
+
+
+    function formatTimer(
+      seconds
+    ) {
+
+      const safe =
+        Math.max(
+          0,
+          Math.floor(
+            Number(seconds) || 0
+          )
+        );
+
+
+      const hours =
+        Math.floor(
+          safe / 3600
+        );
+
+
+      const minutes =
+        Math.floor(
+          (safe % 3600) / 60
+        );
+
+
+      const secs =
+        safe % 60;
+
+
+      return (
+        String(hours)
+          .padStart(2, "0")
+        + ":"
+        + String(minutes)
+          .padStart(2, "0")
+        + ":"
+        + String(secs)
+          .padStart(2, "0")
+      );
+
+    }
+
+
+    function escapeHtml(value) {
+
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    }
+
+
+    /* ============================================
+       APP STATE
+    ============================================ */
+
+    function showAdmin() {
+
+      document.getElementById(
+        "loginScreen"
+      ).classList.add(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "adminApp"
+      ).classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    function showLogin() {
+
+      companyId = null;
+      company = null;
+      currentUser = null;
+
+      liveWorkers = [];
+      members = [];
+
+
+      if (liveTimerInterval) {
+
+        clearInterval(
+          liveTimerInterval
+        );
+
+        liveTimerInterval = null;
+
+      }
+
+
+      document.getElementById(
+        "adminApp"
+      ).classList.add(
+        "hidden"
+      );
+
+
+      document.getElementById(
+        "loginScreen"
+      ).classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    async function logout() {
+
+      await sb.auth.signOut();
+
+
+      document.getElementById(
+        "password"
+      ).value = "";
+
+
+      showLogin();
+
+
+      showMessage(
+        "loginMessage",
+        "Signed out.",
+        "success"
+      );
+
+    }
+
+
+    async function checkExistingSession() {
+
+      const {
+        data: {
+          session
+        }
+      } =
+        await sb.auth.getSession();
+
+
+      if (
+        session?.user
+      ) {
+
+        await loadAdmin(
+          session.user
+        );
+
+      }
+
+    }
+
+
+    /* ============================================
+       EVENTS
+    ============================================ */
+
+    document.getElementById(
+      "loginButton"
+    ).addEventListener(
+      "click",
+      login
+    );
+
+
+    document.getElementById(
+      "password"
+    ).addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          login();
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "logoutButton"
+    ).addEventListener(
+      "click",
+      logout
+    );
+
+
+    document.getElementById(
+      "refreshLiveButton"
+    ).addEventListener(
+      "click",
+      loadLiveWorkers
+    );
+
+
+    document.getElementById(
+      "toggleInviteButton"
+    ).addEventListener(
+      "click",
+      () => {
+
+        document.getElementById(
+          "inviteForm"
+        ).classList.toggle(
+          "hidden"
+        );
+
+      }
+    );
+
+
+    document.getElementById(
+      "sendInviteButton"
+    ).addEventListener(
+      "click",
+      sendInvitation
+    );
+
+
+    /* ============================================
+       AUTO REFRESH
+    ============================================ */
+
+    setInterval(
+      () => {
+
+        if (
+          companyId &&
+          document.getElementById(
+            "page-dashboard"
+          ).classList.contains(
+            "active"
+          )
+        ) {
+
+          loadLiveWorkers();
+
+        }
+
+      },
+      30000
+    );
+
+
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+
+        if (
+          document.visibilityState ===
+            "visible" &&
+          companyId
+        ) {
+
+          loadLiveWorkers();
+
+        }
+
+      }
+    );
+
+
+    /* ============================================
+       START
+    ============================================ */
+
+    checkExistingSession();
+
+  </script>
+
+</body>
+</html>
