@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShiftHQ Worker</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f7fa;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 28px;
+    }
+
+    .status {
+      padding: 14px;
+      border-radius: 14px;
+      background: #f0f2f5;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid #d8d8d8;
+      border-radius: 14px;
+      font-size: 18px;
+      margin-bottom: 14px;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #111;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .success {
+      background: #eaf8ee;
+      color: #176b31;
+    }
+
+    .error {
+      background: #fdecec;
+      color: #9b1c1c;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>ShiftHQ</h1>
+    <div class="subtitle">Worker activation</div>
+
+    <div id="status" class="status">
+      Checking your invitation...
+    </div>
+
+    <div id="activationForm" class="hidden">
+      <label for="pin">Choose a 4-digit PIN</label>
+
+      <input
+        id="pin"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="••••"
+      />
+
+      <label for="confirmPin">Confirm PIN</label>
+
+      <input
+        id="confirmPin"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="••••"
+      />
+
+      <button id="activateButton">
+        Activate worker account
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+    const supabaseClient = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    const statusBox = document.getElementById("status");
+    const activationForm = document.getElementById("activationForm");
+    const activateButton = document.getElementById("activateButton");
+
+    function showStatus(message, type = "") {
+      statusBox.textContent = message;
+      statusBox.className = "status";
+
+      if (type) {
+        statusBox.classList.add(type);
+      }
+    }
+
+    async function initialise() {
+      const params = new URLSearchParams(window.location.search);
+      const inviteToken = params.get("invite");
+
+      const {
+        data: { session },
+        error
+      } = await supabaseClient.auth.getSession();
+
+      if (error) {
+        showStatus("Could not verify your login.", "error");
+        return;
+      }
+
+      if (!session) {
+        showStatus(
+          "Your invitation login has not been completed yet.",
+          "error"
+        );
+        return;
+      }
+
+      if (!inviteToken) {
+        showStatus(
+          "Your ShiftHQ invitation token is missing.",
+          "error"
+        );
+        return;
+      }
+
+      window.shiftHQInviteToken = inviteToken;
+
+      showStatus(
+        `Signed in as ${session.user.email}. Choose your worker PIN below.`
+      );
+
+      activationForm.classList.remove("hidden");
+    }
+
+    activateButton.addEventListener("click", async () => {
+      const pin = document.getElementById("pin").value.trim();
+      const confirmPin = document.getElementById("confirmPin").value.trim();
+
+      if (!/^[0-9]{4}$/.test(pin)) {
+        showStatus("PIN must be exactly 4 digits.", "error");
+        return;
+      }
+
+      if (pin !== confirmPin) {
+        showStatus("The two PINs do not match.", "error");
+        return;
+      }
+
+      activateButton.disabled = true;
+      showStatus("Activating your account...");
+
+      const { data, error } = await supabaseClient.rpc(
+        "accept_worker_invitation",
+        {
+          p_invite_token: window.shiftHQInviteToken,
+          p_pin: pin
+        }
+      );
+
+      if (error) {
+        showStatus(error.message, "error");
+        activateButton.disabled = false;
+        return;
+      }
+
+      showStatus(
+        "Your ShiftHQ worker account is active.",
+        "success"
+      );
+
+      activationForm.classList.add("hidden");
+    });
+
+    initialise();
+  </script>
+</body>
+</html>
