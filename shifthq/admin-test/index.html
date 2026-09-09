@@ -18,19 +18,21 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #f3f5f8;
       color: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 24px;
     }
 
-    .card {
+    .page {
       width: 100%;
-      max-width: 430px;
+      max-width: 520px;
+      margin: 40px auto;
+    }
+
+    .card {
       background: white;
       border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      padding: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.07);
+      margin-bottom: 18px;
     }
 
     h1 {
@@ -38,15 +40,20 @@
       font-size: 34px;
     }
 
+    h2 {
+      margin: 0 0 16px;
+      font-size: 24px;
+    }
+
     .subtitle {
-      margin: 0 0 28px;
+      margin: 0 0 24px;
       color: #777;
       font-size: 17px;
     }
 
     label {
       display: block;
-      margin: 16px 0 7px;
+      margin: 14px 0 7px;
       font-weight: 600;
     }
 
@@ -65,12 +72,10 @@
 
     button {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 18px;
       padding: 15px;
       border: 0;
       border-radius: 12px;
-      background: #111;
-      color: white;
       font-size: 16px;
       font-weight: 700;
       cursor: pointer;
@@ -78,10 +83,39 @@
 
     button:disabled {
       opacity: 0.6;
+      cursor: default;
+    }
+
+    .primary {
+      background: #111;
+      color: white;
+    }
+
+    .blue {
+      background: #2563eb;
+      color: white;
+    }
+
+    .light {
+      background: #eceef1;
+      color: #111;
+    }
+
+    .company-box {
+      padding: 16px;
+      border-radius: 14px;
+      background: #f4f5f7;
+      margin-bottom: 18px;
+    }
+
+    .company-box strong {
+      display: block;
+      font-size: 19px;
+      margin-bottom: 5px;
     }
 
     .message {
-      margin-top: 18px;
+      margin-top: 16px;
       padding: 13px;
       border-radius: 12px;
       display: none;
@@ -100,37 +134,87 @@
       color: #176b34;
     }
 
-    .company {
-      margin-top: 20px;
-      padding: 16px;
-      border-radius: 14px;
-      background: #f4f5f7;
-      display: none;
-    }
-
-    .company strong {
+    .info {
       display: block;
-      font-size: 18px;
-      margin-bottom: 5px;
+      background: #eef5ff;
+      color: #1d4f91;
     }
 
-    .logout {
-      background: #eceef1;
-      color: #111;
-      margin-top: 12px;
+    .member {
+      padding: 15px 0;
+      border-bottom: 1px solid #eceef1;
+    }
+
+    .member:last-child {
+      border-bottom: 0;
+    }
+
+    .member-name {
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .member-email {
+      color: #666;
+      margin-top: 3px;
+      word-break: break-word;
+    }
+
+    .member-meta {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 13px;
+      background: #eef0f3;
+      color: #333;
+    }
+
+    .pill.admin {
+      background: #e8efff;
+      color: #244ba8;
+    }
+
+    .pill.worker {
+      background: #eaf8ee;
+      color: #176b34;
+    }
+
+    .pill.inactive {
+      background: #fdecec;
+      color: #a12622;
     }
 
     #dashboard {
       display: none;
+    }
+
+    #inviteForm {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .top-actions button {
+      margin-top: 0;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="card">
+  <div class="page">
 
-    <div id="loginView">
+    <div class="card" id="loginCard">
       <h1>ShiftHQ PRO</h1>
       <p class="subtitle">Admin Test</p>
 
@@ -150,7 +234,7 @@
         autocomplete="current-password"
       >
 
-      <button id="loginButton" onclick="login()">
+      <button class="primary" id="loginButton">
         Sign in
       </button>
 
@@ -159,26 +243,70 @@
 
 
     <div id="dashboard">
-      <h1>ShiftHQ PRO</h1>
-      <p class="subtitle">Admin Dashboard</p>
 
-      <div id="companyBox" class="company">
-        <strong id="companyName">Company</strong>
-        <div>
-          Company code:
-          <span id="companyCode">—</span>
+      <div class="card">
+        <h1>ShiftHQ PRO</h1>
+        <p class="subtitle">Admin Dashboard</p>
+
+        <div class="company-box">
+          <strong id="companyName">Loading company…</strong>
+          <div>
+            Company code:
+            <span id="companyCode">—</span>
+          </div>
+          <div>
+            Role:
+            <span id="userRole">—</span>
+          </div>
         </div>
-        <div>
-          Role:
-          <span id="userRole">—</span>
+
+        <button class="light" id="logoutButton">
+          Sign out
+        </button>
+      </div>
+
+
+      <div class="card">
+        <div class="top-actions">
+          <button class="blue" id="toggleInviteButton">
+            Invite Worker
+          </button>
+        </div>
+
+        <div id="inviteForm">
+
+          <label for="workerName">Worker name</label>
+          <input
+            id="workerName"
+            type="text"
+            placeholder="John Smith"
+          >
+
+          <label for="workerEmail">Worker email</label>
+          <input
+            id="workerEmail"
+            type="email"
+            placeholder="worker@example.com"
+          >
+
+          <button class="primary" id="sendInviteButton">
+            Send invitation
+          </button>
+
+          <div id="inviteMessage" class="message"></div>
         </div>
       </div>
 
-      <div id="dashboardMessage" class="message"></div>
 
-      <button class="logout" onclick="logout()">
-        Sign out
-      </button>
+      <div class="card">
+        <h2>Workers</h2>
+
+        <div id="workersMessage" class="message"></div>
+        <div id="workersList">
+          Loading…
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -196,20 +324,32 @@
       SUPABASE_PUBLISHABLE_KEY
     );
 
+    let companyId = null;
+
 
     function showMessage(elementId, text, type = "error") {
-      const element = document.getElementById(elementId);
+      const el = document.getElementById(elementId);
 
-      element.textContent = text;
-      element.className = "message " + type;
+      el.textContent = text;
+      el.className = "message " + type;
     }
 
 
     function clearMessage(elementId) {
-      const element = document.getElementById(elementId);
+      const el = document.getElementById(elementId);
 
-      element.textContent = "";
-      element.className = "message";
+      el.textContent = "";
+      el.className = "message";
+    }
+
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
 
@@ -266,6 +406,7 @@
       const { data, error } = await sb
         .from("company_members")
         .select(`
+          company_id,
           role,
           active,
           companies (
@@ -275,6 +416,7 @@
           )
         `)
         .eq("user_id", user.id)
+        .eq("role", "admin")
         .eq("active", true)
         .limit(1)
         .maybeSingle();
@@ -293,30 +435,19 @@
       if (!data) {
         showMessage(
           "loginMessage",
-          "Your account is not assigned to an active company."
+          "This account is not an active company admin."
         );
 
         await sb.auth.signOut();
         return;
       }
 
-      if (data.role !== "admin") {
-        showMessage(
-          "loginMessage",
-          "This account does not have admin access."
-        );
+      companyId = data.company_id;
 
-        await sb.auth.signOut();
-        return;
-      }
-
-      document.getElementById("loginView").style.display =
+      document.getElementById("loginCard").style.display =
         "none";
 
       document.getElementById("dashboard").style.display =
-        "block";
-
-      document.getElementById("companyBox").style.display =
         "block";
 
       document.getElementById("companyName").textContent =
@@ -327,23 +458,223 @@
 
       document.getElementById("userRole").textContent =
         data.role || "—";
+
+      await loadWorkers();
+    }
+
+
+    async function loadWorkers() {
+      clearMessage("workersMessage");
+
+      const list =
+        document.getElementById("workersList");
+
+      list.textContent = "Loading…";
+
+      const { data, error } = await sb
+        .from("company_members")
+        .select(`
+          id,
+          user_id,
+          role,
+          active,
+          profiles (
+            full_name,
+            email
+          )
+        `)
+        .eq("company_id", companyId)
+        .order("joined_at", { ascending: true });
+
+      if (error) {
+        list.textContent = "";
+
+        showMessage(
+          "workersMessage",
+          error.message
+        );
+
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.innerHTML =
+          "<div>No members found.</div>";
+
+        return;
+      }
+
+      list.innerHTML = data.map(member => {
+
+        const profile = member.profiles || {};
+
+        const name =
+          profile.full_name?.trim() ||
+          (member.role === "admin" ? "Admin" : "Worker");
+
+        const email =
+          profile.email || "No email";
+
+        const roleClass =
+          member.role === "admin"
+            ? "admin"
+            : "worker";
+
+        const activeClass =
+          member.active
+            ? ""
+            : "inactive";
+
+        const activeText =
+          member.active
+            ? "Active"
+            : "Inactive";
+
+        return `
+          <div class="member">
+            <div class="member-name">
+              ${escapeHtml(name)}
+            </div>
+
+            <div class="member-email">
+              ${escapeHtml(email)}
+            </div>
+
+            <div class="member-meta">
+              <span class="pill ${roleClass}">
+                ${escapeHtml(member.role)}
+              </span>
+
+              <span class="pill ${activeClass}">
+                ${activeText}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+
+    async function sendInvitation() {
+      clearMessage("inviteMessage");
+
+      const workerName =
+        document.getElementById("workerName").value.trim();
+
+      const workerEmail =
+        document.getElementById("workerEmail").value.trim();
+
+      const button =
+        document.getElementById("sendInviteButton");
+
+      if (!workerEmail) {
+        showMessage(
+          "inviteMessage",
+          "Enter the worker's email address."
+        );
+        return;
+      }
+
+      if (!companyId) {
+        showMessage(
+          "inviteMessage",
+          "No company is loaded."
+        );
+        return;
+      }
+
+      const {
+        data: { session }
+      } = await sb.auth.getSession();
+
+      if (!session) {
+        showMessage(
+          "inviteMessage",
+          "Your admin session has expired. Sign in again."
+        );
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Sending…";
+
+      showMessage(
+        "inviteMessage",
+        "Creating invitation…",
+        "info"
+      );
+
+      try {
+        const response = await fetch(
+          SUPABASE_URL + "/functions/v1/invite-worker",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization":
+                "Bearer " + session.access_token,
+              "apikey":
+                SUPABASE_PUBLISHABLE_KEY
+            },
+
+            body: JSON.stringify({
+              company_id: companyId,
+              email: workerEmail,
+              full_name: workerName || null
+            })
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || "Invitation failed."
+          );
+        }
+
+        showMessage(
+          "inviteMessage",
+          "Invitation sent successfully.",
+          "success"
+        );
+
+        document.getElementById("workerName").value = "";
+        document.getElementById("workerEmail").value = "";
+
+      } catch (error) {
+
+        showMessage(
+          "inviteMessage",
+          error.message || "Invitation failed."
+        );
+
+      } finally {
+
+        button.disabled = false;
+        button.textContent = "Send invitation";
+      }
     }
 
 
     function showLogin() {
+      companyId = null;
+
       document.getElementById("dashboard").style.display =
         "none";
 
-      document.getElementById("loginView").style.display =
+      document.getElementById("loginCard").style.display =
         "block";
     }
 
 
     async function logout() {
       await sb.auth.signOut();
-      showLogin();
 
       document.getElementById("password").value = "";
+
+      showLogin();
 
       showMessage(
         "loginMessage",
@@ -365,8 +696,38 @@
 
 
     document
+      .getElementById("loginButton")
+      .addEventListener("click", login);
+
+
+    document
+      .getElementById("logoutButton")
+      .addEventListener("click", logout);
+
+
+    document
+      .getElementById("toggleInviteButton")
+      .addEventListener("click", () => {
+
+        const form =
+          document.getElementById("inviteForm");
+
+        form.style.display =
+          form.style.display === "block"
+            ? "none"
+            : "block";
+      });
+
+
+    document
+      .getElementById("sendInviteButton")
+      .addEventListener("click", sendInvitation);
+
+
+    document
       .getElementById("password")
-      .addEventListener("keydown", function(event) {
+      .addEventListener("keydown", event => {
+
         if (event.key === "Enter") {
           login();
         }
