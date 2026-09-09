@@ -1012,6 +1012,198 @@
       }
 
     }
+    /* ============================================
+   TIMESHEETS
+============================================ */
+
+.timesheetFilters {
+  display: flex;
+  align-items: end;
+
+  gap: 14px;
+
+  padding: 18px 22px;
+}
+
+.filterField {
+  width: 190px;
+}
+
+.filterField label {
+  margin-bottom: 6px;
+}
+
+.filterField input {
+  height: 42px;
+
+  padding: 8px 11px;
+
+  border-radius: 9px;
+}
+
+.timesheetLoadButton {
+  height: 42px;
+
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.timesheetStats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 16px;
+
+  margin-bottom: 22px;
+}
+
+.timesheetStatValue {
+  margin-top: 10px;
+
+  font-size: 27px;
+  font-weight: 780;
+
+  letter-spacing: -0.5px;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.timesheetTableWrap {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.timesheetTable {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 850px;
+}
+
+.timesheetTable th {
+  padding: 12px 16px;
+
+  background: #fafbfc;
+
+  border-bottom:
+    1px solid var(--border);
+
+  color: var(--muted);
+
+  text-align: left;
+
+  font-size: 11px;
+  font-weight: 750;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.4px;
+}
+
+.timesheetTable td {
+  padding: 15px 16px;
+
+  border-bottom:
+    1px solid var(--border);
+
+  font-size: 14px;
+
+  vertical-align: middle;
+}
+
+.timesheetTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.timesheetTable tbody tr:hover {
+  background: #fafbfc;
+}
+
+.timesheetWorker {
+  font-weight: 700;
+}
+
+.timesheetTime {
+  font-variant-numeric:
+    tabular-nums;
+
+  white-space: nowrap;
+}
+
+.timesheetWorked {
+  font-weight: 750;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.timesheetBreaks {
+  color: var(--muted);
+
+  white-space: nowrap;
+}
+
+.activeShiftPill {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: var(--green-soft);
+  color: #257849;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.completedShiftPill {
+  display: inline-flex;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #f0f2f5;
+  color: #647184;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tableEmpty {
+  padding: 45px !important;
+
+  color: var(--muted);
+
+  text-align: center !important;
+}
+
+@media (max-width: 900px) {
+
+  .timesheetStats {
+    grid-template-columns: 1fr;
+  }
+
+  .timesheetFilters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .filterField {
+    width: 100%;
+  }
+
+}
   </style>
 </head>
 
@@ -1514,22 +1706,167 @@
 
         <!-- TIMESHEETS -->
 
-        <section
-          id="page-timesheets"
-          class="pageSection"
+<section
+  id="page-timesheets"
+  class="pageSection"
+>
+
+  <div class="workersTop">
+
+    <div>
+      <div class="pageHeading">
+        Timesheets
+      </div>
+
+      <div class="pageDescription">
+        Review worked hours and breaks for your team.
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="sectionCard">
+
+    <div class="timesheetFilters">
+
+      <div class="filterField">
+        <label for="timesheetStart">
+          From
+        </label>
+
+        <input
+          id="timesheetStart"
+          type="date"
         >
+      </div>
 
-          <div class="placeholder">
 
-            <div class="placeholderTitle">
-              Timesheets
-            </div>
+      <div class="filterField">
+        <label for="timesheetEnd">
+          To
+        </label>
 
-            <div class="placeholderText">
-              Shift history, breaks and manual corrections will go here next.
-            </div>
+        <input
+          id="timesheetEnd"
+          type="date"
+        >
+      </div>
 
-          </div>
+
+      <button
+        id="loadTimesheetsButton"
+        class="refreshButton timesheetLoadButton"
+      >
+        Apply
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="timesheetStats">
+
+    <div class="statCard">
+      <div class="statLabel">
+        Total worked
+      </div>
+
+      <div
+        id="timesheetTotalWorked"
+        class="timesheetStatValue"
+      >
+        00:00
+      </div>
+    </div>
+
+
+    <div class="statCard">
+      <div class="statLabel">
+        Break time
+      </div>
+
+      <div
+        id="timesheetTotalBreaks"
+        class="timesheetStatValue"
+      >
+        00:00
+      </div>
+    </div>
+
+
+    <div class="statCard">
+      <div class="statLabel">
+        Shifts
+      </div>
+
+      <div
+        id="timesheetShiftCount"
+        class="timesheetStatValue"
+      >
+        0
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="sectionCard">
+
+    <div class="sectionHeader">
+
+      <div>
+        <div class="sectionTitle">
+          Shifts
+        </div>
+
+        <div
+          id="timesheetRangeText"
+          class="sectionSubtitle"
+        >
+          —
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="timesheetTableWrap">
+
+      <table class="timesheetTable">
+
+        <thead>
+          <tr>
+            <th>Worker</th>
+            <th>Date</th>
+            <th>Clock in</th>
+            <th>Clock out</th>
+            <th>Breaks</th>
+            <th>Break time</th>
+            <th>Worked</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="timesheetRows">
+
+          <tr>
+            <td
+              colspan="8"
+              class="tableEmpty"
+            >
+              Loading timesheets…
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
 
         </section>
 
