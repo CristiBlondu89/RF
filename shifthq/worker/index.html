@@ -2422,15 +2422,37 @@ function showActionPanel(
 
   if (shift?.clock_in) {
 
-    shiftBox.classList.remove(
-      "hidden"
+  shiftBox.classList.remove(
+    "hidden"
+  );
+
+
+  const clockIn =
+    new Date(
+      shift.clock_in
     );
 
 
-    const clockIn =
-      new Date(
-        shift.clock_in
+  if (status === "on_break") {
+
+    document.querySelector(
+      ".shiftLabel"
+    ).textContent =
+      "Current break";
+
+
+    clockInText.textContent =
+      "Worked today: " +
+      formatTimer(
+        shift.worked_seconds
       );
+
+  } else {
+
+    document.querySelector(
+      ".shiftLabel"
+    ).textContent =
+      "Worked today";
 
 
     clockInText.textContent =
@@ -2443,13 +2465,16 @@ function showActionPanel(
         }
       );
 
-
-    startShiftTimer(
-      shift.clock_in
-    );
+  }
 
 
-  } else {
+  startShiftTimer(
+    shift,
+    status
+  );
+
+
+} else {
 
     shiftBox.classList.add(
       "hidden"
@@ -2921,21 +2946,14 @@ function updateLocalWorkerStatus(
 
 
 function startShiftTimer(
-  clockIn
+  shift,
+  status
 ) {
 
   stopShiftTimer();
 
 
-  const start =
-    new Date(
-      clockIn
-    ).getTime();
-
-
-  if (
-    !Number.isFinite(start)
-  ) {
+  if (!shift) {
 
     shiftTime.textContent =
       "00:00:00";
@@ -2944,44 +2962,70 @@ function startShiftTimer(
   }
 
 
+  const baseWorkedSeconds =
+    Number(
+      shift.worked_seconds
+    ) || 0;
+
+
+  const baseBreakSeconds =
+    Number(
+      shift.current_break_seconds
+    ) || 0;
+
+
+  const timerStartedAt =
+    Date.now();
+
+
   function update() {
 
-    const seconds =
+    const sinceLoad =
       Math.max(
         0,
         Math.floor(
-          (Date.now() - start) /
-          1000
+          (
+            Date.now() -
+            timerStartedAt
+          ) / 1000
         )
       );
 
 
-    const hours =
-      Math.floor(
-        seconds / 3600
-      );
+    /*
+      While working:
+      worked time continues increasing.
+
+      While on break:
+      worked time stays frozen and
+      the break timer increases.
+    */
+
+    if (status === "on_break") {
+
+      const breakSeconds =
+        baseBreakSeconds +
+        sinceLoad;
 
 
-    const minutes =
-      Math.floor(
-        (seconds % 3600) /
-        60
-      );
+      shiftTime.textContent =
+        formatTimer(
+          breakSeconds
+        );
+
+    } else {
+
+      const workedSeconds =
+        baseWorkedSeconds +
+        sinceLoad;
 
 
-    const secs =
-      seconds % 60;
+      shiftTime.textContent =
+        formatTimer(
+          workedSeconds
+        );
 
-
-    shiftTime.textContent =
-      String(hours)
-        .padStart(2, "0")
-      + ":"
-      + String(minutes)
-        .padStart(2, "0")
-      + ":"
-      + String(secs)
-        .padStart(2, "0");
+    }
 
   }
 
@@ -2994,6 +3038,45 @@ function startShiftTimer(
       update,
       1000
     );
+
+}
+  function formatTimer(seconds) {
+
+  const safeSeconds =
+    Math.max(
+      0,
+      Math.floor(
+        Number(seconds) || 0
+      )
+    );
+
+
+  const hours =
+    Math.floor(
+      safeSeconds / 3600
+    );
+
+
+  const minutes =
+    Math.floor(
+      (safeSeconds % 3600) / 60
+    );
+
+
+  const secs =
+    safeSeconds % 60;
+
+
+  return (
+    String(hours)
+      .padStart(2, "0")
+    + ":"
+    + String(minutes)
+      .padStart(2, "0")
+    + ":"
+    + String(secs)
+      .padStart(2, "0")
+  );
 
 }
 
