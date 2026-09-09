@@ -437,132 +437,203 @@
   color: white;
 }
 
-    /* -------------------------------------------------- */
-    /* ACTIONS */
-    /* -------------------------------------------------- */
+   /* -------------------------------------------------- */
+/* ACTIONS */
+/* -------------------------------------------------- */
 
-    .actionPanel {
-      width: 100%;
-      max-width: 600px;
-      text-align: center;
-    }
+.actionPanel {
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+}
 
-    .actionName {
-      font-size: 38px;
-      font-weight: 780;
-      margin-bottom: 8px;
-    }
+.actionName {
+  font-size: 44px;
+  line-height: 1.1;
+  font-weight: 780;
+  letter-spacing: -0.8px;
+  margin-bottom: 14px;
+}
 
-    .statusBadge {
-      display: inline-block;
-      border-radius: 999px;
-      padding: 9px 17px;
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      background: #253447;
-      color: white;
-    }
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-    .statusBadge.working {
-      background: rgba(72,199,116,0.16);
-      color: #78e59b;
-    }
+  border-radius: 999px;
+  padding: 9px 18px;
 
-    .statusBadge.on_break {
-      background: rgba(245,185,66,0.16);
-      color: #ffd070;
-    }
+  font-size: 15px;
+  font-weight: 700;
 
-    .statusBadge.off {
-      background: rgba(255,91,91,0.13);
-      color: #ff8b8b;
-    }
+  margin-bottom: 28px;
 
-    .shiftBox {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 27px;
-      margin-bottom: 24px;
-    }
+  background: #253447;
+  color: white;
+}
 
-    .shiftLabel {
-      color: var(--muted);
-      font-size: 15px;
-      margin-bottom: 6px;
-    }
+.statusBadge.working {
+  background: rgba(72, 199, 116, 0.16);
+  color: #78e59b;
+}
 
-    .shiftTime {
-      font-size: 52px;
-      font-weight: 780;
-      font-variant-numeric: tabular-nums;
-    }
+.statusBadge.on_break {
+  background: rgba(245, 185, 66, 0.16);
+  color: #ffd070;
+}
 
-    .clockInText {
-      color: var(--muted);
-      margin-top: 7px;
-    }
+.statusBadge.off {
+  background: rgba(255, 91, 91, 0.14);
+  color: #ff8b8b;
+}
 
-    .actionButtons {
-      display: grid;
-      gap: 14px;
-    }
 
-    .actionButton {
-      width: 100%;
-      min-height: 76px;
-      border: 0;
-      border-radius: 18px;
-      font-size: 23px;
-      font-weight: 780;
-      background: white;
-      color: #111;
-    }
+/* CURRENT SHIFT */
 
-    .actionButton.secondary {
-      background: #243347;
-      color: white;
-    }
+.shiftBox {
+  background: #152130;
 
-    .actionButton.danger {
-      background: rgba(255,91,91,0.15);
-      color: #ff8d8d;
-      border: 1px solid rgba(255,91,91,0.2);
-    }
+  border:
+    1px solid rgba(255,255,255,0.08);
 
-    .actionMessage {
-      min-height: 24px;
-      color: var(--muted);
-      margin-top: 16px;
-    }
+  border-radius: 22px;
 
-    .backButton {
-      margin-top: 22px;
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      font-size: 16px;
-    }
+  padding: 24px;
 
-    @media (max-width: 850px) {
-      #kioskScreen {
-        grid-template-columns: 320px 1fr;
-      }
+  margin-bottom: 20px;
+}
 
-      .keypad {
-        grid-template-columns: repeat(3, 82px);
-      }
+.shiftLabel {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
 
-      .key {
-        height: 68px;
-      }
-    }
-  </style>
-</head>
+.shiftTime {
+  font-size: 48px;
+  line-height: 1.1;
 
-<body>
+  font-weight: 760;
 
+  letter-spacing: 1px;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.clockInText {
+  color: var(--muted);
+  margin-top: 9px;
+  font-size: 14px;
+}
+
+
+/* ACTION BUTTONS */
+
+.actionButtons {
+  display: grid;
+  gap: 12px;
+}
+
+.actionButton {
+  width: 100%;
+  min-height: 78px;
+
+  border: 0;
+  border-radius: 18px;
+
+  font-size: 22px;
+  font-weight: 760;
+
+  background: #ffffff;
+  color: #101820;
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,0.14);
+
+  transition:
+    transform 0.08s ease,
+    opacity 0.08s ease,
+    background 0.08s ease;
+}
+
+.actionButton:hover {
+  background: #f1f4f7;
+}
+
+.actionButton:active {
+  transform: scale(0.985);
+}
+
+.actionButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+
+/* BREAK */
+
+.actionButton.secondary {
+  background: #24364a;
+  color: #ffffff;
+
+  border:
+    1px solid rgba(255,255,255,0.07);
+}
+
+.actionButton.secondary:hover {
+  background: #2c425a;
+}
+
+
+/* CLOCK OUT */
+
+.actionButton.danger {
+  background: rgba(255,91,91,0.13);
+  color: #ff8b8b;
+
+  border:
+    1px solid rgba(255,91,91,0.20);
+}
+
+.actionButton.danger:hover {
+  background: rgba(255,91,91,0.19);
+}
+
+
+/* MESSAGE */
+
+.actionMessage {
+  height: 24px;
+  color: var(--muted);
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+
+/* BACK / CANCEL */
+
+.backButton {
+  margin-top: 14px;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--muted);
+
+  font-size: 15px;
+
+  padding: 10px 18px;
+
+  border-radius: 10px;
+}
+
+.backButton:hover {
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+    
 <!-- ==================================================== -->
 <!-- ONE-TIME COMPANY SETUP -->
 <!-- ==================================================== -->
