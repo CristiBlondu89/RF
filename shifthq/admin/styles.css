@@ -1365,3 +1365,26 @@
     padding-right: 18px;
   }
 }       
+.shiftModalTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shiftEditButton {
+  border: 1px solid #dbe1e7;
+  border-radius: 9px;
+  padding: 7px 11px;
+
+  background: #ffffff;
+  color: #374151;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.shiftEditButton:hover {
+  background: #f8fafc;
+}
