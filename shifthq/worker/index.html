@@ -1790,6 +1790,30 @@ function showKiosk() {
   resetInactivityTimer();
 
 }
+  if ("serviceWorker" in navigator) {
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker
+        .register("/shifthq/worker/sw.js")
+        .then(() => {
+          console.log(
+            "ShiftHQ kiosk service worker registered."
+          );
+        })
+        .catch(error => {
+          console.error(
+            "Service worker registration failed:",
+            error
+          );
+        });
+
+    }
+  );
+
+}
 
 
 initialise();
