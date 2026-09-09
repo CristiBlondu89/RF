@@ -8,9 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -38,6 +36,11 @@
       font-size: 30px;
     }
 
+    h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
     .subtitle {
       color: #666;
       margin-bottom: 28px;
@@ -49,6 +52,21 @@
       background: #f0f2f5;
       margin-bottom: 20px;
       font-size: 14px;
+    }
+
+    .success {
+      background: #eaf8ee;
+      color: #176b31;
+    }
+
+    .error {
+      background: #fdecec;
+      color: #9b1c1c;
+    }
+
+    .breakStatus {
+      background: #fff5dd;
+      color: #825b00;
     }
 
     label {
@@ -81,6 +99,7 @@
       cursor: pointer;
       background: #111;
       color: white;
+      margin-top: 10px;
     }
 
     button:disabled {
@@ -88,617 +107,1180 @@
       cursor: default;
     }
 
-    .hidden {
-      display: none;
+    .secondaryButton {
+      background: #f0f2f5;
+      color: #111;
     }
 
-    .success {
-      background: #eaf8ee;
-      color: #176b31;
-    }
-
-    .error {
+    .clockOutButton {
       background: #fdecec;
       color: #9b1c1c;
     }
 
-    .dashboard {
-      text-align: center;
+    .hidden {
+      display: none !important;
     }
 
-    .dashboard h2 {
-      margin: 0 0 8px;
-      font-size: 24px;
+    .workerInfo {
+      margin-bottom: 24px;
     }
 
-    .dashboard p {
+    .workerEmail {
       color: #666;
-      margin: 0 0 24px;
+      margin-top: 5px;
+      word-break: break-word;
     }
 
-    .logoutButton {
-      margin-top: 14px;
-      background: #f0f2f5;
-      color: #111;
+    .timeBox {
+      text-align: center;
+      background: #f5f7fa;
+      border-radius: 20px;
+      padding: 24px 16px;
+      margin: 20px 0;
+    }
+
+    .timeLabel {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .timer {
+      font-size: 42px;
+      line-height: 1.1;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -1px;
+    }
+
+    .clockedInAt {
+      color: #777;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .dashboardStatus {
+      text-align: center;
+      font-weight: 600;
     }
   </style>
 </head>
 
 <body>
+<div class="card">
 
-  <div class="card">
+  <h1>ShiftHQ</h1>
 
-    <h1>ShiftHQ</h1>
+  <!-- LOGIN -->
+  <div id="loginSection" class="hidden">
 
-    <!-- NORMAL WORKER LOGIN -->
+    <div class="subtitle">Worker login</div>
 
-    <div id="loginSection" class="hidden">
-
-      <div class="subtitle">
-        Worker login
-      </div>
-
-      <div id="loginStatus" class="status">
-        Enter your company details and PIN.
-      </div>
-
-      <label for="companyCode">
-        Company code
-      </label>
-
-      <input
-        id="companyCode"
-        type="text"
-        autocomplete="organization"
-        autocapitalize="characters"
-        placeholder="SHIFT001"
-      />
-
-      <label for="email">
-        Email
-      </label>
-
-      <input
-        id="email"
-        type="email"
-        autocomplete="email"
-        placeholder="worker@example.com"
-      />
-
-      <label for="loginPin">
-        4-digit PIN
-      </label>
-
-      <input
-        id="loginPin"
-        type="password"
-        inputmode="numeric"
-        autocomplete="current-password"
-        maxlength="4"
-        placeholder="••••"
-      />
-
-      <button id="loginButton">
-        Sign in
-      </button>
-
+    <div id="loginStatus" class="status">
+      Enter your company details and PIN.
     </div>
 
+    <label for="companyCode">Company code</label>
+    <input
+      id="companyCode"
+      type="text"
+      autocapitalize="characters"
+      placeholder="SHIFT001"
+    />
 
-    <!-- INVITATION ACTIVATION -->
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      autocomplete="email"
+      placeholder="worker@example.com"
+    />
 
-    <div id="activationSection" class="hidden">
+    <label for="loginPin">4-digit PIN</label>
+    <input
+      id="loginPin"
+      type="password"
+      inputmode="numeric"
+      maxlength="4"
+      placeholder="••••"
+    />
 
-      <div class="subtitle">
-        Worker activation
-      </div>
-
-      <div id="activationStatus" class="status">
-        Checking your invitation...
-      </div>
-
-      <div id="activationForm" class="hidden">
-
-        <label for="pin">
-          Choose a 4-digit PIN
-        </label>
-
-        <input
-          id="pin"
-          type="password"
-          inputmode="numeric"
-          maxlength="4"
-          placeholder="••••"
-        />
-
-        <label for="confirmPin">
-          Confirm PIN
-        </label>
-
-        <input
-          id="confirmPin"
-          type="password"
-          inputmode="numeric"
-          maxlength="4"
-          placeholder="••••"
-        />
-
-        <button id="activateButton">
-          Activate worker account
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- LOGGED-IN WORKER -->
-
-    <div id="dashboardSection" class="dashboard hidden">
-
-      <div class="subtitle">
-        Worker dashboard
-      </div>
-
-      <h2 id="workerTitle">
-        You're signed in
-      </h2>
-
-      <p id="workerEmail"></p>
-
-      <div class="status success">
-        Worker session active
-      </div>
-
-      <button id="logoutButton" class="logoutButton">
-        Sign out
-      </button>
-
-    </div>
+    <button id="loginButton">Sign in</button>
 
   </div>
 
 
-  <script>
-    const SUPABASE_URL =
-      "https://diqxssqucdylekeexaxk.supabase.co";
+  <!-- ACTIVATION -->
+  <div id="activationSection" class="hidden">
 
-    const SUPABASE_ANON_KEY =
-      "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
+    <div class="subtitle">Worker activation</div>
+
+    <div id="activationStatus" class="status">
+      Checking your invitation...
+    </div>
+
+    <div id="activationForm" class="hidden">
+
+      <label for="pin">Choose a 4-digit PIN</label>
+
+      <input
+        id="pin"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="••••"
+      />
+
+      <label for="confirmPin">Confirm PIN</label>
+
+      <input
+        id="confirmPin"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="••••"
+      />
+
+      <button id="activateButton">
+        Activate worker account
+      </button>
+
+    </div>
+  </div>
 
 
-    const supabaseClient = supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
+  <!-- WORKER DASHBOARD -->
+  <div id="dashboardSection" class="hidden">
+
+    <div class="subtitle">Worker dashboard</div>
+
+    <div class="workerInfo">
+      <h2 id="workerName">Worker</h2>
+      <div id="workerEmail" class="workerEmail"></div>
+    </div>
+
+    <div
+      id="dashboardStatus"
+      class="status dashboardStatus">
+      Loading shift...
+    </div>
+
+
+    <div id="timeBox" class="timeBox hidden">
+
+      <div class="timeLabel">
+        Current shift
+      </div>
+
+      <div id="shiftTimer" class="timer">
+        00:00:00
+      </div>
+
+      <div
+        id="clockedInAt"
+        class="clockedInAt">
+      </div>
+
+    </div>
+
+
+    <!-- OFF -->
+    <button
+      id="clockInButton"
+      class="hidden">
+      Clock In
+    </button>
+
+
+    <!-- WORKING -->
+    <button
+      id="startBreakButton"
+      class="secondaryButton hidden">
+      Start Break
+    </button>
+
+
+    <!-- ON BREAK -->
+    <button
+      id="endBreakButton"
+      class="hidden">
+      End Break
+    </button>
+
+
+    <!-- WORKING OR BREAK -->
+    <button
+      id="clockOutButton"
+      class="clockOutButton hidden">
+      Clock Out
+    </button>
+
+
+    <button
+      id="logoutButton"
+      class="secondaryButton">
+      Sign out
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+const SUPABASE_URL =
+  "https://diqxssqucdylekeexaxk.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+let currentCompanyId = null;
+let currentShift = null;
+let timerInterval = null;
+
+
+/* -------------------------------------------------------
+   ELEMENTS
+------------------------------------------------------- */
+
+const loginSection =
+  document.getElementById("loginSection");
+
+const activationSection =
+  document.getElementById("activationSection");
+
+const dashboardSection =
+  document.getElementById("dashboardSection");
+
+const loginStatus =
+  document.getElementById("loginStatus");
+
+const activationStatus =
+  document.getElementById("activationStatus");
+
+const dashboardStatus =
+  document.getElementById("dashboardStatus");
+
+const activationForm =
+  document.getElementById("activationForm");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const activateButton =
+  document.getElementById("activateButton");
+
+const clockInButton =
+  document.getElementById("clockInButton");
+
+const startBreakButton =
+  document.getElementById("startBreakButton");
+
+const endBreakButton =
+  document.getElementById("endBreakButton");
+
+const clockOutButton =
+  document.getElementById("clockOutButton");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+const timeBox =
+  document.getElementById("timeBox");
+
+const shiftTimer =
+  document.getElementById("shiftTimer");
+
+const clockedInAt =
+  document.getElementById("clockedInAt");
+
+
+/* -------------------------------------------------------
+   STATUS HELPERS
+------------------------------------------------------- */
+
+function showLoginStatus(message, type = "") {
+  loginStatus.textContent = message;
+  loginStatus.className = "status";
+
+  if (type) {
+    loginStatus.classList.add(type);
+  }
+}
+
+
+function showActivationStatus(message, type = "") {
+  activationStatus.textContent = message;
+  activationStatus.className = "status";
+
+  if (type) {
+    activationStatus.classList.add(type);
+  }
+}
+
+
+function showDashboardStatus(message, type = "") {
+  dashboardStatus.textContent = message;
+  dashboardStatus.className =
+    "status dashboardStatus";
+
+  if (type) {
+    dashboardStatus.classList.add(type);
+  }
+}
+
+
+function hideShiftButtons() {
+  clockInButton.classList.add("hidden");
+  startBreakButton.classList.add("hidden");
+  endBreakButton.classList.add("hidden");
+  clockOutButton.classList.add("hidden");
+}
+
+
+function setButtonsDisabled(disabled) {
+  clockInButton.disabled = disabled;
+  startBreakButton.disabled = disabled;
+  endBreakButton.disabled = disabled;
+  clockOutButton.disabled = disabled;
+}
+
+
+/* -------------------------------------------------------
+   TIMER
+------------------------------------------------------- */
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+
+function formatDuration(seconds) {
+  const hours =
+    Math.floor(seconds / 3600);
+
+  const minutes =
+    Math.floor((seconds % 3600) / 60);
+
+  const secs =
+    Math.floor(seconds % 60);
+
+  return (
+    String(hours).padStart(2, "0") +
+    ":" +
+    String(minutes).padStart(2, "0") +
+    ":" +
+    String(secs).padStart(2, "0")
+  );
+}
+
+
+function startTimer(clockIn) {
+  stopTimer();
+
+  const start =
+    new Date(clockIn).getTime();
+
+  function update() {
+    const seconds =
+      Math.max(
+        0,
+        Math.floor(
+          (Date.now() - start) / 1000
+        )
+      );
+
+    shiftTimer.textContent =
+      formatDuration(seconds);
+  }
+
+  update();
+
+  timerInterval =
+    setInterval(update, 1000);
+}
+
+
+/* -------------------------------------------------------
+   COMPANY
+------------------------------------------------------- */
+
+async function loadWorkerCompany() {
+
+  const {
+    data: { user }
+  } = await supabaseClient.auth.getUser();
+
+  if (!user) {
+    throw new Error(
+      "Worker session is missing."
+    );
+  }
+
+
+  /*
+    RLS should only expose companies/memberships
+    the signed-in worker is allowed to see.
+  */
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("company_members")
+    .select(`
+      company_id,
+      role,
+      active,
+      companies (
+        id,
+        name,
+        company_code
+      )
+    `)
+    .eq("user_id", user.id)
+    .eq("role", "worker")
+    .eq("active", true)
+    .limit(1)
+    .maybeSingle();
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  if (!data) {
+    throw new Error(
+      "No active worker company was found."
+    );
+  }
+
+
+  currentCompanyId =
+    data.company_id;
+
+  return data;
+}
+
+
+/* -------------------------------------------------------
+   LOAD CURRENT SHIFT STATUS
+------------------------------------------------------- */
+
+async function refreshShiftStatus() {
+
+  if (!currentCompanyId) {
+    return;
+  }
+
+  setButtonsDisabled(true);
+
+  const {
+    data,
+    error
+  } = await supabaseClient.rpc(
+    "get_worker_shift_status",
+    {
+      p_company_id:
+        currentCompanyId
+    }
+  );
+
+
+  if (error) {
+    showDashboardStatus(
+      error.message,
+      "error"
+    );
+
+    setButtonsDisabled(false);
+    return;
+  }
+
+
+  const shift =
+    data && data.length
+      ? data[0]
+      : null;
+
+
+  currentShift = shift;
+
+  hideShiftButtons();
+
+
+  if (!shift || shift.status === "off") {
+
+    stopTimer();
+
+    timeBox.classList.add("hidden");
+
+    showDashboardStatus(
+      "Not working"
+    );
+
+    clockInButton.classList.remove(
+      "hidden"
+    );
+
+    setButtonsDisabled(false);
+    return;
+  }
+
+
+  timeBox.classList.remove("hidden");
+
+  startTimer(shift.clock_in);
+
+
+  const clockInDate =
+    new Date(shift.clock_in);
+
+
+  clockedInAt.textContent =
+    "Clocked in at " +
+    clockInDate.toLocaleTimeString(
+      [],
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
     );
 
 
-    const loginSection =
-      document.getElementById("loginSection");
+  if (shift.status === "on_break") {
 
-    const activationSection =
-      document.getElementById("activationSection");
+    showDashboardStatus(
+      "On break",
+      "breakStatus"
+    );
 
-    const dashboardSection =
-      document.getElementById("dashboardSection");
+    endBreakButton.classList.remove(
+      "hidden"
+    );
+
+    clockOutButton.classList.remove(
+      "hidden"
+    );
+
+  } else {
+
+    showDashboardStatus(
+      "Working",
+      "success"
+    );
+
+    startBreakButton.classList.remove(
+      "hidden"
+    );
+
+    clockOutButton.classList.remove(
+      "hidden"
+    );
+  }
 
 
-    const loginStatus =
-      document.getElementById("loginStatus");
-
-    const activationStatus =
-      document.getElementById("activationStatus");
+  setButtonsDisabled(false);
+}
 
 
-    const loginButton =
-      document.getElementById("loginButton");
+/* -------------------------------------------------------
+   RPC ACTION
+------------------------------------------------------- */
 
-    const activateButton =
-      document.getElementById("activateButton");
+async function runShiftAction(
+  functionName,
+  loadingMessage
+) {
 
-    const logoutButton =
-      document.getElementById("logoutButton");
+  setButtonsDisabled(true);
 
-    const activationForm =
-      document.getElementById("activationForm");
+  showDashboardStatus(
+    loadingMessage
+  );
 
 
-    function showLoginStatus(message, type = "") {
-      loginStatus.textContent = message;
-      loginStatus.className = "status";
+  const {
+    error
+  } = await supabaseClient.rpc(
+    functionName,
+    {
+      p_company_id:
+        currentCompanyId
+    }
+  );
 
-      if (type) {
-        loginStatus.classList.add(type);
-      }
+
+  if (error) {
+
+    showDashboardStatus(
+      error.message,
+      "error"
+    );
+
+    setButtonsDisabled(false);
+    return;
+  }
+
+
+  await refreshShiftStatus();
+}
+
+
+/* -------------------------------------------------------
+   CLOCK BUTTONS
+------------------------------------------------------- */
+
+clockInButton.addEventListener(
+  "click",
+  async () => {
+
+    await runShiftAction(
+      "worker_clock_in",
+      "Clocking in..."
+    );
+
+  }
+);
+
+
+startBreakButton.addEventListener(
+  "click",
+  async () => {
+
+    await runShiftAction(
+      "worker_start_break",
+      "Starting break..."
+    );
+
+  }
+);
+
+
+endBreakButton.addEventListener(
+  "click",
+  async () => {
+
+    await runShiftAction(
+      "worker_end_break",
+      "Ending break..."
+    );
+
+  }
+);
+
+
+clockOutButton.addEventListener(
+  "click",
+  async () => {
+
+    await runShiftAction(
+      "worker_clock_out",
+      "Clocking out..."
+    );
+
+  }
+);
+
+
+/* -------------------------------------------------------
+   LOGIN
+------------------------------------------------------- */
+
+loginButton.addEventListener(
+  "click",
+  async () => {
+
+    const companyCode =
+      document
+        .getElementById("companyCode")
+        .value
+        .trim()
+        .toUpperCase();
+
+    const email =
+      document
+        .getElementById("email")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const pin =
+      document
+        .getElementById("loginPin")
+        .value
+        .trim();
+
+
+    if (!companyCode) {
+      showLoginStatus(
+        "Enter your company code.",
+        "error"
+      );
+      return;
     }
 
 
-    function showActivationStatus(message, type = "") {
-      activationStatus.textContent = message;
-      activationStatus.className = "status";
-
-      if (type) {
-        activationStatus.classList.add(type);
-      }
+    if (!email) {
+      showLoginStatus(
+        "Enter your email address.",
+        "error"
+      );
+      return;
     }
 
 
-    function showLogin() {
-      activationSection.classList.add("hidden");
-      dashboardSection.classList.add("hidden");
-
-      loginSection.classList.remove("hidden");
+    if (!/^[0-9]{4}$/.test(pin)) {
+      showLoginStatus(
+        "PIN must be exactly 4 digits.",
+        "error"
+      );
+      return;
     }
 
 
-    function showDashboard(session) {
-      loginSection.classList.add("hidden");
-      activationSection.classList.add("hidden");
+    loginButton.disabled = true;
 
-      dashboardSection.classList.remove("hidden");
-
-      document.getElementById("workerEmail").textContent =
-        session.user.email || "";
-    }
+    showLoginStatus("Signing in...");
 
 
-    // --------------------------------------------------
-    // WORKER PIN LOGIN
-    // --------------------------------------------------
+    try {
 
-    loginButton.addEventListener("click", async () => {
+      const response = await fetch(
+        `${SUPABASE_URL}/functions/v1/worker-login`,
+        {
+          method: "POST",
 
-      const companyCode =
-        document.getElementById("companyCode")
-          .value
-          .trim()
-          .toUpperCase();
+          headers: {
+            "Content-Type":
+              "application/json",
 
-      const email =
-        document.getElementById("email")
-          .value
-          .trim()
-          .toLowerCase();
+            "apikey":
+              SUPABASE_ANON_KEY
+          },
 
-      const pin =
-        document.getElementById("loginPin")
-          .value
-          .trim();
+          body: JSON.stringify({
+            company_code:
+              companyCode,
 
+            email:
+              email,
 
-      if (!companyCode) {
-        showLoginStatus(
-          "Enter your company code.",
-          "error"
-        );
-        return;
-      }
-
-
-      if (!email) {
-        showLoginStatus(
-          "Enter your email address.",
-          "error"
-        );
-        return;
-      }
-
-
-      if (!/^[0-9]{4}$/.test(pin)) {
-        showLoginStatus(
-          "PIN must be exactly 4 digits.",
-          "error"
-        );
-        return;
-      }
-
-
-      loginButton.disabled = true;
-
-      showLoginStatus("Signing in...");
-
-
-      try {
-
-        const response = await fetch(
-          `${SUPABASE_URL}/functions/v1/worker-login`,
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type": "application/json",
-              "apikey": SUPABASE_ANON_KEY
-            },
-
-            body: JSON.stringify({
-              company_code: companyCode,
-              email: email,
-              pin: pin
-            })
-          }
-        );
-
-
-        const result = await response.json();
-
-
-        if (!response.ok) {
-
-          showLoginStatus(
-            result.error ||
-            "Could not sign in.",
-            "error"
-          );
-
-          loginButton.disabled = false;
-          return;
+            pin:
+              pin
+          })
         }
+      );
 
 
-        if (!result.token_hash) {
-
-          showLoginStatus(
-            "The server did not return a login token.",
-            "error"
-          );
-
-          loginButton.disabled = false;
-          return;
-        }
+      const result =
+        await response.json();
 
 
-        // Exchange the one-time server token
-        // for a normal Supabase Auth session.
-
-        const {
-          data,
-          error
-        } = await supabaseClient.auth.verifyOtp({
-          token_hash: result.token_hash,
-          type: "magiclink"
-        });
-
-
-        if (error || !data.session) {
-
-          showLoginStatus(
-            error?.message ||
-            "Could not create your session.",
-            "error"
-          );
-
-          loginButton.disabled = false;
-          return;
-        }
-
-
-        // PIN no longer needed in the page.
-
-        document.getElementById("loginPin").value = "";
-
-
-        showDashboard(data.session);
-
-      } catch (error) {
-
-        console.error(error);
+      if (!response.ok) {
 
         showLoginStatus(
-          "Could not connect to ShiftHQ.",
+          result.error ||
+          "Could not sign in.",
           "error"
         );
 
         loginButton.disabled = false;
-      }
-
-    });
-
-
-    // --------------------------------------------------
-    // WORKER ACTIVATION
-    // --------------------------------------------------
-
-    activateButton.addEventListener("click", async () => {
-
-      const pin =
-        document.getElementById("pin")
-          .value
-          .trim();
-
-      const confirmPin =
-        document.getElementById("confirmPin")
-          .value
-          .trim();
-
-
-      if (!/^[0-9]{4}$/.test(pin)) {
-
-        showActivationStatus(
-          "PIN must be exactly 4 digits.",
-          "error"
-        );
-
         return;
       }
-
-
-      if (pin !== confirmPin) {
-
-        showActivationStatus(
-          "The two PINs do not match.",
-          "error"
-        );
-
-        return;
-      }
-
-
-      activateButton.disabled = true;
-
-      showActivationStatus(
-        "Activating your account..."
-      );
 
 
       const {
+        data,
         error
-      } = await supabaseClient.rpc(
-        "accept_worker_invitation",
-        {
-          p_invite_token:
-            window.shiftHQInviteToken,
+      } =
+        await supabaseClient.auth.verifyOtp({
+          token_hash:
+            result.token_hash,
 
-          p_pin: pin
-        }
-      );
+          type:
+            "magiclink"
+        });
 
 
-      if (error) {
+      if (error || !data.session) {
 
-        showActivationStatus(
-          error.message,
+        showLoginStatus(
+          error?.message ||
+          "Could not create your session.",
           "error"
         );
 
-        activateButton.disabled = false;
+        loginButton.disabled = false;
         return;
       }
 
 
-      showActivationStatus(
-        "Your ShiftHQ worker account is active.",
-        "success"
+      /*
+        We already know the company ID because the
+        server verified the company code + PIN.
+      */
+
+      currentCompanyId =
+        result.company_id;
+
+
+      document
+        .getElementById("loginPin")
+        .value = "";
+
+
+      await showDashboard(
+        data.session
       );
 
+    } catch (error) {
 
-      activationForm.classList.add("hidden");
-
-    });
-
-
-    // --------------------------------------------------
-    // SIGN OUT
-    // --------------------------------------------------
-
-    logoutButton.addEventListener("click", async () => {
-
-      await supabaseClient.auth.signOut();
-
-      document.getElementById("companyCode").value = "";
-      document.getElementById("email").value = "";
-      document.getElementById("loginPin").value = "";
+      console.error(error);
 
       showLoginStatus(
-        "Enter your company details and PIN."
+        "Could not connect to ShiftHQ.",
+        "error"
       );
 
       loginButton.disabled = false;
+    }
 
-      showLogin();
-
-    });
-
-
-    // --------------------------------------------------
-    // INITIALISE PAGE
-    // --------------------------------------------------
-
-    async function initialise() {
-
-      const params =
-        new URLSearchParams(
-          window.location.search
-        );
-
-      const inviteToken =
-        params.get("invite");
+  }
+);
 
 
-      const {
-        data: { session },
-        error
-      } = await supabaseClient.auth.getSession();
+/* -------------------------------------------------------
+   ACTIVATION
+------------------------------------------------------- */
+
+activateButton.addEventListener(
+  "click",
+  async () => {
+
+    const pin =
+      document
+        .getElementById("pin")
+        .value
+        .trim();
+
+    const confirmPin =
+      document
+        .getElementById("confirmPin")
+        .value
+        .trim();
 
 
-      if (error) {
+    if (!/^[0-9]{4}$/.test(pin)) {
 
-        showLogin();
+      showActivationStatus(
+        "PIN must be exactly 4 digits.",
+        "error"
+      );
 
-        showLoginStatus(
-          "Could not verify your login.",
-          "error"
-        );
+      return;
+    }
 
-        return;
+
+    if (pin !== confirmPin) {
+
+      showActivationStatus(
+        "The two PINs do not match.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    activateButton.disabled = true;
+
+    showActivationStatus(
+      "Activating your account..."
+    );
+
+
+    const {
+      error
+    } = await supabaseClient.rpc(
+      "accept_worker_invitation",
+      {
+        p_invite_token:
+          window.shiftHQInviteToken,
+
+        p_pin:
+          pin
       }
+    );
 
 
-      /*
-        INVITATION MODE
+    if (error) {
 
-        An invite URL always gets priority, even if
-        Supabase already has a session in this browser.
-      */
+      showActivationStatus(
+        error.message,
+        "error"
+      );
 
-      if (inviteToken) {
-
-        activationSection.classList.remove("hidden");
-
-        loginSection.classList.add("hidden");
-        dashboardSection.classList.add("hidden");
+      activateButton.disabled = false;
+      return;
+    }
 
 
-        if (!session) {
+    showActivationStatus(
+      "Your ShiftHQ worker account is active.",
+      "success"
+    );
 
-          showActivationStatus(
-            "Your invitation login has not been completed yet.",
-            "error"
-          );
+    activationForm.classList.add(
+      "hidden"
+    );
 
-          return;
-        }
-
-
-        window.shiftHQInviteToken =
-          inviteToken;
+  }
+);
 
 
-        showActivationStatus(
-          `Signed in as ${session.user.email}. Choose your worker PIN below.`
-        );
+/* -------------------------------------------------------
+   DASHBOARD
+------------------------------------------------------- */
+
+async function showDashboard(session) {
+
+  loginSection.classList.add(
+    "hidden"
+  );
+
+  activationSection.classList.add(
+    "hidden"
+  );
+
+  dashboardSection.classList.remove(
+    "hidden"
+  );
 
 
-        activationForm.classList.remove("hidden");
+  document
+    .getElementById("workerEmail")
+    .textContent =
+      session.user.email || "";
 
-        return;
+
+  showDashboardStatus(
+    "Loading shift..."
+  );
+
+
+  try {
+
+    /*
+      After a fresh PIN login we already have the
+      company ID.
+
+      After reopening the website with an existing
+      session, we retrieve it from membership.
+    */
+
+    if (!currentCompanyId) {
+
+      const membership =
+        await loadWorkerCompany();
+
+
+      const companyName =
+        membership.companies?.name;
+
+
+      if (companyName) {
+        document
+          .getElementById("workerName")
+          .textContent =
+            companyName;
       }
-
-
-      /*
-        EXISTING SESSION
-
-        If this browser already has a worker Supabase
-        session, don't ask for the PIN again.
-      */
-
-      if (session) {
-
-        showDashboard(session);
-
-        return;
-      }
-
-
-      // No invitation and no existing session:
-      // show normal PIN login.
-
-      showLogin();
 
     }
 
 
-    initialise();
-  </script>
+    await refreshShiftStatus();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showDashboardStatus(
+      error.message ||
+      "Could not load worker account.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* -------------------------------------------------------
+   SIGN OUT
+------------------------------------------------------- */
+
+logoutButton.addEventListener(
+  "click",
+  async () => {
+
+    stopTimer();
+
+    await supabaseClient.auth.signOut();
+
+    currentCompanyId = null;
+    currentShift = null;
+
+
+    dashboardSection.classList.add(
+      "hidden"
+    );
+
+    activationSection.classList.add(
+      "hidden"
+    );
+
+    loginSection.classList.remove(
+      "hidden"
+    );
+
+
+    document
+      .getElementById("companyCode")
+      .value = "";
+
+    document
+      .getElementById("email")
+      .value = "";
+
+    document
+      .getElementById("loginPin")
+      .value = "";
+
+
+    showLoginStatus(
+      "Enter your company details and PIN."
+    );
+
+
+    loginButton.disabled = false;
+
+  }
+);
+
+
+/* -------------------------------------------------------
+   INITIALISE
+------------------------------------------------------- */
+
+async function initialise() {
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const inviteToken =
+    params.get("invite");
+
+
+  const {
+    data: { session },
+    error
+  } =
+    await supabaseClient.auth.getSession();
+
+
+  if (error) {
+
+    loginSection.classList.remove(
+      "hidden"
+    );
+
+    showLoginStatus(
+      "Could not verify your login.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  /*
+    INVITATION ACTIVATION
+  */
+
+  if (inviteToken) {
+
+    activationSection.classList.remove(
+      "hidden"
+    );
+
+
+    if (!session) {
+
+      showActivationStatus(
+        "Your invitation login has not been completed yet.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    window.shiftHQInviteToken =
+      inviteToken;
+
+
+    showActivationStatus(
+      `Signed in as ${session.user.email}. Choose your worker PIN below.`
+    );
+
+
+    activationForm.classList.remove(
+      "hidden"
+    );
+
+    return;
+  }
+
+
+  /*
+    EXISTING WORKER SESSION
+  */
+
+  if (session) {
+
+    await showDashboard(session);
+
+    return;
+  }
+
+
+  /*
+    LOGGED OUT
+  */
+
+  loginSection.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+initialise();
+</script>
 
 </body>
 </html>
