@@ -4785,6 +4785,245 @@ element.textContent =
     ============================================ */
 
     checkExistingSession();
+    sync function openShiftDetails(shiftId) {
+
+  const modal = document.getElementById("shiftDetailsModal");
+  const content = document.getElementById("shiftDetailsContent");
+  const workerElement = document.getElementById("shiftDetailsWorker");
+
+  modal.classList.remove("hidden");
+  workerElement.textContent = "Loading…";
+
+  content.innerHTML = `
+    <div class="emptyState">
+      Loading shift…
+    </div>
+  `;
+
+  const { data, error } = await sb.rpc(
+    "get_admin_shift_details",
+    {
+      p_shift_id: shiftId
+    }
+  );
+
+  if (error || !Array.isArray(data) || data.length === 0) {
+
+    console.error("Shift details error:", error);
+
+    workerElement.textContent = "Could not load shift";
+
+    content.innerHTML = `
+      <div class="emptyState">
+        Could not load shift details.
+      </div>
+    `;
+
+    return;
+  }
+
+  const shift = data[0];
+
+  const breaks = data.filter(
+    row => row.break_id
+  );
+
+  workerElement.textContent =
+    shift.worker_name || "Worker";
+
+  const shiftStart =
+    new Date(shift.clock_in).getTime();
+
+  const shiftEnd =
+    shift.clock_out
+      ? new Date(shift.clock_out).getTime()
+      : Date.now();
+
+  const totalShiftSeconds =
+    Math.max(
+      0,
+      Math.floor((shiftEnd - shiftStart) / 1000)
+    );
+
+  const totalBreakSeconds =
+    breaks.reduce(
+      (total, breakItem) => {
+
+        const breakStart =
+          new Date(breakItem.break_start).getTime();
+
+        const breakEnd =
+          breakItem.break_end
+            ? new Date(breakItem.break_end).getTime()
+            : Date.now();
+
+        return total + Math.max(
+          0,
+          Math.floor((breakEnd - breakStart) / 1000)
+        );
+      },
+      0
+    );
+
+  const workedSeconds =
+    Math.max(
+      0,
+      totalShiftSeconds - totalBreakSeconds
+    );
+
+  const breaksHtml =
+    breaks.length
+      ? breaks.map(
+          (breakItem, index) => {
+
+            const breakStart =
+              new Date(breakItem.break_start).getTime();
+
+            const breakEnd =
+              breakItem.break_end
+                ? new Date(breakItem.break_end).getTime()
+                : Date.now();
+
+            const duration =
+              Math.max(
+                0,
+                Math.floor((breakEnd - breakStart) / 1000)
+              );
+
+            return `
+              <div class="shiftBreakRow">
+
+                <div>
+                  <div class="shiftBreakTime">
+                    Break ${index + 1}
+                  </div>
+
+                  <div class="shiftBreakDuration">
+                    ${escapeHtml(formatClockTime(breakItem.break_start))}
+                    –
+                    ${
+                      breakItem.break_end
+                        ? escapeHtml(formatClockTime(breakItem.break_end))
+                        : "Active"
+                    }
+                  </div>
+                </div>
+
+                <div class="shiftBreakTime">
+                  ${escapeHtml(formatHoursMinutes(duration))}
+                </div>
+
+              </div>
+            `;
+          }
+        ).join("")
+      : `
+          <div class="shiftDetailEmpty">
+            No breaks recorded.
+          </div>
+        `;
+
+  content.innerHTML = `
+
+    <div class="shiftDetailGrid">
+
+      <div class="shiftDetailBox">
+        <div class="shiftDetailLabel">Date</div>
+        <div class="shiftDetailValue">
+          ${escapeHtml(formatShiftDate(shift.clock_in))}
+        </div>
+      </div>
+
+      <div class="shiftDetailBox">
+        <div class="shiftDetailLabel">Status</div>
+        <div class="shiftDetailValue">
+          ${shift.is_active ? "Active" : "Completed"}
+        </div>
+      </div>
+
+      <div class="shiftDetailBox">
+        <div class="shiftDetailLabel">Clock in</div>
+        <div class="shiftDetailValue">
+          ${escapeHtml(formatClockTime(shift.clock_in))}
+        </div>
+      </div>
+
+      <div class="shiftDetailBox">
+        <div class="shiftDetailLabel">Clock out</div>
+        <div class="shiftDetailValue">
+          ${
+            shift.clock_out
+              ? escapeHtml(formatClockTime(shift.clock_out))
+              : "Still working"
+          }
+        </div>
+      </div>
+
+      <div class="shiftDetailBox">
+        <div class="shiftDetailLabel">Total shift</div>
+        <div class="shiftDetailValue">
+          ${escapeHtml(formatHoursMinutes(totalShiftSeconds))}
+        </div>
+      </div>
+
+      <div class="shiftDetailBox">
+        <div class="shiftDetailLabel">Worked</div>
+        <div class="shiftDetailValue">
+          ${escapeHtml(formatHoursMinutes(workedSeconds))}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="shiftDetailSection">
+
+      <div class="shiftDetailSectionTitle">
+        Breaks · ${breaks.length}
+      </div>
+
+      ${breaksHtml}
+
+      <div class="shiftBreakRow">
+
+        <div class="shiftBreakTime">
+          Total break time
+        </div>
+
+        <div class="shiftBreakTime">
+          ${escapeHtml(formatHoursMinutes(totalBreakSeconds))}
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="shiftDetailSection">
+
+      <div class="shiftDetailSectionTitle">
+        Note
+      </div>
+
+      <div class="shiftNoteBox">
+        ${
+          shift.note
+            ? escapeHtml(shift.note)
+            : "No note"
+        }
+      </div>
+
+    </div>
+
+  `;
+}
+
+
+function closeShiftDetails() {
+
+  const modal =
+    document.getElementById("shiftDetailsModal");
+
+  modal.classList.add("hidden");
+}
 
   </script>
 
