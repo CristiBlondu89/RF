@@ -1618,6 +1618,11 @@ const summaryTotalShift =
     "summaryTotalShift"
   );
 
+const summaryBreaksLabel =
+  document.getElementById(
+    "summaryBreaksLabel"
+  );
+  
 const summaryBreaks =
   document.getElementById(
     "summaryBreaks"
@@ -2728,10 +2733,41 @@ function showSummaryPanel(
     );
 
 
+  const breakCount =
+  Number(
+    summary.break_count
+  ) || 0;
+
+
+if (breakCount === 0) {
+
+  summaryBreaksLabel.textContent =
+    "Breaks";
+
+  summaryBreaks.textContent =
+    "0m";
+
+} else if (breakCount === 1) {
+
+  summaryBreaksLabel.textContent =
+    "Break";
+
   summaryBreaks.textContent =
     formatDuration(
       summary.total_break_seconds
     );
+
+} else {
+
+  summaryBreaksLabel.textContent =
+    `Breaks (${breakCount})`;
+
+  summaryBreaks.textContent =
+    formatDuration(
+      summary.total_break_seconds
+    );
+
+}
 
 
   summaryWorked.textContent =
