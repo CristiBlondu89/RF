@@ -3929,7 +3929,7 @@ function closeShiftDetails() {
               <tr
                 class="timesheetRow"
                 data-shift-id="${escapeHtml(shift.shift_id)}"
-                onclick="alert('clicked')"
+                onclick="openShiftDetails('${escapeHtml(shift.shift_id)}')"
               >
                 <td class="timesheetWorker">
                   ${escapeHtml(
