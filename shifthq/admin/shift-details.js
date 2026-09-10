@@ -145,17 +145,32 @@ async function openShiftDetails(shiftId) {
                 </div>
 
                 <div>
+
                   <div class="shiftBreakTime">
                     ${escapeHtml(formatHoursMinutes(duration))}
                   </div>
 
-                  <button
-                    class="shiftEditButton"
-                    type="button"
-                    onclick="startEditBreak('${escapeHtml(breakItem.break_id)}')"
-                  >
-                    Edit
-                  </button>
+                  <div class="shiftBreakActions">
+
+                    <button
+                      class="shiftEditButton"
+                      type="button"
+                      onclick="startEditBreak('${escapeHtml(breakItem.break_id)}')"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      id="deleteBreakButton-${escapeHtml(breakItem.break_id)}"
+                      class="shiftEditButton shiftDeleteButton"
+                      type="button"
+                      onclick="deleteBreak('${escapeHtml(breakItem.break_id)}')"
+                    >
+                      Delete
+                    </button>
+
+                  </div>
+
                 </div>
 
               </div>
@@ -298,6 +313,10 @@ function toDateTimeLocalValue(value) {
     .slice(0, 16);
 }
 
+
+/* ============================================
+   EDIT SHIFT
+============================================ */
 
 function startEditShift() {
 
@@ -1111,6 +1130,81 @@ async function saveBreakChanges(
 
     button.textContent =
       "Save";
+
+    return;
+  }
+
+  await loadTimesheets();
+
+  await openShiftDetails(
+    shiftId
+  );
+}
+
+
+/* ============================================
+   DELETE BREAK
+============================================ */
+
+async function deleteBreak(breakId) {
+
+  if (!selectedShiftId || !breakId) {
+    return;
+  }
+
+  const breakItem =
+    selectedShiftBreaks.find(
+      item => item.break_id === breakId
+    );
+
+  if (!breakItem) {
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "Delete this break?\n\nThis cannot be undone."
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const button =
+    document.getElementById(
+      `deleteBreakButton-${breakId}`
+    );
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Deleting…";
+  }
+
+  const shiftId = selectedShiftId;
+
+  const { error } =
+    await sb.rpc(
+      "admin_delete_break",
+      {
+        p_break_id: breakId
+      }
+    );
+
+  if (error) {
+
+    console.error(
+      "Delete break:",
+      error
+    );
+
+    window.alert(
+      error.message ||
+      "Could not delete break."
+    );
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Delete";
+    }
 
     return;
   }
