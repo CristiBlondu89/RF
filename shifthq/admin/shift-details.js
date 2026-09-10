@@ -1,13 +1,39 @@
+/* ============================================
+   SHIFT DETAILS
+============================================ */
+
 async function openShiftDetails(shiftId) {
 
-  const modal = document.getElementById("shiftDetailsModal");
-  const content = document.getElementById("shiftDetailsContent");
-  const workerElement = document.getElementById("shiftDetailsWorker");
-  const editButton = document.getElementById("editShiftButton");
+  const modal =
+    document.getElementById(
+      "shiftDetailsModal"
+    );
+
+  const content =
+    document.getElementById(
+      "shiftDetailsContent"
+    );
+
+  const workerElement =
+    document.getElementById(
+      "shiftDetailsWorker"
+    );
+
+  const editButton =
+    document.getElementById(
+      "editShiftButton"
+    );
 
   selectedShiftId = shiftId;
   selectedShift = null;
   selectedShiftBreaks = [];
+
+  ensureDeleteShiftButton();
+
+  const deleteButton =
+    document.getElementById(
+      "deleteShiftButton"
+    );
 
   if (editButton) {
     editButton.disabled = true;
@@ -15,8 +41,17 @@ async function openShiftDetails(shiftId) {
     editButton.onclick = startEditShift;
   }
 
-  modal.classList.remove("hidden");
-  workerElement.textContent = "Loading…";
+  if (deleteButton) {
+    deleteButton.disabled = true;
+    deleteButton.textContent = "Delete shift";
+  }
+
+  modal.classList.remove(
+    "hidden"
+  );
+
+  workerElement.textContent =
+    "Loading…";
 
   content.innerHTML = `
     <div class="emptyState">
@@ -24,18 +59,31 @@ async function openShiftDetails(shiftId) {
     </div>
   `;
 
-  const { data, error } = await sb.rpc(
-    "get_admin_shift_details",
-    {
-      p_shift_id: shiftId
-    }
-  );
+  const {
+    data,
+    error
+  } =
+    await sb.rpc(
+      "get_admin_shift_details",
+      {
+        p_shift_id:
+          shiftId
+      }
+    );
 
-  if (error || !Array.isArray(data) || data.length === 0) {
+  if (
+    error ||
+    !Array.isArray(data) ||
+    data.length === 0
+  ) {
 
-    console.error("Shift details error:", error);
+    console.error(
+      "Shift details error:",
+      error
+    );
 
-    workerElement.textContent = "Could not load shift";
+    workerElement.textContent =
+      "Could not load shift";
 
     content.innerHTML = `
       <div class="emptyState">
@@ -46,52 +94,86 @@ async function openShiftDetails(shiftId) {
     return;
   }
 
-  const shift = data[0];
+  const shift =
+    data[0];
 
-  selectedShift = shift;
+  selectedShift =
+    shift;
 
   if (editButton) {
     editButton.disabled = false;
   }
 
-  const breaks = data.filter(
-    row => row.break_id
-  );
+  if (deleteButton) {
+    deleteButton.disabled = false;
+  }
 
-  selectedShiftBreaks = breaks;
+  const breaks =
+    data.filter(
+      row =>
+        row.break_id
+    );
+
+  selectedShiftBreaks =
+    breaks;
 
   workerElement.textContent =
-    shift.worker_name || "Worker";
+    shift.worker_name ||
+    "Worker";
 
   const shiftStart =
-    new Date(shift.clock_in).getTime();
+    new Date(
+      shift.clock_in
+    ).getTime();
 
   const shiftEnd =
     shift.clock_out
-      ? new Date(shift.clock_out).getTime()
+      ? new Date(
+          shift.clock_out
+        ).getTime()
       : Date.now();
 
   const totalShiftSeconds =
     Math.max(
       0,
-      Math.floor((shiftEnd - shiftStart) / 1000)
+      Math.floor(
+        (
+          shiftEnd -
+          shiftStart
+        ) / 1000
+      )
     );
 
   const totalBreakSeconds =
     breaks.reduce(
-      (total, breakItem) => {
+      (
+        total,
+        breakItem
+      ) => {
 
         const breakStart =
-          new Date(breakItem.break_start).getTime();
+          new Date(
+            breakItem.break_start
+          ).getTime();
 
         const breakEnd =
           breakItem.break_end
-            ? new Date(breakItem.break_end).getTime()
+            ? new Date(
+                breakItem.break_end
+              ).getTime()
             : Date.now();
 
-        return total + Math.max(
-          0,
-          Math.floor((breakEnd - breakStart) / 1000)
+        return (
+          total +
+          Math.max(
+            0,
+            Math.floor(
+              (
+                breakEnd -
+                breakStart
+              ) / 1000
+            )
+          )
         );
       },
       0
@@ -100,83 +182,118 @@ async function openShiftDetails(shiftId) {
   const workedSeconds =
     Math.max(
       0,
-      totalShiftSeconds - totalBreakSeconds
+      totalShiftSeconds -
+      totalBreakSeconds
     );
 
   const breaksHtml =
     breaks.length
-      ? breaks.map(
-          (breakItem, index) => {
+      ? breaks
+          .map(
+            (
+              breakItem,
+              index
+            ) => {
 
-            const breakStart =
-              new Date(breakItem.break_start).getTime();
+              const breakStart =
+                new Date(
+                  breakItem.break_start
+                ).getTime();
 
-            const breakEnd =
-              breakItem.break_end
-                ? new Date(breakItem.break_end).getTime()
-                : Date.now();
-
-            const duration =
-              Math.max(
-                0,
-                Math.floor((breakEnd - breakStart) / 1000)
-              );
-
-            return `
-              <div
-                class="shiftBreakRow"
-                id="shiftBreakRow-${escapeHtml(breakItem.break_id)}"
-              >
-
-                <div>
-                  <div class="shiftBreakTime">
-                    Break ${index + 1}
-                  </div>
-
-                  <div class="shiftBreakDuration">
-                    ${escapeHtml(formatClockTime(breakItem.break_start))}
-                    –
-                    ${
+              const breakEnd =
+                breakItem.break_end
+                  ? new Date(
                       breakItem.break_end
-                        ? escapeHtml(formatClockTime(breakItem.break_end))
-                        : "Active"
-                    }
+                    ).getTime()
+                  : Date.now();
+
+              const duration =
+                Math.max(
+                  0,
+                  Math.floor(
+                    (
+                      breakEnd -
+                      breakStart
+                    ) / 1000
+                  )
+                );
+
+              return `
+                <div
+                  class="shiftBreakRow"
+                  id="shiftBreakRow-${escapeHtml(breakItem.break_id)}"
+                >
+
+                  <div>
+
+                    <div class="shiftBreakTime">
+                      Break ${index + 1}
+                    </div>
+
+                    <div class="shiftBreakDuration">
+
+                      ${escapeHtml(
+                        formatClockTime(
+                          breakItem.break_start
+                        )
+                      )}
+
+                      –
+
+                      ${
+                        breakItem.break_end
+                          ? escapeHtml(
+                              formatClockTime(
+                                breakItem.break_end
+                              )
+                            )
+                          : "Active"
+                      }
+
+                    </div>
+
                   </div>
+
+                  <div>
+
+                    <div class="shiftBreakTime">
+
+                      ${escapeHtml(
+                        formatHoursMinutes(
+                          duration
+                        )
+                      )}
+
+                    </div>
+
+                    <div class="shiftBreakActions">
+
+                      <button
+                        class="shiftEditButton"
+                        type="button"
+                        onclick="startEditBreak('${escapeHtml(breakItem.break_id)}')"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        id="deleteBreakButton-${escapeHtml(breakItem.break_id)}"
+                        class="shiftEditButton shiftDeleteButton"
+                        type="button"
+                        onclick="deleteBreak('${escapeHtml(breakItem.break_id)}')"
+                      >
+                        Delete
+                      </button>
+
+                    </div>
+
+                  </div>
+
                 </div>
-
-                <div>
-
-                  <div class="shiftBreakTime">
-                    ${escapeHtml(formatHoursMinutes(duration))}
-                  </div>
-
-                  <div class="shiftBreakActions">
-
-                    <button
-                      class="shiftEditButton"
-                      type="button"
-                      onclick="startEditBreak('${escapeHtml(breakItem.break_id)}')"
-                    >
-                      Edit
-                    </button>
-
-                    <button
-                      id="deleteBreakButton-${escapeHtml(breakItem.break_id)}"
-                      class="shiftEditButton shiftDeleteButton"
-                      type="button"
-                      onclick="deleteBreak('${escapeHtml(breakItem.break_id)}')"
-                    >
-                      Delete
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </div>
-            `;
-          }
-        ).join("")
+              `;
+            }
+          )
+          .join("")
       : `
           <div class="shiftDetailEmpty">
             No breaks recorded.
@@ -188,52 +305,109 @@ async function openShiftDetails(shiftId) {
     <div class="shiftDetailGrid">
 
       <div class="shiftDetailBox">
-        <div class="shiftDetailLabel">Date</div>
-        <div class="shiftDetailValue">
-          ${escapeHtml(formatShiftDate(shift.clock_in))}
+
+        <div class="shiftDetailLabel">
+          Date
         </div>
+
+        <div class="shiftDetailValue">
+          ${escapeHtml(
+            formatShiftDate(
+              shift.clock_in
+            )
+          )}
+        </div>
+
       </div>
 
       <div class="shiftDetailBox">
-        <div class="shiftDetailLabel">Status</div>
-        <div class="shiftDetailValue">
-          ${shift.is_active ? "Active" : "Completed"}
-        </div>
-      </div>
 
-      <div class="shiftDetailBox">
-        <div class="shiftDetailLabel">Clock in</div>
-        <div class="shiftDetailValue">
-          ${escapeHtml(formatClockTime(shift.clock_in))}
+        <div class="shiftDetailLabel">
+          Status
         </div>
-      </div>
 
-      <div class="shiftDetailBox">
-        <div class="shiftDetailLabel">Clock out</div>
         <div class="shiftDetailValue">
           ${
-            shift.clock_out
-              ? escapeHtml(formatClockTime(shift.clock_out))
-              : "Still working"
+            shift.is_active
+              ? "Active"
+              : "Completed"
           }
         </div>
+
       </div>
 
       <div class="shiftDetailBox">
-        <div class="shiftDetailLabel">Total shift</div>
-        <div class="shiftDetailValue">
-          ${escapeHtml(formatHoursMinutes(totalShiftSeconds))}
+
+        <div class="shiftDetailLabel">
+          Clock in
         </div>
+
+        <div class="shiftDetailValue">
+          ${escapeHtml(
+            formatClockTime(
+              shift.clock_in
+            )
+          )}
+        </div>
+
       </div>
 
       <div class="shiftDetailBox">
-        <div class="shiftDetailLabel">Worked</div>
-        <div class="shiftDetailValue">
-          ${escapeHtml(formatHoursMinutes(workedSeconds))}
+
+        <div class="shiftDetailLabel">
+          Clock out
         </div>
+
+        <div class="shiftDetailValue">
+
+          ${
+            shift.clock_out
+              ? escapeHtml(
+                  formatClockTime(
+                    shift.clock_out
+                  )
+                )
+              : "Still working"
+          }
+
+        </div>
+
+      </div>
+
+      <div class="shiftDetailBox">
+
+        <div class="shiftDetailLabel">
+          Total shift
+        </div>
+
+        <div class="shiftDetailValue">
+          ${escapeHtml(
+            formatHoursMinutes(
+              totalShiftSeconds
+            )
+          )}
+        </div>
+
+      </div>
+
+      <div class="shiftDetailBox">
+
+        <div class="shiftDetailLabel">
+          Worked
+        </div>
+
+        <div class="shiftDetailValue">
+          ${escapeHtml(
+            formatHoursMinutes(
+              workedSeconds
+            )
+          )}
+        </div>
+
       </div>
 
     </div>
+
 
     <div class="shiftDetailSection">
 
@@ -264,12 +438,17 @@ async function openShiftDetails(shiftId) {
         </div>
 
         <div class="shiftBreakTime">
-          ${escapeHtml(formatHoursMinutes(totalBreakSeconds))}
+          ${escapeHtml(
+            formatHoursMinutes(
+              totalBreakSeconds
+            )
+          )}
         </div>
 
       </div>
 
     </div>
+
 
     <div class="shiftDetailSection">
 
@@ -278,11 +457,15 @@ async function openShiftDetails(shiftId) {
       </div>
 
       <div class="shiftNoteBox">
+
         ${
           shift.note
-            ? escapeHtml(shift.note)
+            ? escapeHtml(
+                shift.note
+              )
             : "No note"
         }
+
       </div>
 
     </div>
@@ -291,26 +474,192 @@ async function openShiftDetails(shiftId) {
 }
 
 
+/* ============================================
+   DELETE SHIFT BUTTON
+============================================ */
+
+function ensureDeleteShiftButton() {
+
+  const editButton =
+    document.getElementById(
+      "editShiftButton"
+    );
+
+  if (!editButton) {
+    return;
+  }
+
+  if (
+    document.getElementById(
+      "deleteShiftButton"
+    )
+  ) {
+    return;
+  }
+
+  const button =
+    document.createElement(
+      "button"
+    );
+
+  button.id =
+    "deleteShiftButton";
+
+  button.type =
+    "button";
+
+  button.className =
+    "shiftEditButton shiftDeleteButton";
+
+  button.textContent =
+    "Delete shift";
+
+  button.onclick =
+    deleteShift;
+
+  editButton.insertAdjacentElement(
+    "afterend",
+    button
+  );
+}
+
+
+/* ============================================
+   DELETE SHIFT
+============================================ */
+
+async function deleteShift() {
+
+  if (
+    !selectedShiftId ||
+    !selectedShift
+  ) {
+    return;
+  }
+
+  const workerName =
+    selectedShift.worker_name ||
+    "this worker";
+
+  const shiftDate =
+    formatShiftDate(
+      selectedShift.clock_in
+    );
+
+  const confirmed =
+    window.confirm(
+      `Delete this shift for ${workerName} on ${shiftDate}?\n\nAll breaks belonging to this shift will also be deleted.\n\nThis cannot be undone.`
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const deleteButton =
+    document.getElementById(
+      "deleteShiftButton"
+    );
+
+  const editButton =
+    document.getElementById(
+      "editShiftButton"
+    );
+
+  if (deleteButton) {
+
+    deleteButton.disabled =
+      true;
+
+    deleteButton.textContent =
+      "Deleting…";
+  }
+
+  if (editButton) {
+    editButton.disabled = true;
+  }
+
+  const shiftId =
+    selectedShiftId;
+
+  const {
+    error
+  } =
+    await sb.rpc(
+      "admin_delete_shift",
+      {
+        p_shift_id:
+          shiftId
+      }
+    );
+
+  if (error) {
+
+    console.error(
+      "Delete shift:",
+      error
+    );
+
+    window.alert(
+      error.message ||
+      "Could not delete shift."
+    );
+
+    if (deleteButton) {
+
+      deleteButton.disabled =
+        false;
+
+      deleteButton.textContent =
+        "Delete shift";
+    }
+
+    if (editButton) {
+      editButton.disabled = false;
+    }
+
+    return;
+  }
+
+  closeShiftDetails();
+
+  await loadTimesheets();
+}
+
+
+/* ============================================
+   DATE/TIME HELPER
+============================================ */
+
 function toDateTimeLocalValue(value) {
 
   if (!value) {
     return "";
   }
 
-  const date = new Date(value);
+  const date =
+    new Date(value);
 
-  if (Number.isNaN(date.getTime())) {
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
     return "";
   }
 
   const offset =
-    date.getTimezoneOffset() * 60000;
+    date.getTimezoneOffset() *
+    60000;
 
   return new Date(
-    date.getTime() - offset
+    date.getTime() -
+    offset
   )
     .toISOString()
-    .slice(0, 16);
+    .slice(
+      0,
+      16
+    );
 }
 
 
@@ -320,18 +669,34 @@ function toDateTimeLocalValue(value) {
 
 function startEditShift() {
 
-  if (!selectedShift || !selectedShiftId) {
+  if (
+    !selectedShift ||
+    !selectedShiftId
+  ) {
     return;
   }
 
   const content =
-    document.getElementById("shiftDetailsContent");
+    document.getElementById(
+      "shiftDetailsContent"
+    );
 
   const editButton =
-    document.getElementById("editShiftButton");
+    document.getElementById(
+      "editShiftButton"
+    );
+
+  const deleteButton =
+    document.getElementById(
+      "deleteShiftButton"
+    );
 
   if (editButton) {
     editButton.disabled = true;
+  }
+
+  if (deleteButton) {
+    deleteButton.disabled = true;
   }
 
   content.innerHTML = `
@@ -383,7 +748,10 @@ function startEditShift() {
           id="editShiftNote"
           rows="4"
           placeholder="No note"
-        >${escapeHtml(selectedShift.note || "")}</textarea>
+        >${escapeHtml(
+          selectedShift.note ||
+          ""
+        )}</textarea>
 
       </div>
 
@@ -421,6 +789,7 @@ function startEditShift() {
 async function cancelEditShift() {
 
   if (selectedShiftId) {
+
     await openShiftDetails(
       selectedShiftId
     );
@@ -465,12 +834,45 @@ async function saveShiftChanges() {
   }
 
   const clockIn =
-    new Date(clockInValue);
+    new Date(
+      clockInValue
+    );
 
   const clockOut =
     clockOutValue
-      ? new Date(clockOutValue)
+      ? new Date(
+          clockOutValue
+        )
       : null;
+
+  if (
+    Number.isNaN(
+      clockIn.getTime()
+    )
+  ) {
+
+    showMessage(
+      "editShiftMessage",
+      "Enter a valid clock in time."
+    );
+
+    return;
+  }
+
+  if (
+    clockOut &&
+    Number.isNaN(
+      clockOut.getTime()
+    )
+  ) {
+
+    showMessage(
+      "editShiftMessage",
+      "Enter a valid clock out time."
+    );
+
+    return;
+  }
 
   if (
     clockOut &&
@@ -485,14 +887,19 @@ async function saveShiftChanges() {
     return;
   }
 
-  button.disabled = true;
-  button.textContent = "Saving…";
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Saving…";
 
   clearMessage(
     "editShiftMessage"
   );
 
-  const { error } =
+  const {
+    error
+  } =
     await sb.rpc(
       "admin_update_shift",
       {
@@ -522,10 +929,11 @@ async function saveShiftChanges() {
     showMessage(
       "editShiftMessage",
       error.message ||
-        "Could not save shift."
+      "Could not save shift."
     );
 
-    button.disabled = false;
+    button.disabled =
+      false;
 
     button.textContent =
       "Save changes";
@@ -547,7 +955,10 @@ async function saveShiftChanges() {
 
 function startAddBreak() {
 
-  if (!selectedShift || !selectedShiftId) {
+  if (
+    !selectedShift ||
+    !selectedShiftId
+  ) {
     return;
   }
 
@@ -566,7 +977,9 @@ function startAddBreak() {
     );
 
   if (existingStart) {
+
     existingStart.focus();
+
     return;
   }
 
@@ -665,7 +1078,10 @@ function cancelAddBreak() {
 
 async function saveNewBreak() {
 
-  if (!selectedShiftId || !selectedShift) {
+  if (
+    !selectedShiftId ||
+    !selectedShift
+  ) {
     return;
   }
 
@@ -709,11 +1125,15 @@ async function saveNewBreak() {
   }
 
   const breakStart =
-    new Date(startValue);
+    new Date(
+      startValue
+    );
 
   const breakEnd =
     endValue
-      ? new Date(endValue)
+      ? new Date(
+          endValue
+        )
       : null;
 
   if (
@@ -775,7 +1195,8 @@ async function saveNewBreak() {
 
     const hasActiveBreak =
       selectedShiftBreaks.some(
-        item => !item.break_end
+        item =>
+          !item.break_end
       );
 
     if (hasActiveBreak) {
@@ -789,7 +1210,8 @@ async function saveNewBreak() {
     }
   }
 
-  button.disabled = true;
+  button.disabled =
+    true;
 
   button.textContent =
     "Adding…";
@@ -801,7 +1223,9 @@ async function saveNewBreak() {
   const shiftId =
     selectedShiftId;
 
-  const { error } =
+  const {
+    error
+  } =
     await sb.rpc(
       "admin_add_break",
       {
@@ -828,10 +1252,11 @@ async function saveNewBreak() {
     showMessage(
       "addBreakMessage",
       error.message ||
-        "Could not add break."
+      "Could not add break."
     );
 
-    button.disabled = false;
+    button.disabled =
+      false;
 
     button.textContent =
       "Add break";
@@ -853,14 +1278,18 @@ async function saveNewBreak() {
 
 function startEditBreak(breakId) {
 
-  if (!selectedShift || !selectedShiftId) {
+  if (
+    !selectedShift ||
+    !selectedShiftId
+  ) {
     return;
   }
 
   const breakItem =
     selectedShiftBreaks.find(
       item =>
-        item.break_id === breakId
+        item.break_id ===
+        breakId
     );
 
   const row =
@@ -868,7 +1297,10 @@ function startEditBreak(breakId) {
       `shiftBreakRow-${breakId}`
     );
 
-  if (!breakItem || !row) {
+  if (
+    !breakItem ||
+    !row
+  ) {
     return;
   }
 
@@ -876,9 +1308,13 @@ function startEditBreak(breakId) {
     .querySelectorAll(
       ".shiftBreakRow .shiftEditButton"
     )
-    .forEach(button => {
-      button.disabled = true;
-    });
+    .forEach(
+      button => {
+
+        button.disabled =
+          true;
+      }
+    );
 
   row.innerHTML = `
     <div class="shiftEditForm">
@@ -957,7 +1393,6 @@ async function cancelEditBreak() {
     await openShiftDetails(
       selectedShiftId
     );
-
   }
 }
 
@@ -976,7 +1411,8 @@ async function saveBreakChanges(
   const breakItem =
     selectedShiftBreaks.find(
       item =>
-        item.break_id === breakId
+        item.break_id ===
+        breakId
     );
 
   if (!breakItem) {
@@ -1001,6 +1437,14 @@ async function saveBreakChanges(
   const messageId =
     `editBreakMessage-${breakId}`;
 
+  if (
+    !startInput ||
+    !endInput ||
+    !button
+  ) {
+    return;
+  }
+
   const startValue =
     startInput.value;
 
@@ -1018,11 +1462,15 @@ async function saveBreakChanges(
   }
 
   const breakStart =
-    new Date(startValue);
+    new Date(
+      startValue
+    );
 
   const breakEnd =
     endValue
-      ? new Date(endValue)
+      ? new Date(
+          endValue
+        )
       : null;
 
   if (
@@ -1084,7 +1532,8 @@ async function saveBreakChanges(
     return;
   }
 
-  button.disabled = true;
+  button.disabled =
+    true;
 
   button.textContent =
     "Saving…";
@@ -1096,7 +1545,9 @@ async function saveBreakChanges(
   const shiftId =
     selectedShiftId;
 
-  const { error } =
+  const {
+    error
+  } =
     await sb.rpc(
       "admin_update_break",
       {
@@ -1123,10 +1574,11 @@ async function saveBreakChanges(
     showMessage(
       messageId,
       error.message ||
-        "Could not save break."
+      "Could not save break."
     );
 
-    button.disabled = false;
+    button.disabled =
+      false;
 
     button.textContent =
       "Save";
@@ -1146,24 +1598,32 @@ async function saveBreakChanges(
    DELETE BREAK
 ============================================ */
 
-async function deleteBreak(breakId) {
+async function deleteBreak(
+  breakId
+) {
 
-  if (!selectedShiftId || !breakId) {
+  if (
+    !selectedShiftId ||
+    !breakId
+  ) {
     return;
   }
 
   const breakItem =
     selectedShiftBreaks.find(
-      item => item.break_id === breakId
+      item =>
+        item.break_id ===
+        breakId
     );
 
   if (!breakItem) {
     return;
   }
 
-  const confirmed = window.confirm(
-    "Delete this break?\n\nThis cannot be undone."
-  );
+  const confirmed =
+    window.confirm(
+      "Delete this break?\n\nThis cannot be undone."
+    );
 
   if (!confirmed) {
     return;
@@ -1175,17 +1635,25 @@ async function deleteBreak(breakId) {
     );
 
   if (button) {
-    button.disabled = true;
-    button.textContent = "Deleting…";
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Deleting…";
   }
 
-  const shiftId = selectedShiftId;
+  const shiftId =
+    selectedShiftId;
 
-  const { error } =
+  const {
+    error
+  } =
     await sb.rpc(
       "admin_delete_break",
       {
-        p_break_id: breakId
+        p_break_id:
+          breakId
       }
     );
 
@@ -1202,8 +1670,12 @@ async function deleteBreak(breakId) {
     );
 
     if (button) {
-      button.disabled = false;
-      button.textContent = "Delete";
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "Delete";
     }
 
     return;
@@ -1217,6 +1689,10 @@ async function deleteBreak(breakId) {
 }
 
 
+/* ============================================
+   CLOSE SHIFT DETAILS
+============================================ */
+
 function closeShiftDetails() {
 
   const modal =
@@ -1224,11 +1700,19 @@ function closeShiftDetails() {
       "shiftDetailsModal"
     );
 
-  modal.classList.add(
-    "hidden"
-  );
+  if (modal) {
 
-  selectedShiftId = null;
-  selectedShift = null;
-  selectedShiftBreaks = [];
+    modal.classList.add(
+      "hidden"
+    );
+  }
+
+  selectedShiftId =
+    null;
+
+  selectedShift =
+    null;
+
+  selectedShiftBreaks =
+    [];
 }
