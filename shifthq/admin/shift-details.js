@@ -1,4 +1,4 @@
-    async function openShiftDetails(shiftId) {
+async function openShiftDetails(shiftId) {
 
   const modal = document.getElementById("shiftDetailsModal");
   const content = document.getElementById("shiftDetailsContent");
@@ -222,9 +222,23 @@
 
     <div class="shiftDetailSection">
 
-      <div class="shiftDetailSectionTitle">
-        Breaks · ${breaks.length}
+      <div class="shiftBreakHeader">
+
+        <div class="shiftDetailSectionTitle">
+          Breaks · ${breaks.length}
+        </div>
+
+        <button
+          class="shiftEditButton"
+          type="button"
+          onclick="startAddBreak()"
+        >
+          + Add break
+        </button>
+
       </div>
+
+      <div id="addBreakContainer"></div>
 
       ${breaksHtml}
 
@@ -274,9 +288,12 @@ function toDateTimeLocalValue(value) {
     return "";
   }
 
-  const offset = date.getTimezoneOffset() * 60000;
+  const offset =
+    date.getTimezoneOffset() * 60000;
 
-  return new Date(date.getTime() - offset)
+  return new Date(
+    date.getTime() - offset
+  )
     .toISOString()
     .slice(0, 16);
 }
@@ -300,36 +317,64 @@ function startEditShift() {
 
   content.innerHTML = `
     <div class="shiftEditForm">
+
       <div class="shiftEditField">
-        <label for="editShiftClockIn">Clock in</label>
+
+        <label for="editShiftClockIn">
+          Clock in
+        </label>
+
         <input
           id="editShiftClockIn"
           type="datetime-local"
-          value="${escapeHtml(toDateTimeLocalValue(selectedShift.clock_in))}"
+          value="${escapeHtml(
+            toDateTimeLocalValue(
+              selectedShift.clock_in
+            )
+          )}"
         >
+
       </div>
 
       <div class="shiftEditField">
-        <label for="editShiftClockOut">Clock out</label>
+
+        <label for="editShiftClockOut">
+          Clock out
+        </label>
+
         <input
           id="editShiftClockOut"
           type="datetime-local"
-          value="${escapeHtml(toDateTimeLocalValue(selectedShift.clock_out))}"
+          value="${escapeHtml(
+            toDateTimeLocalValue(
+              selectedShift.clock_out
+            )
+          )}"
         >
+
       </div>
 
       <div class="shiftEditField shiftEditFieldFull">
-        <label for="editShiftNote">Note</label>
+
+        <label for="editShiftNote">
+          Note
+        </label>
+
         <textarea
           id="editShiftNote"
           rows="4"
           placeholder="No note"
         >${escapeHtml(selectedShift.note || "")}</textarea>
+
       </div>
 
-      <div id="editShiftMessage" class="message"></div>
+      <div
+        id="editShiftMessage"
+        class="message"
+      ></div>
 
       <div class="shiftEditActions">
+
         <button
           class="shiftEditCancelButton"
           type="button"
@@ -346,7 +391,9 @@ function startEditShift() {
         >
           Save changes
         </button>
+
       </div>
+
     </div>
   `;
 }
@@ -355,7 +402,9 @@ function startEditShift() {
 async function cancelEditShift() {
 
   if (selectedShiftId) {
-    await openShiftDetails(selectedShiftId);
+    await openShiftDetails(
+      selectedShiftId
+    );
   }
 }
 
@@ -367,59 +416,421 @@ async function saveShiftChanges() {
   }
 
   const clockInValue =
-    document.getElementById("editShiftClockIn").value;
+    document.getElementById(
+      "editShiftClockIn"
+    ).value;
 
   const clockOutValue =
-    document.getElementById("editShiftClockOut").value;
+    document.getElementById(
+      "editShiftClockOut"
+    ).value;
 
   const note =
-    document.getElementById("editShiftNote").value.trim();
+    document.getElementById(
+      "editShiftNote"
+    ).value.trim();
 
   const button =
-    document.getElementById("saveShiftButton");
+    document.getElementById(
+      "saveShiftButton"
+    );
 
   if (!clockInValue) {
-    showMessage("editShiftMessage", "Clock in is required.");
+
+    showMessage(
+      "editShiftMessage",
+      "Clock in is required."
+    );
+
     return;
   }
 
-  const clockIn = new Date(clockInValue);
-  const clockOut = clockOutValue ? new Date(clockOutValue) : null;
+  const clockIn =
+    new Date(clockInValue);
 
-  if (clockOut && clockOut <= clockIn) {
+  const clockOut =
+    clockOutValue
+      ? new Date(clockOutValue)
+      : null;
+
+  if (
+    clockOut &&
+    clockOut <= clockIn
+  ) {
+
     showMessage(
       "editShiftMessage",
       "Clock out must be after clock in."
     );
+
     return;
   }
 
   button.disabled = true;
   button.textContent = "Saving…";
-  clearMessage("editShiftMessage");
 
-  const { error } = await sb.rpc(
-    "admin_update_shift",
-    {
-      p_shift_id: selectedShiftId,
-      p_clock_in: clockIn.toISOString(),
-      p_clock_out: clockOut ? clockOut.toISOString() : null,
-      p_note: note || null
-    }
+  clearMessage(
+    "editShiftMessage"
   );
 
+  const { error } =
+    await sb.rpc(
+      "admin_update_shift",
+      {
+        p_shift_id:
+          selectedShiftId,
+
+        p_clock_in:
+          clockIn.toISOString(),
+
+        p_clock_out:
+          clockOut
+            ? clockOut.toISOString()
+            : null,
+
+        p_note:
+          note || null
+      }
+    );
+
   if (error) {
-    console.error("Update shift:", error);
-    showMessage("editShiftMessage", error.message || "Could not save shift.");
+
+    console.error(
+      "Update shift:",
+      error
+    );
+
+    showMessage(
+      "editShiftMessage",
+      error.message ||
+        "Could not save shift."
+    );
+
     button.disabled = false;
-    button.textContent = "Save changes";
+
+    button.textContent =
+      "Save changes";
+
     return;
   }
 
   await loadTimesheets();
-  await openShiftDetails(selectedShiftId);
+
+  await openShiftDetails(
+    selectedShiftId
+  );
 }
 
+
+/* ============================================
+   ADD BREAK
+============================================ */
+
+function startAddBreak() {
+
+  if (!selectedShift || !selectedShiftId) {
+    return;
+  }
+
+  const container =
+    document.getElementById(
+      "addBreakContainer"
+    );
+
+  if (!container) {
+    return;
+  }
+
+  const existingStart =
+    document.getElementById(
+      "addBreakStart"
+    );
+
+  if (existingStart) {
+    existingStart.focus();
+    return;
+  }
+
+  const defaultStart =
+    selectedShift.clock_in
+      ? toDateTimeLocalValue(
+          selectedShift.clock_in
+        )
+      : "";
+
+  const defaultEnd =
+    selectedShift.clock_out
+      ? toDateTimeLocalValue(
+          selectedShift.clock_out
+        )
+      : "";
+
+  container.innerHTML = `
+    <div class="shiftAddBreakForm">
+
+      <div class="shiftEditForm">
+
+        <div class="shiftEditField">
+
+          <label for="addBreakStart">
+            Break start
+          </label>
+
+          <input
+            id="addBreakStart"
+            type="datetime-local"
+            value="${escapeHtml(defaultStart)}"
+          >
+
+        </div>
+
+        <div class="shiftEditField">
+
+          <label for="addBreakEnd">
+            Break end
+          </label>
+
+          <input
+            id="addBreakEnd"
+            type="datetime-local"
+            value="${escapeHtml(defaultEnd)}"
+          >
+
+        </div>
+
+        <div
+          id="addBreakMessage"
+          class="message"
+        ></div>
+
+        <div class="shiftEditActions">
+
+          <button
+            class="shiftEditCancelButton"
+            type="button"
+            onclick="cancelAddBreak()"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="saveAddBreakButton"
+            class="shiftEditSaveButton"
+            type="button"
+            onclick="saveNewBreak()"
+          >
+            Add break
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+function cancelAddBreak() {
+
+  const container =
+    document.getElementById(
+      "addBreakContainer"
+    );
+
+  if (container) {
+    container.innerHTML = "";
+  }
+}
+
+
+async function saveNewBreak() {
+
+  if (!selectedShiftId || !selectedShift) {
+    return;
+  }
+
+  const startInput =
+    document.getElementById(
+      "addBreakStart"
+    );
+
+  const endInput =
+    document.getElementById(
+      "addBreakEnd"
+    );
+
+  const button =
+    document.getElementById(
+      "saveAddBreakButton"
+    );
+
+  if (
+    !startInput ||
+    !endInput ||
+    !button
+  ) {
+    return;
+  }
+
+  const startValue =
+    startInput.value;
+
+  const endValue =
+    endInput.value;
+
+  if (!startValue) {
+
+    showMessage(
+      "addBreakMessage",
+      "Break start is required."
+    );
+
+    return;
+  }
+
+  const breakStart =
+    new Date(startValue);
+
+  const breakEnd =
+    endValue
+      ? new Date(endValue)
+      : null;
+
+  if (
+    Number.isNaN(
+      breakStart.getTime()
+    )
+  ) {
+
+    showMessage(
+      "addBreakMessage",
+      "Enter a valid break start."
+    );
+
+    return;
+  }
+
+  if (
+    breakEnd &&
+    Number.isNaN(
+      breakEnd.getTime()
+    )
+  ) {
+
+    showMessage(
+      "addBreakMessage",
+      "Enter a valid break end."
+    );
+
+    return;
+  }
+
+  if (
+    breakEnd &&
+    breakEnd <= breakStart
+  ) {
+
+    showMessage(
+      "addBreakMessage",
+      "Break end must be after break start."
+    );
+
+    return;
+  }
+
+  if (
+    !breakEnd &&
+    !selectedShift.is_active
+  ) {
+
+    showMessage(
+      "addBreakMessage",
+      "Break end is required for a completed shift."
+    );
+
+    return;
+  }
+
+  if (!breakEnd) {
+
+    const hasActiveBreak =
+      selectedShiftBreaks.some(
+        item => !item.break_end
+      );
+
+    if (hasActiveBreak) {
+
+      showMessage(
+        "addBreakMessage",
+        "This shift already has an active break."
+      );
+
+      return;
+    }
+  }
+
+  button.disabled = true;
+
+  button.textContent =
+    "Adding…";
+
+  clearMessage(
+    "addBreakMessage"
+  );
+
+  const shiftId =
+    selectedShiftId;
+
+  const { error } =
+    await sb.rpc(
+      "admin_add_break",
+      {
+        p_shift_id:
+          shiftId,
+
+        p_break_start:
+          breakStart.toISOString(),
+
+        p_break_end:
+          breakEnd
+            ? breakEnd.toISOString()
+            : null
+      }
+    );
+
+  if (error) {
+
+    console.error(
+      "Add break:",
+      error
+    );
+
+    showMessage(
+      "addBreakMessage",
+      error.message ||
+        "Could not add break."
+    );
+
+    button.disabled = false;
+
+    button.textContent =
+      "Add break";
+
+    return;
+  }
+
+  await loadTimesheets();
+
+  await openShiftDetails(
+    shiftId
+  );
+}
+
+
+/* ============================================
+   EDIT BREAK
+============================================ */
 
 function startEditBreak(breakId) {
 
@@ -427,46 +838,66 @@ function startEditBreak(breakId) {
     return;
   }
 
-  const breakItem = selectedShiftBreaks.find(
-    item => item.break_id === breakId
-  );
+  const breakItem =
+    selectedShiftBreaks.find(
+      item =>
+        item.break_id === breakId
+    );
 
-  const row = document.getElementById(
-    `shiftBreakRow-${breakId}`
-  );
+  const row =
+    document.getElementById(
+      `shiftBreakRow-${breakId}`
+    );
 
   if (!breakItem || !row) {
     return;
   }
 
   document
-    .querySelectorAll(".shiftBreakRow .shiftEditButton")
+    .querySelectorAll(
+      ".shiftBreakRow .shiftEditButton"
+    )
     .forEach(button => {
       button.disabled = true;
     });
 
   row.innerHTML = `
     <div class="shiftEditForm">
+
       <div class="shiftEditField">
+
         <label for="editBreakStart-${escapeHtml(breakId)}">
           Break start
         </label>
+
         <input
           id="editBreakStart-${escapeHtml(breakId)}"
           type="datetime-local"
-          value="${escapeHtml(toDateTimeLocalValue(breakItem.break_start))}"
+          value="${escapeHtml(
+            toDateTimeLocalValue(
+              breakItem.break_start
+            )
+          )}"
         >
+
       </div>
 
       <div class="shiftEditField">
+
         <label for="editBreakEnd-${escapeHtml(breakId)}">
           Break end
         </label>
+
         <input
           id="editBreakEnd-${escapeHtml(breakId)}"
           type="datetime-local"
-          value="${escapeHtml(toDateTimeLocalValue(breakItem.break_end))}"
+          value="${escapeHtml(
+            toDateTimeLocalValue(
+              breakItem.break_end
+            )
+          )}"
         >
+
       </div>
 
       <div
@@ -475,6 +906,7 @@ function startEditBreak(breakId) {
       ></div>
 
       <div class="shiftEditActions">
+
         <button
           class="shiftEditCancelButton"
           type="button"
@@ -491,7 +923,9 @@ function startEditBreak(breakId) {
         >
           Save
         </button>
+
       </div>
+
     </div>
   `;
 }
@@ -500,109 +934,205 @@ function startEditBreak(breakId) {
 async function cancelEditBreak() {
 
   if (selectedShiftId) {
-    await openShiftDetails(selectedShiftId);
+
+    await openShiftDetails(
+      selectedShiftId
+    );
+
   }
 }
 
 
-async function saveBreakChanges(breakId) {
+async function saveBreakChanges(
+  breakId
+) {
 
-  if (!selectedShiftId || !selectedShift) {
+  if (
+    !selectedShiftId ||
+    !selectedShift
+  ) {
     return;
   }
 
-  const breakItem = selectedShiftBreaks.find(
-    item => item.break_id === breakId
-  );
+  const breakItem =
+    selectedShiftBreaks.find(
+      item =>
+        item.break_id === breakId
+    );
 
   if (!breakItem) {
     return;
   }
 
-  const startInput = document.getElementById(
-    `editBreakStart-${breakId}`
-  );
+  const startInput =
+    document.getElementById(
+      `editBreakStart-${breakId}`
+    );
 
-  const endInput = document.getElementById(
-    `editBreakEnd-${breakId}`
-  );
+  const endInput =
+    document.getElementById(
+      `editBreakEnd-${breakId}`
+    );
 
-  const button = document.getElementById(
-    `saveBreakButton-${breakId}`
-  );
+  const button =
+    document.getElementById(
+      `saveBreakButton-${breakId}`
+    );
 
-  const messageId = `editBreakMessage-${breakId}`;
-  const startValue = startInput.value;
-  const endValue = endInput.value;
+  const messageId =
+    `editBreakMessage-${breakId}`;
+
+  const startValue =
+    startInput.value;
+
+  const endValue =
+    endInput.value;
 
   if (!startValue) {
-    showMessage(messageId, "Break start is required.");
+
+    showMessage(
+      messageId,
+      "Break start is required."
+    );
+
     return;
   }
 
-  const breakStart = new Date(startValue);
-  const breakEnd = endValue ? new Date(endValue) : null;
+  const breakStart =
+    new Date(startValue);
 
-  if (Number.isNaN(breakStart.getTime())) {
-    showMessage(messageId, "Enter a valid break start.");
+  const breakEnd =
+    endValue
+      ? new Date(endValue)
+      : null;
+
+  if (
+    Number.isNaN(
+      breakStart.getTime()
+    )
+  ) {
+
+    showMessage(
+      messageId,
+      "Enter a valid break start."
+    );
+
     return;
   }
 
-  if (breakEnd && Number.isNaN(breakEnd.getTime())) {
-    showMessage(messageId, "Enter a valid break end.");
+  if (
+    breakEnd &&
+    Number.isNaN(
+      breakEnd.getTime()
+    )
+  ) {
+
+    showMessage(
+      messageId,
+      "Enter a valid break end."
+    );
+
     return;
   }
 
-  if (breakEnd && breakEnd <= breakStart) {
-    showMessage(messageId, "Break end must be after break start.");
+  if (
+    breakEnd &&
+    breakEnd <= breakStart
+  ) {
+
+    showMessage(
+      messageId,
+      "Break end must be after break start."
+    );
+
     return;
   }
 
   const mayRemainActive =
-    selectedShift.is_active && !breakItem.break_end;
+    selectedShift.is_active &&
+    !breakItem.break_end;
 
-  if (!breakEnd && !mayRemainActive) {
+  if (
+    !breakEnd &&
+    !mayRemainActive
+  ) {
+
     showMessage(
       messageId,
       "Break end is required unless this is the active break on an active shift."
     );
+
     return;
   }
 
   button.disabled = true;
-  button.textContent = "Saving…";
-  clearMessage(messageId);
 
-  const shiftId = selectedShiftId;
+  button.textContent =
+    "Saving…";
 
-  const { error } = await sb.rpc(
-    "admin_update_break",
-    {
-      p_break_id: breakId,
-      p_break_start: breakStart.toISOString(),
-      p_break_end: breakEnd ? breakEnd.toISOString() : null
-    }
+  clearMessage(
+    messageId
   );
 
+  const shiftId =
+    selectedShiftId;
+
+  const { error } =
+    await sb.rpc(
+      "admin_update_break",
+      {
+        p_break_id:
+          breakId,
+
+        p_break_start:
+          breakStart.toISOString(),
+
+        p_break_end:
+          breakEnd
+            ? breakEnd.toISOString()
+            : null
+      }
+    );
+
   if (error) {
-    console.error("Update break:", error);
-    showMessage(messageId, error.message || "Could not save break.");
+
+    console.error(
+      "Update break:",
+      error
+    );
+
+    showMessage(
+      messageId,
+      error.message ||
+        "Could not save break."
+    );
+
     button.disabled = false;
-    button.textContent = "Save";
+
+    button.textContent =
+      "Save";
+
     return;
   }
 
   await loadTimesheets();
-  await openShiftDetails(shiftId);
+
+  await openShiftDetails(
+    shiftId
+  );
 }
 
 
 function closeShiftDetails() {
 
   const modal =
-    document.getElementById("shiftDetailsModal");
+    document.getElementById(
+      "shiftDetailsModal"
+    );
 
-  modal.classList.add("hidden");
+  modal.classList.add(
+    "hidden"
+  );
 
   selectedShiftId = null;
   selectedShift = null;
