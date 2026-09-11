@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <head>
   <meta charset="UTF-8" />
 
@@ -1110,10 +1111,386 @@
         min-height: 58px;
       }
     }
+    /* ==================================================
+   WORKER INVITATION
+================================================== */
+
+#inviteScreen {
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+.inviteCard {
+  width: 100%;
+  max-width: 480px;
+
+  background: var(--panel);
+
+  padding: 34px;
+
+  border-radius: 26px;
+  border: 1px solid var(--border);
+}
+
+.inviteLogo {
+  font-size: 36px;
+  font-weight: 800;
+
+  margin-bottom: 8px;
+}
+
+.inviteBadge {
+  display: inline-block;
+
+  margin-left: 8px;
+
+  padding: 4px 8px;
+
+  border-radius: 8px;
+
+  background: rgba(72,199,116,0.15);
+  color: #78e59b;
+
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.inviteTitle {
+  font-size: 24px;
+  font-weight: 750;
+
+  margin-top: 28px;
+  margin-bottom: 8px;
+}
+
+.inviteSubtitle {
+  color: var(--muted);
+
+  line-height: 1.5;
+
+  margin-bottom: 28px;
+}
+
+.inviteField {
+  margin-bottom: 18px;
+}
+
+.inviteField label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-weight: 650;
+}
+
+.inviteField input {
+  width: 100%;
+
+  padding: 17px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: #0f1925;
+  color: white;
+
+  outline: none;
+
+  font-size: 22px;
+
+  letter-spacing: 8px;
+
+  text-align: center;
+
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.inviteField input:focus {
+  border-color: rgba(255,255,255,0.22);
+}
+
+.inviteActivateButton {
+  width: 100%;
+
+  border: 0;
+  border-radius: 14px;
+
+  padding: 17px;
+
+  font-size: 18px;
+  font-weight: 750;
+
+  background: white;
+  color: #111;
+}
+
+.inviteActivateButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.inviteMessage {
+  min-height: 22px;
+
+  margin-top: 16px;
+
+  color: var(--muted);
+
+  font-size: 14px;
+
+  text-align: center;
+}
+
+.inviteMessage.error {
+  color: #ff8b8b;
+}
+
+.inviteSuccess {
+  text-align: center;
+}
+
+.inviteSuccessCheck {
+  width: 72px;
+  height: 72px;
+
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(72,199,116,0.16);
+  color: #78e59b;
+
+  border: 1px solid rgba(72,199,116,0.22);
+
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.inviteSuccessTitle {
+  font-size: 28px;
+  font-weight: 780;
+
+  margin-bottom: 10px;
+}
+
+.inviteSuccessText {
+  color: var(--muted);
+
+  line-height: 1.6;
+}
   </style>
-</head>
+</head> 
+  
+<div id="setupScreen" class="hidden">
+
+  <div id="inviteScreen" class="hidden">
+
+  <div class="inviteCard">
+
+    <div id="inviteFormContent">
+
+      <div class="inviteLogo">
+        ShiftHQ
+        <span class="inviteBadge">
+          PRO
+        </span>
+      </div>
+
+      <div class="inviteTitle">
+        Activate your worker account
+      </div>
+
+      <div class="inviteSubtitle">
+        You've been invited to join a company on ShiftHQ.
+        Choose the 4-digit PIN you'll use at your workplace kiosk.
+      </div>
+
+      <div class="inviteField">
+
+        <label for="invitePin">
+          Create PIN
+        </label>
+
+        <input
+          id="invitePin"
+          type="password"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="4"
+          autocomplete="new-password"
+          placeholder="••••"
+        >
+
+      </div>
+
+      <div class="inviteField">
+
+        <label for="invitePinConfirm">
+          Confirm PIN
+        </label>
+
+        <input
+          id="invitePinConfirm"
+          type="password"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="4"
+          autocomplete="new-password"
+          placeholder="••••"
+        >
+
+      </div>
+
+      <button
+        id="activateInviteButton"
+        class="inviteActivateButton"
+      >
+        Activate account
+      </button>
+
+      <div
+        id="inviteMessage"
+        class="inviteMessage"
+      ></div>
+
+    </div>
+
+
+    <div
+      id="inviteSuccessContent"
+      class="inviteSuccess hidden"
+    >
+
+      <div class="inviteSuccessCheck">
+        ✓
+      </div>
+
+      <div class="inviteSuccessTitle">
+        You're all set
+      </div>
+
+      <div class="inviteSuccessText">
+        Your ShiftHQ worker account has been activated.
+        <br><br>
+        You can now use your 4-digit PIN to clock in and out from your company's ShiftHQ kiosk.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
 <body>
+
+  <div id="inviteScreen" class="hidden">
+
+  <div class="inviteCard">
+
+    <div id="inviteFormContent">
+
+      <div class="inviteLogo">
+        ShiftHQ
+        <span class="inviteBadge">
+          PRO
+        </span>
+      </div>
+
+      <div class="inviteTitle">
+        Activate your worker account
+      </div>
+
+      <div class="inviteSubtitle">
+        You've been invited to join a company on ShiftHQ.
+        Choose the 4-digit PIN you'll use at your workplace kiosk.
+      </div>
+
+      <div class="inviteField">
+
+        <label for="invitePin">
+          Create PIN
+        </label>
+
+        <input
+          id="invitePin"
+          type="password"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="4"
+          autocomplete="new-password"
+          placeholder="••••"
+        >
+
+      </div>
+
+      <div class="inviteField">
+
+        <label for="invitePinConfirm">
+          Confirm PIN
+        </label>
+
+        <input
+          id="invitePinConfirm"
+          type="password"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="4"
+          autocomplete="new-password"
+          placeholder="••••"
+        >
+
+      </div>
+
+      <button
+        id="activateInviteButton"
+        class="inviteActivateButton"
+      >
+        Activate account
+      </button>
+
+      <div
+        id="inviteMessage"
+        class="inviteMessage"
+      ></div>
+
+    </div>
+
+
+    <div
+      id="inviteSuccessContent"
+      class="inviteSuccess hidden"
+    >
+
+      <div class="inviteSuccessCheck">
+        ✓
+      </div>
+
+      <div class="inviteSuccessTitle">
+        You're all set
+      </div>
+
+      <div class="inviteSuccessText">
+        Your ShiftHQ worker account has been activated.
+        <br><br>
+        You can now use your 4-digit PIN to clock in and out from your company's ShiftHQ kiosk.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
 <div id="setupScreen" class="hidden">
 
@@ -1489,6 +1866,20 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
   "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
+  const sb = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
+
+let invitationToken = null;
+let invitationInProgress = false;
 
 
 let companyCode = null;
@@ -1636,6 +2027,41 @@ const summaryWorked =
 const summaryCountdown =
   document.getElementById(
     "summaryCountdown"
+  );
+
+  const inviteScreen =
+  document.getElementById(
+    "inviteScreen"
+  );
+
+const invitePin =
+  document.getElementById(
+    "invitePin"
+  );
+
+const invitePinConfirm =
+  document.getElementById(
+    "invitePinConfirm"
+  );
+
+const activateInviteButton =
+  document.getElementById(
+    "activateInviteButton"
+  );
+
+const inviteMessage =
+  document.getElementById(
+    "inviteMessage"
+  );
+
+const inviteFormContent =
+  document.getElementById(
+    "inviteFormContent"
+  );
+
+const inviteSuccessContent =
+  document.getElementById(
+    "inviteSuccessContent"
   );
 
 
@@ -3529,10 +3955,398 @@ if (
   );
 
 }
+function cleanPinInput(input) {
+
+  input.value =
+    input.value
+      .replace(/\D/g, "")
+      .slice(0, 4);
+
+}
 
 
-initialise();
+invitePin.addEventListener(
+  "input",
+  () => cleanPinInput(invitePin)
+);
 
+
+invitePinConfirm.addEventListener(
+  "input",
+  () => cleanPinInput(invitePinConfirm)
+);
+
+
+async function waitForInviteSession() {
+
+  const {
+    data: {
+      session
+    }
+  } =
+    await sb.auth.getSession();
+
+
+  if (session?.user) {
+    return session;
+  }
+
+
+  return await new Promise(resolve => {
+
+    let finished = false;
+
+
+    const timeout =
+      setTimeout(
+        async () => {
+
+          if (finished) {
+            return;
+          }
+
+          finished = true;
+
+          subscription.unsubscribe();
+
+
+          const {
+            data: {
+              session: latestSession
+            }
+          } =
+            await sb.auth.getSession();
+
+
+          resolve(
+            latestSession || null
+          );
+
+        },
+        4000
+      );
+
+
+    const {
+      data: {
+        subscription
+      }
+    } =
+      sb.auth.onAuthStateChange(
+        (
+          event,
+          session
+        ) => {
+
+          if (
+            finished ||
+            !session?.user
+          ) {
+            return;
+          }
+
+
+          finished = true;
+
+          clearTimeout(timeout);
+
+          subscription.unsubscribe();
+
+          resolve(session);
+
+        }
+      );
+
+  });
+
+}
+
+
+async function showInvitationActivation(
+  token
+) {
+
+  invitationToken = token;
+
+
+  setupScreen.classList.add(
+    "hidden"
+  );
+
+  kioskScreen.classList.add(
+    "hidden"
+  );
+
+  inviteScreen.classList.remove(
+    "hidden"
+  );
+
+
+  inviteMessage.textContent =
+    "Verifying invitation…";
+
+  inviteMessage.className =
+    "inviteMessage";
+
+
+  activateInviteButton.disabled =
+    true;
+
+
+  const session =
+    await waitForInviteSession();
+
+
+  if (!session?.user) {
+
+    inviteMessage.textContent =
+      "We could not verify this invitation. Open the invitation link from your email again.";
+
+    inviteMessage.className =
+      "inviteMessage error";
+
+    return;
+  }
+
+
+  inviteMessage.textContent = "";
+
+  activateInviteButton.disabled =
+    false;
+
+  invitePin.focus();
+
+}
+
+
+async function activateInvitation() {
+
+  if (
+    invitationInProgress ||
+    !invitationToken
+  ) {
+    return;
+  }
+
+
+  const pin =
+    invitePin.value.trim();
+
+
+  const confirmation =
+    invitePinConfirm.value.trim();
+
+
+  if (!/^[0-9]{4}$/.test(pin)) {
+
+    inviteMessage.textContent =
+      "PIN must contain exactly 4 digits.";
+
+    inviteMessage.className =
+      "inviteMessage error";
+
+    return;
+  }
+
+
+  if (pin !== confirmation) {
+
+    inviteMessage.textContent =
+      "The PINs do not match.";
+
+    inviteMessage.className =
+      "inviteMessage error";
+
+    return;
+  }
+
+
+  invitationInProgress = true;
+
+  activateInviteButton.disabled =
+    true;
+
+  inviteMessage.textContent =
+    "Activating account…";
+
+  inviteMessage.className =
+    "inviteMessage";
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await sb.rpc(
+        "accept_worker_invitation",
+        {
+          p_invite_token:
+            invitationToken,
+
+          p_pin:
+            pin
+        }
+      );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    await sb.auth.signOut();
+
+
+    history.replaceState(
+      {},
+      "",
+      "/shifthq/worker/"
+    );
+
+
+    inviteFormContent.classList.add(
+      "hidden"
+    );
+
+    inviteSuccessContent.classList.remove(
+      "hidden"
+    );
+
+
+  } catch (error) {
+
+    inviteMessage.textContent =
+      error.message ||
+      "Could not activate your account.";
+
+    inviteMessage.className =
+      "inviteMessage error";
+
+    activateInviteButton.disabled =
+      false;
+
+
+  } finally {
+
+    invitationInProgress = false;
+
+  }
+
+}
+
+
+activateInviteButton.addEventListener(
+  "click",
+  activateInvitation
+);
+
+
+invitePinConfirm.addEventListener(
+  "keydown",
+  event => {
+
+    if (event.key === "Enter") {
+
+      event.preventDefault();
+
+      activateInvitation();
+
+    }
+
+  }
+);
+
+async function initialise() {
+
+  updateTopClock();
+
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  const inviteToken =
+    params.get("invite");
+
+
+  if (inviteToken) {
+
+    await showInvitationActivation(
+      inviteToken
+    );
+
+    return;
+  }
+
+
+  const savedCode =
+    localStorage.getItem(
+      "shifthq_kiosk_company"
+    );
+
+
+  if (!savedCode) {
+
+    setupScreen.classList.remove(
+      "hidden"
+    );
+
+
+    setupCompanyCode.focus();
+
+    return;
+  }
+
+
+  try {
+
+    companyCode =
+      savedCode;
+
+
+    const result =
+      await loadWorkers(
+        savedCode
+      );
+
+
+    applyCompanyResult(
+      result
+    );
+
+
+    showKiosk();
+
+
+  } catch (error) {
+
+    localStorage.removeItem(
+      "shifthq_kiosk_company"
+    );
+
+
+    setupStatus.textContent =
+      error.message;
+
+
+    setupStatus.className =
+      "setupStatus error";
+
+
+    setupScreen.classList.remove(
+      "hidden"
+    );
+
+
+    setupCompanyCode.focus();
+
+  }
+
+}
 </script>
 
 </body>
