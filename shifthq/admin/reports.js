@@ -42,13 +42,25 @@ function initializeReports() {
 
   </div>
 
-  <button
-    class="inviteButton"
-    type="button"
-    onclick="exportReportCSV()"
-  >
-    Export CSV
-  </button>
+  <div style="display: flex; gap: 10px;">
+
+    <button
+      class="refreshButton"
+      type="button"
+      onclick="exportReportPDF()"
+    >
+      Export PDF
+    </button>
+
+    <button
+      class="inviteButton"
+      type="button"
+      onclick="exportReportCSV()"
+    >
+      Export CSV
+    </button>
+
+  </div>
 
 </div>
 
@@ -1059,4 +1071,16 @@ function csvEscapeValue(
   }
 
   return text;
+}
+
+/* ============================================
+   PDF EXPORT
+============================================ */
+
+function exportReportPDF() {
+  ...
+}
+
+function formatReportDateRange(start, end) {
+  ...
 }
