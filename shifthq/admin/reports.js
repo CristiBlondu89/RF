@@ -827,3 +827,229 @@ document.addEventListener(
     );
   }
 );
+
+/* ============================================
+   CSV EXPORT
+============================================ */
+
+function exportReportCSV() {
+
+  if (!reportRows.length) {
+    window.alert(
+      "There is no report data to export."
+    );
+    return;
+  }
+
+  const start =
+    document.getElementById(
+      "reportStart"
+    )?.value || "";
+
+  const end =
+    document.getElementById(
+      "reportEnd"
+    )?.value || "";
+
+  const csvRows = [
+    [
+      "Worker",
+      "Shifts",
+      "Total Shift",
+      "Break Time",
+      "Worked",
+      "Average Worked"
+    ]
+  ];
+
+  reportRows.forEach(worker => {
+
+    const shifts =
+      Number(
+        worker.shift_count
+      ) || 0;
+
+    const totalShift =
+      Number(
+        worker.total_shift_seconds
+      ) || 0;
+
+    const totalBreak =
+      Number(
+        worker.total_break_seconds
+      ) || 0;
+
+    const worked =
+      Number(
+        worker.worked_seconds
+      ) || 0;
+
+    const averageWorked =
+      shifts > 0
+        ? Math.floor(
+            worked / shifts
+          )
+        : 0;
+
+    csvRows.push([
+      worker.worker_name || "Worker",
+      shifts,
+      formatReportCSVTime(
+        totalShift
+      ),
+      formatReportCSVTime(
+        totalBreak
+      ),
+      formatReportCSVTime(
+        worked
+      ),
+      formatReportCSVTime(
+        averageWorked
+      )
+    ]);
+  });
+
+  const csv =
+    csvRows
+      .map(row =>
+        row
+          .map(
+            csvEscapeValue
+          )
+          .join(",")
+      )
+      .join("\r\n");
+
+  /*
+    UTF-8 BOM helps Excel correctly
+    recognise names containing characters
+    such as æ, ø, å, etc.
+  */
+
+  const blob =
+    new Blob(
+      [
+        "\uFEFF",
+        csv
+      ],
+      {
+        type:
+          "text/csv;charset=utf-8;"
+      }
+    );
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+  const companyName =
+    (
+      document.getElementById(
+        "topCompanyName"
+      )?.textContent ||
+      "ShiftHQ"
+    )
+      .trim()
+      .replace(
+        /[^a-z0-9]+/gi,
+        "-"
+      )
+      .replace(
+        /^-+|-+$/g,
+        ""
+      );
+
+  link.href =
+    url;
+
+  link.download =
+    `${companyName || "ShiftHQ"}-report-${start || "start"}-${end || "end"}.csv`;
+
+  document.body.appendChild(
+    link
+  );
+
+  link.click();
+
+  link.remove();
+
+  URL.revokeObjectURL(
+    url
+  );
+}
+
+
+function formatReportCSVTime(
+  seconds
+) {
+
+  const safeSeconds =
+    Math.max(
+      0,
+      Number(seconds) || 0
+    );
+
+  const hours =
+    Math.floor(
+      safeSeconds / 3600
+    );
+
+  const minutes =
+    Math.floor(
+      (
+        safeSeconds % 3600
+      ) / 60
+    );
+
+  return (
+    String(hours)
+      .padStart(
+        2,
+        "0"
+      )
+    +
+    ":"
+    +
+    String(minutes)
+      .padStart(
+        2,
+        "0"
+      )
+  );
+}
+
+
+function csvEscapeValue(
+  value
+) {
+
+  const text =
+    String(
+      value ?? ""
+    );
+
+  if (
+    text.includes(",") ||
+    text.includes('"') ||
+    text.includes("\n") ||
+    text.includes("\r")
+  ) {
+
+    return (
+      '"' +
+      text.replace(
+        /"/g,
+        '""'
+      ) +
+      '"'
+    );
+  }
+
+  return text;
+}
