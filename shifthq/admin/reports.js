@@ -30,20 +30,27 @@ function initializeReports() {
   section.innerHTML = `
     <div class="workersTop">
 
-      <div>
+  <div>
 
-        <div class="pageHeading">
-          Reports
-        </div>
-
-        <div class="pageDescription">
-          Review worked hours and performance across your team.
-        </div>
-
-      </div>
-
+    <div class="pageHeading">
+      Reports
     </div>
 
+    <div class="pageDescription">
+      Review worked hours and performance across your team.
+    </div>
+
+  </div>
+
+  <button
+    class="inviteButton"
+    type="button"
+    onclick="exportReportCSV()"
+  >
+    Export CSV
+  </button>
+
+</div>
 
     <div class="sectionCard">
 
