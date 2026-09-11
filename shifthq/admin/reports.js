@@ -1078,9 +1078,578 @@ function csvEscapeValue(
 ============================================ */
 
 function exportReportPDF() {
-  ...
+
+  if (!reportRows.length) {
+
+    window.alert(
+      "There is no report data to export."
+    );
+
+    return;
+  }
+
+  const start =
+    document.getElementById(
+      "reportStart"
+    )?.value || "";
+
+  const end =
+    document.getElementById(
+      "reportEnd"
+    )?.value || "";
+
+  const companyName =
+    document.getElementById(
+      "topCompanyName"
+    )?.textContent?.trim()
+    || "ShiftHQ";
+
+  let totalWorked = 0;
+  let totalBreaks = 0;
+  let totalShiftTime = 0;
+  let shiftCount = 0;
+
+  reportRows.forEach(worker => {
+
+    totalWorked +=
+      Number(
+        worker.worked_seconds
+      ) || 0;
+
+    totalBreaks +=
+      Number(
+        worker.total_break_seconds
+      ) || 0;
+
+    totalShiftTime +=
+      Number(
+        worker.total_shift_seconds
+      ) || 0;
+
+    shiftCount +=
+      Number(
+        worker.shift_count
+      ) || 0;
+  });
+
+  const averageShift =
+    shiftCount > 0
+      ? Math.floor(
+          totalShiftTime /
+          shiftCount
+        )
+      : 0;
+
+
+  const workerRows =
+    reportRows
+      .map(worker => {
+
+        const shifts =
+          Number(
+            worker.shift_count
+          ) || 0;
+
+        const totalShift =
+          Number(
+            worker.total_shift_seconds
+          ) || 0;
+
+        const breakTime =
+          Number(
+            worker.total_break_seconds
+          ) || 0;
+
+        const worked =
+          Number(
+            worker.worked_seconds
+          ) || 0;
+
+        const averageWorked =
+          shifts > 0
+            ? Math.floor(
+                worked /
+                shifts
+              )
+            : 0;
+
+        return `
+          <tr>
+
+            <td>
+              ${escapeHtml(
+                worker.worker_name ||
+                "Worker"
+              )}
+            </td>
+
+            <td>
+              ${shifts}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                formatHoursMinutes(
+                  totalShift
+                )
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                formatHoursMinutes(
+                  breakTime
+                )
+              )}
+            </td>
+
+            <td>
+              <strong>
+                ${escapeHtml(
+                  formatHoursMinutes(
+                    worked
+                  )
+                )}
+              </strong>
+            </td>
+
+            <td>
+              ${escapeHtml(
+                formatHoursMinutes(
+                  averageWorked
+                )
+              )}
+            </td>
+
+          </tr>
+        `;
+      })
+      .join("");
+
+
+  const printWindow =
+    window.open(
+      "",
+      "_blank"
+    );
+
+  if (!printWindow) {
+
+    window.alert(
+      "Your browser blocked the PDF window. Allow pop-ups for this site and try again."
+    );
+
+    return;
+  }
+
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+
+    <html lang="en">
+
+    <head>
+
+      <meta charset="UTF-8">
+
+      <title>
+        ${escapeHtml(companyName)} Report
+      </title>
+
+      <style>
+
+        * {
+          box-sizing: border-box;
+        }
+
+        @page {
+          size: A4 landscape;
+          margin: 14mm;
+        }
+
+        body {
+          margin: 0;
+          font-family:
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Arial,
+            sans-serif;
+
+          color: #111827;
+          background: #ffffff;
+          font-size: 12px;
+        }
+
+        .report {
+          width: 100%;
+        }
+
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 30px;
+          padding-bottom: 18px;
+          margin-bottom: 22px;
+          border-bottom: 2px solid #111827;
+        }
+
+        .brand {
+          font-size: 25px;
+          font-weight: 800;
+        }
+
+        .pro {
+          display: inline-block;
+          margin-left: 7px;
+          padding: 3px 6px;
+          border: 1px solid #111827;
+          border-radius: 5px;
+          font-size: 9px;
+          letter-spacing: 1px;
+          vertical-align: middle;
+        }
+
+        .company {
+          margin-top: 5px;
+          color: #64748b;
+          font-size: 13px;
+        }
+
+        .reportMeta {
+          text-align: right;
+        }
+
+        .reportTitle {
+          font-size: 20px;
+          font-weight: 750;
+        }
+
+        .reportRange {
+          margin-top: 5px;
+          color: #64748b;
+        }
+
+        .stats {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          margin-bottom: 26px;
+        }
+
+        .stat {
+          padding: 15px;
+          border: 1px solid #dbe2ea;
+          border-radius: 10px;
+        }
+
+        .statLabel {
+          margin-bottom: 7px;
+          color: #64748b;
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .statValue {
+          font-size: 22px;
+          font-weight: 800;
+        }
+
+        .sectionTitle {
+          margin-bottom: 10px;
+          font-size: 15px;
+          font-weight: 750;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          border: 1px solid #dbe2ea;
+        }
+
+        th {
+          padding: 10px;
+          text-align: left;
+          background: #f8fafc;
+          border-bottom: 1px solid #dbe2ea;
+          color: #64748b;
+          font-size: 9px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        td {
+          padding: 11px 10px;
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:last-child td {
+          border-bottom: none;
+        }
+
+        .footer {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 24px;
+          padding-top: 10px;
+          border-top: 1px solid #e5e7eb;
+          color: #94a3b8;
+          font-size: 9px;
+        }
+
+        @media print {
+
+          body {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+          }
+
+        }
+
+      </style>
+
+    </head>
+
+
+    <body>
+
+      <div class="report">
+
+        <div class="header">
+
+          <div>
+
+            <div class="brand">
+              ShiftHQ
+
+              <span class="pro">
+                PRO
+              </span>
+            </div>
+
+            <div class="company">
+              ${escapeHtml(companyName)}
+            </div>
+
+          </div>
+
+
+          <div class="reportMeta">
+
+            <div class="reportTitle">
+              Work Report
+            </div>
+
+            <div class="reportRange">
+              ${escapeHtml(
+                formatReportDateRange(
+                  start,
+                  end
+                )
+              )}
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="stats">
+
+          <div class="stat">
+
+            <div class="statLabel">
+              Total worked
+            </div>
+
+            <div class="statValue">
+              ${escapeHtml(
+                formatHoursMinutes(
+                  totalWorked
+                )
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="statLabel">
+              Break time
+            </div>
+
+            <div class="statValue">
+              ${escapeHtml(
+                formatHoursMinutes(
+                  totalBreaks
+                )
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="statLabel">
+              Shifts
+            </div>
+
+            <div class="statValue">
+              ${shiftCount}
+            </div>
+
+          </div>
+
+
+          <div class="stat">
+
+            <div class="statLabel">
+              Average shift
+            </div>
+
+            <div class="statValue">
+              ${escapeHtml(
+                formatHoursMinutes(
+                  averageShift
+                )
+              )}
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="sectionTitle">
+          Worker breakdown
+        </div>
+
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Worker</th>
+              <th>Shifts</th>
+              <th>Total shift</th>
+              <th>Break time</th>
+              <th>Worked</th>
+              <th>Avg worked</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+            ${workerRows}
+          </tbody>
+
+        </table>
+
+
+        <div class="footer">
+
+          <div>
+            Generated by ShiftHQ PRO
+          </div>
+
+          <div>
+            ${escapeHtml(
+              new Date().toLocaleString()
+            )}
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <script>
+
+        window.onload = function () {
+
+          setTimeout(
+            function () {
+              window.print();
+            },
+            250
+          );
+
+        };
+
+      <\/script>
+
+    </body>
+
+    </html>
+  `);
+
+  printWindow.document.close();
 }
 
-function formatReportDateRange(start, end) {
-  ...
+
+function formatReportDateRange(
+  start,
+  end
+) {
+
+  if (!start || !end) {
+    return "";
+  }
+
+  const startDate =
+    parseDateInput(
+      start
+    );
+
+  const endDate =
+    parseDateInput(
+      end
+    );
+
+  if (
+    !startDate ||
+    !endDate
+  ) {
+
+    return (
+      start +
+      " – " +
+      end
+    );
+  }
+
+  const formatter =
+    new Intl.DateTimeFormat(
+      undefined,
+      {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      }
+    );
+
+  if (start === end) {
+
+    return formatter.format(
+      startDate
+    );
+  }
+
+  return (
+    formatter.format(
+      startDate
+    )
+    +
+    " – "
+    +
+    formatter.format(
+      endDate
+    )
+  );
 }
