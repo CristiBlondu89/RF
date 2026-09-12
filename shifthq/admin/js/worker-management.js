@@ -1,193 +1,84 @@
-(function () {
-  "use strict";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-  let invitations = [];
+const origin = Deno.env.get("APP_ORIGIN") ?? "https://rusticflight.com";
+const cors = { "Access-Control-Allow-Origin": origin, "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS" };
+const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
-  async function callWorkerApi(action, payload = {}) {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) throw new Error("Your admin session has expired. Sign in again.");
+Deno.serve(async req => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
+  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  try {
+    const authorization = req.headers.get("Authorization");
+    if (!authorization) return json({ error: "Unauthorized" }, 401);
+    const url = Deno.env.get("SUPABASE_URL")!;
+    const anon = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const service = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const userClient = createClient(url, anon, { global: { headers: { Authorization: authorization } } });
+    const admin = createClient(url, service, { auth: { persistSession: false } });
+    const { data: { user } } = await userClient.auth.getUser();
+    if (!user) return json({ error: "Unauthorized" }, 401);
 
-    const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-workers`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${session.access_token}`,
-        "apikey": SUPABASE_PUBLISHABLE_KEY
-      },
-      body: JSON.stringify({ action, company_id: companyId, ...payload })
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(result.error || "Worker action failed.");
-    return result;
-  }
+    const body = await req.json();
+    const companyId = String(body.company_id ?? "");
+    const action = String(body.action ?? "");
+    const { data: membership, error: membershipError } = await userClient.from("company_members").select("role,active").eq("company_id", companyId).eq("user_id", user.id).maybeSingle();
+    if (membershipError) {
+      console.error("Membership lookup failed:", membershipError);
+      return json({ error: `Could not verify admin membership: ${membershipError.message}` }, 403);
+    }
+    if (!membership || membership.role !== "admin" || membership.active !== true) return json({ error: "You are not an active admin of this company" }, 403);
 
-  function setActionMessage(text, type = "") {
-    showMessage("workerActionMessage", text, type);
-  }
-
-  async function load() {
-    if (!companyId) return;
-    const memberResult = await sb
-      .from("company_members")
-      .select(`id,user_id,role,active,joined_at,profiles(full_name,email)`)
-      .eq("company_id", companyId)
-      .order("joined_at", { ascending: true });
-
-    if (memberResult.error) {
-      console.error("Members:", memberResult.error);
-      document.getElementById("membersList").innerHTML =
-        '<div class="emptyState">Could not load team members.</div>';
-    } else {
-      members = Array.isArray(memberResult.data) ? memberResult.data : [];
-      renderMembers();
+    if (action === "list") {
+      const result = await admin.from("invitations").select("id,email,full_name,created_at,expires_at").eq("company_id", companyId).is("accepted_at", null).order("created_at", { ascending: false });
+      if (result.error) throw result.error;
+      return json({ invitations: result.data });
     }
 
-    await loadInvitations();
-  }
-
-  function renderMembers() {
-    const workers = members.filter(member => member.role === "worker");
-    document.getElementById("workerCountText").textContent =
-      `${workers.length} worker${workers.length === 1 ? "" : "s"}`;
-    const container = document.getElementById("membersList");
-    if (!workers.length) {
-      container.innerHTML = '<div class="emptyState">No workers yet.</div>';
-      return;
+    if (action === "cancel") {
+      const id = String(body.invitation_id ?? "");
+      const result = await admin.from("invitations").delete().eq("id", id).eq("company_id", companyId).is("accepted_at", null).select("id").maybeSingle();
+      if (result.error) throw result.error;
+      if (!result.data) return json({ error: "Pending invitation not found" }, 404);
+      // Deliberately do not delete auth.users: the address may own another company membership.
+      return json({ success: true });
     }
 
-    container.innerHTML = workers.map(member => {
-      const profile = member.profiles || {};
-      const name = profile.full_name?.trim() || "Worker";
-      const email = profile.email || "No email";
-      return `
-        <div class="memberRow">
-          <div class="avatar">${escapeHtml(initials(name))}</div>
-          <div class="workerName">${escapeHtml(name)}</div>
-          <div class="memberEmail">${escapeHtml(email)}</div>
-          <div class="memberActions">
-            <button class="dangerButton" data-remove-worker="${escapeHtml(member.user_id)}"
-              data-worker-name="${escapeHtml(name)}">Remove</button>
-          </div>
-        </div>`;
-    }).join("");
-  }
-
-  async function loadInvitations() {
-    const container = document.getElementById("pendingInvitationsList");
-    try {
-      const result = await callWorkerApi("list");
-      invitations = result.invitations || [];
-      document.getElementById("invitationCountText").textContent =
-        `${invitations.length} pending invitation${invitations.length === 1 ? "" : "s"}`;
-      if (!invitations.length) {
-        container.innerHTML = '<div class="emptyState">No pending invitations.</div>';
-        return;
-      }
-      container.innerHTML = invitations.map(invitation => `
-        <div class="invitationRow">
-          <div class="workerName">${escapeHtml(invitation.full_name || "Worker")}</div>
-          <div class="memberEmail">${escapeHtml(invitation.email)}</div>
-          <div class="memberEmail">${escapeHtml(formatInviteDate(invitation.created_at))}</div>
-          <div class="invitationActions">
-            <button class="secondaryButton" data-resend-invite="${escapeHtml(invitation.id)}">Resend</button>
-            <button class="dangerButton" data-cancel-invite="${escapeHtml(invitation.id)}">Cancel</button>
-          </div>
-        </div>`).join("");
-    } catch (error) {
-      console.error("Invitations:", error);
-      container.innerHTML = `<div class="emptyState">Could not load invitations: ${escapeHtml(error.message || String(error))}</div>`;
-      setActionMessage(error.message);
-    }
-  }
-
-  function formatInviteDate(value) {
-    if (!value) return "Pending";
-    return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(value));
-  }
-
-  async function sendInvitation() {
-    clearMessage("inviteMessage");
-    const fullName = document.getElementById("workerName").value.trim();
-    const email = document.getElementById("workerEmail").value.trim().toLowerCase();
-    const button = document.getElementById("sendInviteButton");
-    if (!email) return showMessage("inviteMessage", "Enter the worker's email address.");
-    if (!companyId) return showMessage("inviteMessage", "No company is loaded.");
-
-    button.disabled = true;
-    button.textContent = "Sending…";
-    showMessage("inviteMessage", "Creating invitation…", "info");
-    try {
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) throw new Error("Your admin session has expired. Sign in again.");
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/invite-worker`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`,
-          "apikey": SUPABASE_PUBLISHABLE_KEY
-        },
-        body: JSON.stringify({ company_id: companyId, email, full_name: fullName || null })
+    if (action === "resend") {
+      const id = String(body.invitation_id ?? "");
+      const found = await admin.from("invitations").select("id,email,full_name").eq("id", id).eq("company_id", companyId).is("accepted_at", null).maybeSingle();
+      if (found.error) throw found.error;
+      if (!found.data) return json({ error: "Pending invitation not found" }, 404);
+      const removedOld = await admin.from("invitations").delete().eq("id", id).eq("company_id", companyId).is("accepted_at", null);
+      if (removedOld.error) throw removedOld.error;
+      const created = await userClient.rpc("create_worker_invitation", {
+        p_company_id: companyId, p_email: found.data.email, p_full_name: found.data.full_name
       });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "Invitation failed.");
-      showMessage("inviteMessage", result.message || "Invitation sent successfully.", "success");
-      document.getElementById("workerName").value = "";
-      document.getElementById("workerEmail").value = "";
-      await load();
-    } catch (error) {
-      showMessage("inviteMessage", error.message || "Invitation failed.");
-    } finally {
-      button.disabled = false;
-      button.textContent = "Send invitation";
+      if (created.error) throw created.error;
+      const redirectTo = `${origin}/shifthq/worker/?invite=${encodeURIComponent(created.data)}`;
+      const mailClient = createClient(url, anon, { auth: { persistSession: false } });
+      const sent = await mailClient.auth.signInWithOtp({ email: found.data.email, options: { emailRedirectTo: redirectTo, shouldCreateUser: true, data: { full_name: found.data.full_name, company_id: companyId } } });
+      if (sent.error) {
+        return json({ error: sent.error.message }, 429);
+      }
+      return json({ success: true });
     }
-  }
 
-  async function removeWorker(userId, name) {
-    if (!confirm(`Remove ${name} from this company? Their ShiftHQ account will not be deleted.`)) return;
-    setActionMessage("Removing worker…", "info");
-    try {
-      await callWorkerApi("remove", { user_id: userId });
-      setActionMessage(`${name} was removed.`, "success");
-      await load();
-      if (typeof loadLiveWorkers === "function") await loadLiveWorkers();
-    } catch (error) {
-      setActionMessage(error.message);
-      alert(`Could not remove worker: ${error.message || String(error)}`);
+    if (action === "remove") {
+      const workerId = String(body.user_id ?? "");
+      const removed = await userClient.rpc("admin_remove_worker", { p_company_id: companyId, p_user_id: workerId });
+      if (removed.error) return json({ error: removed.error.message }, 409);
+      return json({ success: true });
     }
+
+    return json({ error: "Unknown action" }, 400);
+  } catch (error) {
+    console.error(error);
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "object" && error !== null && "message" in error
+          ? String(error.message)
+          : JSON.stringify(error);
+    return json({ error: message || "Unexpected server error" }, 500);
   }
-
-  async function resendInvitation(id) {
-    setActionMessage("Resending invitation…", "info");
-    try {
-      await callWorkerApi("resend", { invitation_id: id });
-      setActionMessage("Invitation resent.", "success");
-      await loadInvitations();
-    } catch (error) {
-      setActionMessage(error.message);
-    }
-  }
-
-  async function cancelInvitation(id) {
-    const invitation = invitations.find(item => item.id === id);
-    if (!confirm(`Cancel the invitation for ${invitation?.email || "this worker"}?`)) return;
-    setActionMessage("Cancelling invitation…", "info");
-    try {
-      await callWorkerApi("cancel", { invitation_id: id });
-      setActionMessage("Invitation cancelled.", "success");
-      await loadInvitations();
-    } catch (error) {
-      setActionMessage(error.message);
-    }
-  }
-
-  document.addEventListener("click", event => {
-    const remove = event.target.closest("[data-remove-worker]");
-    if (remove) removeWorker(remove.dataset.removeWorker, remove.dataset.workerName);
-    const resend = event.target.closest("[data-resend-invite]");
-    if (resend) resendInvitation(resend.dataset.resendInvite);
-    const cancel = event.target.closest("[data-cancel-invite]");
-    if (cancel) cancelInvitation(cancel.dataset.cancelInvite);
-  });
-
-  window.WorkerManagement = { load, renderMembers, sendInvitation, loadInvitations };
-})();
+});
