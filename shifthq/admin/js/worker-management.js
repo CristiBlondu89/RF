@@ -196,4 +196,7 @@
   });
 
   window.WorkerManagement = { load, renderMembers, sendInvitation, loadInvitations };
+  window.loadMembers = load;
+  window.renderMembers = renderMembers;
+  window.sendInvitation = sendInvitation;
 })();
