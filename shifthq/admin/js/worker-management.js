@@ -75,8 +75,9 @@
   async function loadInvitations() {
     const container = document.getElementById("pendingInvitationsList");
     try {
-      const result = await callWorkerApi("list");
-      invitations = result.invitations || [];
+      const result = await sb.rpc("get_admin_pending_invitations", { p_company_id: companyId });
+      if (result.error) throw result.error;
+      invitations = result.data || [];
       document.getElementById("invitationCountText").textContent =
         `${invitations.length} pending invitation${invitations.length === 1 ? "" : "s"}`;
       if (!invitations.length) {
@@ -146,7 +147,8 @@
     if (!confirm(`Remove ${name} from this company? Their ShiftHQ account will not be deleted.`)) return;
     setActionMessage("Removing worker…", "info");
     try {
-      await callWorkerApi("remove", { user_id: userId });
+      const result = await sb.rpc("admin_remove_worker", { p_company_id: companyId, p_user_id: userId });
+      if (result.error) throw result.error;
       setActionMessage(`${name} was removed.`, "success");
       await load();
       if (typeof loadLiveWorkers === "function") await loadLiveWorkers();
