@@ -46,7 +46,7 @@
   }
 
   function renderMembers() {
-    const workers = members.filter(member => member.role === "worker");
+    const workers = members.filter(member => member.role === "worker" && member.active === true);
     document.getElementById("workerCountText").textContent =
       `${workers.length} worker${workers.length === 1 ? "" : "s"}`;
     const container = document.getElementById("membersList");
@@ -174,7 +174,11 @@
     if (!confirm(`Cancel the invitation for ${invitation?.email || "this worker"}?`)) return;
     setActionMessage("Cancelling invitation…", "info");
     try {
-      await callWorkerApi("cancel", { invitation_id: id });
+      const result = await sb.rpc("admin_cancel_worker_invitation", {
+        p_company_id: companyId,
+        p_invitation_id: id
+      });
+      if (result.error) throw result.error;
       setActionMessage("Invitation cancelled.", "success");
       await loadInvitations();
     } catch (error) {
