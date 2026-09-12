@@ -95,7 +95,7 @@
         </div>`).join("");
     } catch (error) {
       console.error("Invitations:", error);
-      container.innerHTML = '<div class="emptyState">Could not load invitations.</div>';
+      container.innerHTML = `<div class="emptyState">Could not load invitations: ${escapeHtml(error.message || String(error))}</div>`;
       setActionMessage(error.message);
     }
   }
@@ -152,6 +152,7 @@
       if (typeof loadLiveWorkers === "function") await loadLiveWorkers();
     } catch (error) {
       setActionMessage(error.message);
+      alert(`Could not remove worker: ${error.message || String(error)}`);
     }
   }
 
