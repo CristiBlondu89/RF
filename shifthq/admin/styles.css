@@ -872,7 +872,7 @@
       font-weight: 700;
     }
 
-    .inactivePill {
+.inactivePill {
       justify-self: start;
 
       padding: 5px 9px;
@@ -1220,6 +1220,23 @@
   background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(3px);
 }
+
+.memberActions { display: flex; justify-content: flex-end; }
+.dangerButton, .secondaryButton {
+  border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px;
+  background: white; color: var(--text); font-weight: 650;
+}
+.dangerButton { color: #a13b3b; border-color: rgba(161,59,59,.25); }
+.dangerButton:hover { background: var(--red-soft); }
+.secondaryButton:hover { background: var(--surface-soft); }
+.pendingCard { margin-top: 20px; }
+.invitationRow {
+  display: grid; grid-template-columns: minmax(180px,1fr) minmax(220px,1fr) 110px auto;
+  align-items: center; gap: 16px; padding: 15px 22px; border-bottom: 1px solid var(--border);
+}
+.invitationRow:last-child { border-bottom: 0; }
+.invitationActions { display: flex; justify-content: flex-end; gap: 8px; }
+.actionStatus { min-height: 20px; padding: 0 22px 16px; }
 
 .shiftModalCard {
   position: relative;
