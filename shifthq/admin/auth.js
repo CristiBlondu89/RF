@@ -254,6 +254,7 @@
     function showLogin() {
 
       window.WorkerProfile?.close();
+      window.FormerWorkers?.clear();
 
       companyId = null;
       company = null;

@@ -1,0 +1,23 @@
+.formerLayout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;align-items:start}
+.formerPeople{padding:20px}.formerPeople label{font-size:13px;font-weight:650;display:block;margin-bottom:9px}.formerPeople input{width:100%;padding:11px;border:1px solid var(--border);border-radius:9px;font:inherit}
+.formerPerson{display:block;width:100%;background:transparent;text-align:left;border:0;border-bottom:1px solid var(--border);padding:17px 9px;color:var(--text);border-radius:8px}.formerPerson.selected{background:var(--blue-soft)}.formerPerson strong,.formerPerson span,.formerPerson small{display:block;overflow-wrap:anywhere}.formerPerson span{font-size:12px;color:var(--muted);margin:6px 0}.formerPerson small{color:var(--muted)}
+.formerDetail{padding:25px;min-width:0}.formerDetail h2{margin:15px 0 8px;overflow-wrap:anywhere}.formerDetail p{overflow-wrap:anywhere}.formerMuted{color:var(--muted);font-size:13px;line-height:1.6}.formerDetail header{padding-bottom:15px;border-bottom:1px solid var(--border)}
+#formerFilters{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:20px 0}#formerFilters label{font-size:13px;font-weight:600}#formerFilters input{display:block;margin-top:8px;border:1px solid var(--border);border-radius:9px;padding:10px;font:inherit;min-width:0}
+.formerExport{display:flex;gap:10px;flex-wrap:wrap}.formerStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}.formerStats>div{border:1px solid var(--border);padding:14px;border-radius:12px;background:var(--surface-soft)}.formerStats strong{display:block;font-size:21px;overflow-wrap:anywhere}.formerStats span{font-size:12px;color:var(--muted);display:block;margin-top:9px}
+.formerTableWrap{overflow:auto}.formerTable{border-collapse:collapse;width:100%;font-size:13px}.formerTable th,.formerTable td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--border)}.formerTable th{background:var(--surface-soft);color:var(--muted)}.formerPages{display:flex;gap:15px;align-items:center;justify-content:center;margin-top:20px;font-size:13px}
+#page-former-workers button:disabled{opacity:.5;cursor:default}#page-former-workers button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+@media(max-width:1000px){.formerLayout{grid-template-columns:1fr}.formerPeople{max-height:300px;overflow:auto}}@media(max-width:560px){.formerDetail{padding:16px}.formerStats strong{font-size:16px}.formerStats>div{padding:10px}}
+@media(max-width:700px){
+  #adminApp:has(#page-former-workers.active){grid-template-columns:minmax(0,1fr)}
+  #adminApp:has(#page-former-workers.active) .sidebar{position:static;height:auto;min-width:0}
+  #adminApp:has(#page-former-workers.active) .sidebarBrand{padding:14px 18px}
+  #adminApp:has(#page-former-workers.active) .sidebarCompany{display:none}
+  #adminApp:has(#page-former-workers.active) .navigation{display:flex;overflow-x:auto;padding:8px;gap:5px}
+  #adminApp:has(#page-former-workers.active) .navButton{width:auto;white-space:nowrap;flex-shrink:0}
+  #adminApp:has(#page-former-workers.active) .sidebarBottom{margin-top:0;padding:8px 18px;display:flex;align-items:center;gap:14px}
+  #adminApp:has(#page-former-workers.active) .adminIdentity{flex:1;margin:0;min-width:0}
+  #adminApp:has(#page-former-workers.active) .signOutButton{width:auto;white-space:nowrap}
+  #adminApp:has(#page-former-workers.active) .pageContent{padding:18px}
+  #page-former-workers .workersTop{align-items:start;flex-wrap:wrap;gap:14px}
+  #formerFilters label{max-width:100%}
+}

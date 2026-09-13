@@ -80,6 +80,8 @@ const SUPABASE_URL =
 
     function showPage(pageName) {
 
+      if (pageName === "former-workers") window.FormerWorkers?.load();
+
       document
         .querySelectorAll(
           ".pageSection"
@@ -126,6 +128,7 @@ const SUPABASE_URL =
       const titles = {
         dashboard: "Dashboard",
         workers: "Workers",
+        "former-workers": "Former workers",
         timesheets: "Timesheets",
         reports: "Reports",
         settings: "Settings"

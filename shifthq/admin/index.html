@@ -14,6 +14,7 @@
 
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="worker-profile.css">
+  <link rel="stylesheet" href="former-workers.css">
 </head>
 
 <body>
@@ -142,6 +143,11 @@
           Workers
         </button>
 
+        <button class="navButton" data-page="former-workers">
+          <span class="navIcon">♙</span>
+          Former workers
+        </button>
+
         <button
           class="navButton"
           data-page="timesheets"
@@ -219,6 +225,8 @@
 
 
       <div class="pageContent">
+
+        <section id="page-former-workers" class="pageSection"></section>
 
         <!-- DASHBOARD -->
 
@@ -506,7 +514,6 @@
 
             </div>
 
-            <label class="workerInactiveToggle"><input type="checkbox" id="showInactiveWorkers"> Show inactive workers</label>
             <div id="membersList">
 
               <div class="emptyState">
@@ -852,6 +859,7 @@
   <script src="js/worker-profile.js"></script>
   <script src="timesheets.js"></script>
   <script src="reports.js"></script>
+  <script src="js/former-workers.js"></script>
   <script src="settings.js"></script>
   <script src="shift-details.js"></script>
 
