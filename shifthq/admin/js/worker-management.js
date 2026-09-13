@@ -30,7 +30,7 @@
     if (!companyId) return;
     const memberResult = await sb
       .from("company_members")
-      .select(`id,user_id,role,active,joined_at,profiles(full_name,email)`)
+      .select(`id,user_id,role,active,joined_at,removed_at,profiles(full_name,email)`)
       .eq("company_id", companyId)
       .order("joined_at", { ascending: true });
 
@@ -47,7 +47,7 @@
   }
 
   function renderMembers() {
-    const workers = members.filter(member => member.role === "worker" && (showInactiveWorkers || member.active === true));
+    const workers = members.filter(member => member.role === "worker" && !member.removed_at && (showInactiveWorkers || member.active === true));
     document.getElementById("workerCountText").textContent =
       `${workers.length} worker${workers.length === 1 ? "" : "s"}`;
     const container = document.getElementById("membersList");
@@ -145,12 +145,12 @@
   }
 
   async function removeWorker(userId, name) {
-    if (!confirm(`Remove ${name} from this company? Their ShiftHQ account will not be deleted.`)) return;
+    if (!confirm(`Remove ${name} from this company? They will disappear from both worker lists. Their shift history and ShiftHQ account will be kept.`)) return;
     setActionMessage("Removing worker…", "info");
     try {
       const result = await sb.rpc("admin_remove_worker", { p_company_id: companyId, p_user_id: userId });
       if (result.error) throw result.error;
-      setActionMessage(`${name} was removed.`, "success");
+      setActionMessage(`${name} was removed from the worker list. Shift history was kept.`, "success");
       await load();
       if (typeof loadLiveWorkers === "function") await loadLiveWorkers();
     } catch (error) {
