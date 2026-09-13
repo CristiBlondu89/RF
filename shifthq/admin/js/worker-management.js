@@ -2,6 +2,7 @@
   "use strict";
 
   let invitations = [];
+  let showInactiveWorkers = false;
 
   async function callWorkerApi(action, payload = {}) {
     const { data: { session } } = await sb.auth.getSession();
@@ -46,7 +47,7 @@
   }
 
   function renderMembers() {
-    const workers = members.filter(member => member.role === "worker" && member.active === true);
+    const workers = members.filter(member => member.role === "worker" && (showInactiveWorkers || member.active === true));
     document.getElementById("workerCountText").textContent =
       `${workers.length} worker${workers.length === 1 ? "" : "s"}`;
     const container = document.getElementById("membersList");
@@ -60,9 +61,9 @@
       const name = profile.full_name?.trim() || "Worker";
       const email = profile.email || "No email";
       return `
-        <div class="memberRow">
+        <div class="memberRow workerProfileRow" data-worker-profile="${escapeHtml(member.user_id)}">
           <div class="avatar">${escapeHtml(initials(name))}</div>
-          <div class="workerName">${escapeHtml(name)}</div>
+          <div class="workerName"><button class="workerProfileLink" data-open-profile="${escapeHtml(member.user_id)}" aria-haspopup="dialog">${escapeHtml(name)}</button><span class="workerProfileStatus">${member.active ? "Active" : "Inactive"}</span></div>
           <div class="memberEmail">${escapeHtml(email)}</div>
           <div class="memberActions">
             <button class="dangerButton" data-remove-worker="${escapeHtml(member.user_id)}"
@@ -185,6 +186,13 @@
       setActionMessage(error.message);
     }
   }
+
+  document.addEventListener("change", event => {
+    if (event.target.id === "showInactiveWorkers") {
+      showInactiveWorkers = event.target.checked;
+      renderMembers();
+    }
+  });
 
   document.addEventListener("click", event => {
     const remove = event.target.closest("[data-remove-worker]");
