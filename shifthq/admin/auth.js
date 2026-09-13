@@ -256,6 +256,7 @@
       window.WorkerProfile?.close();
       window.FormerWorkers?.clear();
       window.PayPeriods?.clear();
+      window.DataLoenExport?.clear();
 
       companyId = null;
       company = null;
