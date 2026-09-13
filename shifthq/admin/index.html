@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="worker-profile.css">
   <link rel="stylesheet" href="former-workers.css">
+  <link rel="stylesheet" href="pay-periods.css">
 </head>
 
 <body>
@@ -143,6 +144,8 @@
           Workers
         </button>
 
+        <button class="navButton" data-page="pay-periods"><span class="navIcon">▤</span>Pay periods</button>
+
         <button class="navButton" data-page="former-workers">
           <span class="navIcon">♙</span>
           Former workers
@@ -226,6 +229,7 @@
 
       <div class="pageContent">
 
+        <section id="page-pay-periods" class="pageSection"></section>
         <section id="page-former-workers" class="pageSection"></section>
 
         <!-- DASHBOARD -->
@@ -860,6 +864,7 @@
   <script src="timesheets.js"></script>
   <script src="reports.js"></script>
   <script src="js/former-workers.js"></script>
+  <script src="js/pay-periods.js"></script>
   <script src="settings.js"></script>
   <script src="shift-details.js"></script>
 

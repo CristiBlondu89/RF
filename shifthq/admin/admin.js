@@ -80,6 +80,7 @@ const SUPABASE_URL =
 
     function showPage(pageName) {
 
+      if (pageName === "pay-periods") window.PayPeriods?.load();
       if (pageName === "former-workers") window.FormerWorkers?.load();
 
       document
@@ -129,6 +130,7 @@ const SUPABASE_URL =
         dashboard: "Dashboard",
         workers: "Workers",
         "former-workers": "Former workers",
+        "pay-periods": "Pay periods",
         timesheets: "Timesheets",
         reports: "Reports",
         settings: "Settings"

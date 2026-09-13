@@ -255,6 +255,7 @@
 
       window.WorkerProfile?.close();
       window.FormerWorkers?.clear();
+      window.PayPeriods?.clear();
 
       companyId = null;
       company = null;
