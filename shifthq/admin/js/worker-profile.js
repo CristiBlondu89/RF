@@ -121,6 +121,9 @@
       saved = true;
       if (selected.company === companyId) {
         await Promise.allSettled([loadMembers(), loadLiveWorkers()]);
+        if (document.getElementById("page-former-workers")?.classList.contains("active")) {
+          window.FormerWorkers?.load();
+        }
       }
       if (!current(ticket, selected.company)) return;
       await load(selected.userId, selected.company);

@@ -2,7 +2,6 @@
   "use strict";
 
   let invitations = [];
-  let showInactiveWorkers = false;
 
   async function callWorkerApi(action, payload = {}) {
     const { data: { session } } = await sb.auth.getSession();
@@ -47,7 +46,7 @@
   }
 
   function renderMembers() {
-    const workers = members.filter(member => member.role === "worker" && !member.removed_at && (showInactiveWorkers || member.active === true));
+    const workers = members.filter(member => member.role === "worker" && !member.removed_at && member.active === true);
     document.getElementById("workerCountText").textContent =
       `${workers.length} worker${workers.length === 1 ? "" : "s"}`;
     const container = document.getElementById("membersList");
@@ -186,13 +185,6 @@
       setActionMessage(error.message);
     }
   }
-
-  document.addEventListener("change", event => {
-    if (event.target.id === "showInactiveWorkers") {
-      showInactiveWorkers = event.target.checked;
-      renderMembers();
-    }
-  });
 
   document.addEventListener("click", event => {
     const remove = event.target.closest("[data-remove-worker]");
