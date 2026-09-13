@@ -2,12 +2,24 @@
   "use strict";
   const section = document.getElementById("page-former-workers");
   let people = [], selected = null, shifts = [], snapshot = null, page = 0, version = 0;
+  let deletion = null;
+  const deleteDialog = document.createElement("dialog");
+  deleteDialog.className = "formerDeleteDialog";
+  deleteDialog.setAttribute("aria-labelledby", "formerDeleteTitle");
+  deleteDialog.setAttribute("aria-describedby", "formerDeleteWarning");
+  document.body.appendChild(deleteDialog);
+  function closeDelete(force = false) {
+    if (deletion?.busy && !force) return;
+    deletion = null;
+    if (deleteDialog.open) deleteDialog.close();
+    deleteDialog.replaceChildren();
+  }
   const escape = value => escapeHtml(value);
   const duration = value => formatReportCSVTime(Number(value) || 0);
   const date = value => value ? new Date(value).toLocaleString() : "—";
   const status = person => person.removed_at ? "Removed" : "Deactivated";
   const name = person => person.profiles?.full_name?.trim() || "Worker";
-  function clear() { version++; people = []; selected = null; shifts = []; snapshot = null; section.replaceChildren(); }
+  function clear() { closeDelete(true); version++; people = []; selected = null; shifts = []; snapshot = null; section.replaceChildren(); }
   function shell() {
     section.innerHTML = `<div class="workersTop"><div><div class="pageHeading">Former workers</div>
       <div class="pageDescription">Deactivated and removed workers, with their shift history and exports.</div></div>
@@ -47,7 +59,8 @@
       ${!selected.removed_at ? '<button class="secondaryButton" data-former-access>Manage access</button>' : ''}</header>
       <form id="formerFilters"><label>From<input type="date" id="formerStart"></label><label>To<input type="date" id="formerEnd"></label><button class="secondaryButton" type="submit">Apply dates</button><button class="secondaryButton" type="button" data-former-all>All time</button></form>
       <div class="formerExport"><button class="secondaryButton" data-former-csv disabled>Export CSV</button><button class="secondaryButton" data-former-pdf disabled>Export PDF</button></div>
-      <div id="formerHistory" aria-live="polite"></div>`;
+      <div id="formerHistory" aria-live="polite"></div>
+      <div class="formerDeleteArea"><h3>Permanent deletion</h3><p class="formerMuted">Permanently delete this worker’s company records and all shift history.</p><button class="dangerButton" data-former-delete>Permanently delete worker</button></div>`;
     history();
   }
   async function history() {
@@ -110,6 +123,51 @@
     popup.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Worker shift history</title><style>@page{size:A4 landscape;margin:14mm}body{font:12px Arial;color:#172231}h1{font-size:23px}p{line-height:1.6}table{border-collapse:collapse;width:100%}th,td{text-align:left;border-bottom:1px solid #ddd;padding:8px}th{background:#f4f6f8}thead{display:table-header-group}tr{break-inside:avoid}button{padding:10px}@media print{button{display:none}}</style></head><body><h1>${escape(name(snapshot.person))} — shift history</h1><p>${escape(snapshot.person.profiles?.email || "No email recorded")} · ${status(snapshot.person)}<br>Worker ID: ${escape(snapshot.person.user_id)}<br>${escape(range())} · Snapshot ${escape(date(snapshot.asOf))}<br>${shifts.length} shifts · Worked ${escape(duration(total.worked))} · Breaks ${escape(duration(total.breaks))}</p>${table(shifts,false)}</body></html>`);
     popup.document.close(); popup.focus(); popup.print();
   }
+  function confirmDelete() {
+    if (!selected || !companyId) return;
+    deletion = {userId:selected.user_id, company:companyId, busy:false};
+    deleteDialog.innerHTML = `<h2 id="formerDeleteTitle">Permanently delete ${escape(name(selected))}?</h2>
+      <p>${escape(selected.profiles?.email || "No email recorded")}<br><small>Worker ID: ${escape(selected.user_id)}</small></p>
+      <p id="formerDeleteWarning"><strong>This cannot be undone. Deleted records cannot be recovered in ShiftHQ.</strong></p>
+      <p>This deletes the worker’s membership, PIN, and <strong>all shifts and breaks in this company, from all dates</strong>—including shifts outside the current filter. They will also disappear from Timesheets and Reports.</p>
+      <p>Their shared account and records in other companies are kept. Export any records you need before continuing.</p>
+      <form id="formerDeleteForm"><label for="formerDeleteText">Type DELETE to confirm</label><input id="formerDeleteText" autocomplete="off" spellcheck="false" required>
+        <div class="formerDeleteButtons"><button type="button" class="secondaryButton" data-delete-cancel autofocus>Cancel</button><button type="submit" class="dangerButton" id="formerDeleteSubmit" disabled>Delete permanently</button></div>
+      </form><p id="formerDeleteMessage" role="status" aria-live="polite"></p>`;
+    deleteDialog.showModal();
+  }
+  deleteDialog.addEventListener("cancel",event=>{event.preventDefault();closeDelete();});
+  deleteDialog.addEventListener("click",event=>{if(event.target.closest("[data-delete-cancel]")) closeDelete();});
+  deleteDialog.addEventListener("input",()=>{if(!deletion?.busy) document.getElementById("formerDeleteSubmit").disabled = document.getElementById("formerDeleteText").value !== "DELETE";});
+  deleteDialog.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if (!deletion || deletion.busy || deletion.company !== companyId || document.getElementById("formerDeleteText").value !== "DELETE") return;
+    const target = deletion;
+    target.busy = true;
+    deleteDialog.querySelectorAll("button,input").forEach(el=>el.disabled=true);
+    document.getElementById("formerDeleteMessage").textContent="Deleting permanently…";
+    try {
+      const result=await sb.rpc("admin_delete_former_worker", {p_company_id:target.company,p_user_id:target.userId,p_confirmation:"DELETE"});
+      if(result.error) throw result.error;
+      if(deletion !== target || companyId !== target.company) return;
+      closeDelete(true);
+      // Clear cached totals and exports; the original pages reload through their normal flows.
+      members = members.filter(m=>m.user_id !== target.userId);
+      timesheets = []; timesheetsInitialized = false;
+      reportRows = [];
+      if(typeof renderTimesheets === "function") renderTimesheets();
+      if(typeof updateTimesheetStats === "function") updateTimesheetStats();
+      if(typeof renderReportRows === "function") renderReportRows();
+      if(typeof resetReportStats === "function") resetReportStats();
+      await load();
+      if(companyId === target.company && document.getElementById("formerDetail")) document.getElementById("formerDetail").innerHTML='<div class="emptyState" role="status">Worker and company shift history permanently deleted.</div>';
+    } catch(error) {
+      if(deletion !== target || companyId !== target.company) return;
+      target.busy=false;
+      document.getElementById("formerDeleteMessage").textContent=error.message || "Deletion could not be confirmed. Refresh the list before trying again.";
+      deleteDialog.querySelectorAll("button,input").forEach(el=>el.disabled=false);
+    }
+  });
   section.addEventListener("input",e=>{
     if(e.target.id === "formerSearch") renderPeople();
     if(e.target.id === "formerStart" || e.target.id === "formerEnd") {
@@ -121,6 +179,7 @@
   section.addEventListener("submit",e=>{if(e.target.id === "formerFilters") {e.preventDefault();history();}});
   section.addEventListener("click",async e=>{
     const button=e.target.closest("button");if(!button) return;
+    if(button.hasAttribute("data-former-delete")) return confirmDelete();
     if(button.hasAttribute("data-former-refresh")) return load();
     if(button.dataset.formerPerson) return select(button.dataset.formerPerson);
     if(button.hasAttribute("data-former-all")) {document.getElementById("formerStart").value="";document.getElementById("formerEnd").value="";return history();}
