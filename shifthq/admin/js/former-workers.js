@@ -60,7 +60,7 @@
       <form id="formerFilters"><label>From<input type="date" id="formerStart"></label><label>To<input type="date" id="formerEnd"></label><button class="secondaryButton" type="submit">Apply dates</button><button class="secondaryButton" type="button" data-former-all>All time</button></form>
       <div class="formerExport"><button class="secondaryButton" data-former-csv disabled>Export CSV</button><button class="secondaryButton" data-former-pdf disabled>Export PDF</button></div>
       <div id="formerHistory" aria-live="polite"></div>
-      <div class="formerDeleteArea"><h3>Permanent deletion</h3><p class="formerMuted">Permanently delete this worker’s company records and all shift history.</p><button class="dangerButton" data-former-delete>Permanently delete worker</button></div>`;
+      <div class="formerDeleteArea"><h3>Permanent deletion</h3><p class="formerMuted">Workers with recorded hours stay archived. Only workers with no work records can be permanently deleted.</p><button class="dangerButton" data-former-delete>Delete unused worker</button></div>`;
     history();
   }
   async function history() {
@@ -129,7 +129,7 @@
     deleteDialog.innerHTML = `<h2 id="formerDeleteTitle">Permanently delete ${escape(name(selected))}?</h2>
       <p>${escape(selected.profiles?.email || "No email recorded")}<br><small>Worker ID: ${escape(selected.user_id)}</small></p>
       <p id="formerDeleteWarning"><strong>This cannot be undone. Deleted records cannot be recovered in ShiftHQ.</strong></p>
-      <p>This deletes the worker’s membership, PIN, and <strong>all shifts and breaks in this company, from all dates</strong>—including shifts outside the current filter. They will also disappear from Timesheets and Reports.</p>
+      <p>This deletes an unused worker’s company membership and PIN. <strong>Deletion is blocked if the worker has any shifts or preserved work-record history, from any date.</strong> Keep workers with recorded hours archived.</p>
       <p>Their shared account and records in other companies are kept. Export any records you need before continuing.</p>
       <form id="formerDeleteForm"><label for="formerDeleteText">Type DELETE to confirm</label><input id="formerDeleteText" autocomplete="off" spellcheck="false" required>
         <div class="formerDeleteButtons"><button type="button" class="secondaryButton" data-delete-cancel autofocus>Cancel</button><button type="submit" class="dangerButton" id="formerDeleteSubmit" disabled>Delete permanently</button></div>
@@ -160,7 +160,7 @@
       if(typeof renderReportRows === "function") renderReportRows();
       if(typeof resetReportStats === "function") resetReportStats();
       await load();
-      if(companyId === target.company && document.getElementById("formerDetail")) document.getElementById("formerDetail").innerHTML='<div class="emptyState" role="status">Worker and company shift history permanently deleted.</div>';
+      if(companyId === target.company && document.getElementById("formerDetail")) document.getElementById("formerDetail").innerHTML='<div class="emptyState" role="status">Unused worker permanently deleted.</div>';
     } catch(error) {
       if(deletion !== target || companyId !== target.company) return;
       target.busy=false;
