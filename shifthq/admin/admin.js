@@ -1,848 +1,646 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
+const SUPABASE_URL =
+      "https://diqxssqucdylekeexaxk.supabase.co";
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_zWxqAQuOq2l_3mnj0T4Cnw_FUL9Yvqn";
 
-  <title>ShiftHQ PRO</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    const sb =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
 
-  <link rel="stylesheet" href="styles.css">
-</head>
 
-<body>
+    let companyId = null;
+    let company = null;
 
-  <!-- ==========================================
-       LOGIN
-  =========================================== -->
+    let currentUser = null;
 
-  <div id="loginScreen">
+    let liveWorkers = [];
+    let members = [];
+    let timesheets = [];
 
-    <div class="loginCard">
+    let liveLoadedAt =
+      Date.now();
 
-      <div class="loginLogo">
-        ShiftHQ
-        <span class="proBadge">
-          PRO
-        </span>
-      </div>
+    let liveTimerInterval = null;
 
-      <div class="loginSubtitle">
-        Sign in to manage your company.
-      </div>
+    let timesheetsInitialized = false;
 
-      <div class="field">
+    let selectedShiftId = null;
+    let selectedShift = null;
+    let selectedShiftBreaks = [];
 
-        <label for="email">
-          Email
-        </label>
 
-        <input
-          id="email"
-          type="email"
-          autocomplete="email"
-          placeholder="admin@example.com"
-        >
+    /* ============================================
+       MESSAGES
+    ============================================ */
 
-      </div>
+    function showMessage(
+      elementId,
+      text,
+      type = "error"
+    ) {
 
-      <div class="field">
+      const element =
+        document.getElementById(
+          elementId
+        );
 
-        <label for="password">
-          Password
-        </label>
+      element.textContent =
+        text;
 
-        <input
-          id="password"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Password"
-        >
+      element.className =
+        "message " + type;
 
-      </div>
+    }
 
-      <button
-        id="loginButton"
-        class="primaryButton"
-      >
-        Sign in
-      </button>
 
-      <div
-        id="loginMessage"
-        class="message"
-      ></div>
+    function clearMessage(
+      elementId
+    ) {
 
-    </div>
+      const element =
+        document.getElementById(
+          elementId
+        );
 
-  </div>
+      element.textContent = "";
 
+      element.className =
+        "message";
 
-  <!-- ==========================================
-       ADMIN APP
-  =========================================== -->
+    }
 
-  <div
-    id="adminApp"
-    class="hidden"
-  >
 
-    <aside class="sidebar">
+    /* ============================================
+       NAVIGATION
+    ============================================ */
 
-      <div class="sidebarBrand">
+    function showPage(pageName) {
 
-        <div class="sidebarLogo">
-          ShiftHQ
-        </div>
+      document
+        .querySelectorAll(
+          ".pageSection"
+        )
+        .forEach(section => {
 
-        <div class="sidebarPro">
-          PRO ADMIN
-        </div>
+          section.classList.remove(
+            "active"
+          );
 
-      </div>
+        });
 
 
-      <div class="sidebarCompany">
+      const target =
+        document.getElementById(
+          "page-" + pageName
+        );
 
-        <div class="sidebarCompanyLabel">
-          Company
-        </div>
 
-        <div
-          id="sidebarCompanyName"
-          class="sidebarCompanyName"
-        >
-          —
-        </div>
+      if (target) {
 
-      </div>
+        target.classList.add(
+          "active"
+        );
 
+      }
 
-      <nav class="navigation">
 
-        <button
-          class="navButton active"
-          data-page="dashboard"
-        >
-          <span class="navIcon">⌂</span>
-          Dashboard
-        </button>
+      document
+        .querySelectorAll(
+          ".navButton"
+        )
+        .forEach(button => {
 
-        <button
-          class="navButton"
-          data-page="workers"
-        >
-          <span class="navIcon">♙</span>
-          Workers
-        </button>
+          button.classList.toggle(
+            "active",
+            button.dataset.page ===
+              pageName
+          );
 
-        <button
-          class="navButton"
-          data-page="timesheets"
-        >
-          <span class="navIcon">◷</span>
-          Timesheets
-        </button>
+        });
 
-        <button
-          class="navButton"
-          data-page="reports"
-        >
-          <span class="navIcon">▥</span>
-          Reports
-        </button>
 
-        <button
-          class="navButton"
-          data-page="settings"
-        >
-          <span class="navIcon">⚙</span>
-          Settings
-        </button>
+      const titles = {
+        dashboard: "Dashboard",
+        workers: "Workers",
+        timesheets: "Timesheets",
+        reports: "Reports",
+        settings: "Settings"
+      };
 
-      </nav>
 
+      document.getElementById(
+        "topPageTitle"
+      ).textContent =
+        titles[pageName] ||
+        "ShiftHQ PRO";
 
-      <div class="sidebarBottom">
 
-        <div class="adminIdentity">
+      if (
+        pageName === "dashboard"
+      ) {
 
-          <div
-            id="adminName"
-            class="adminName"
-          >
-            Admin
-          </div>
+        loadLiveWorkers();
 
-          <div
-            id="adminEmail"
-            class="adminEmail"
-          ></div>
+      }
 
-        </div>
 
-        <button
-          id="logoutButton"
-          class="signOutButton"
-        >
-          Sign out
-        </button>
+      if (
+        pageName === "workers"
+      ) {
 
-      </div>
+        loadMembers();
 
-    </aside>
+      }
 
 
-    <main class="content">
+      if (
+        pageName === "timesheets"
+      ) {
 
-      <header class="topbar">
+        initializeTimesheetDates();
 
-        <div
-          id="topPageTitle"
-          class="pageTitle"
-        >
-          Dashboard
-        </div>
+        if (!timesheetsInitialized) {
 
-        <div
-          id="topCompanyName"
-          class="topCompany"
-        ></div>
+          timesheetsInitialized =
+            true;
 
-      </header>
+          loadTimesheets();
 
+        }
 
-      <div class="pageContent">
+      }
 
-        <!-- DASHBOARD -->
+    }
 
-        <section
-          id="page-dashboard"
-          class="pageSection active"
-        >
 
-          <div
-            id="welcomeHeading"
-            class="welcomeHeading"
-          >
-            Dashboard
-          </div>
+    document
+      .querySelectorAll(
+        ".navButton"
+      )
+      .forEach(button => {
 
-          <div class="welcomeSub">
-            Here's what's happening with your team right now.
-          </div>
+        button.addEventListener(
+          "click",
+          () => {
 
+            showPage(
+              button.dataset.page
+            );
 
-          <div class="stats">
+          }
+        );
 
-            <div class="statCard">
+      });
 
-              <div class="statTop">
 
-                <div class="statLabel">
-                  Working
-                </div>
+    /* ============================================
+       UTILITIES
+    ============================================ */
 
-                <div class="statDot working"></div>
+    function normalizeStatus(
+      status
+    ) {
 
-              </div>
+      if (
+        status === "working" ||
+        status === "on_break"
+      ) {
 
-              <div
-                id="workingCount"
-                class="statNumber"
-              >
-                0
-              </div>
+        return status;
 
-            </div>
+      }
 
 
-            <div class="statCard">
+      return "off";
 
-              <div class="statTop">
+    }
 
-                <div class="statLabel">
-                  On break
-                </div>
 
-                <div class="statDot on_break"></div>
+    function formatStatus(
+      status
+    ) {
 
-              </div>
+      switch (
+        normalizeStatus(status)
+      ) {
 
-              <div
-                id="breakCount"
-                class="statNumber"
-              >
-                0
-              </div>
+        case "working":
+          return "Working";
 
-            </div>
+        case "on_break":
+          return "On break";
 
+        default:
+          return "Clocked out";
 
-            <div class="statCard">
+      }
 
-              <div class="statTop">
+    }
 
-                <div class="statLabel">
-                  Clocked out
-                </div>
 
-                <div class="statDot off"></div>
+    function initials(name) {
 
-              </div>
+      return String(name || "?")
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(part => part[0])
+        .join("")
+        .toUpperCase();
 
-              <div
-                id="offCount"
-                class="statNumber"
-              >
-                0
-              </div>
+    }
 
-            </div>
 
-          </div>
+    function formatClockTime(
+      value
+    ) {
 
+      if (!value) {
+        return "—";
+      }
 
-          <div class="sectionCard">
 
-            <div class="sectionHeader">
+      const date =
+        new Date(value);
 
-              <div>
 
-                <div class="sectionTitle">
-                  Live workforce
-                </div>
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
 
-                <div class="sectionSubtitle">
-                  Current status of active workers
-                </div>
+        return "—";
 
-              </div>
+      }
 
-              <button
-                id="refreshLiveButton"
-                class="refreshButton"
-              >
-                Refresh
-              </button>
 
-            </div>
+      return date.toLocaleTimeString(
+        [],
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
 
-            <div id="liveWorkers">
+    }
 
-              <div class="emptyState">
-                Loading workers…
-              </div>
 
-            </div>
+    function formatShiftDate(
+      value
+    ) {
 
-          </div>
+      if (!value) {
+        return "—";
+      }
 
 
-          <div class="sectionCard">
+      const date =
+        new Date(value);
 
-            <div class="sectionHeader">
 
-              <div>
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
 
-                <div class="sectionTitle">
-                  Company
-                </div>
+        return "—";
 
-                <div class="sectionSubtitle">
-                  Quick company information
-                </div>
+      }
 
-              </div>
 
-            </div>
+      return date.toLocaleDateString(
+        [],
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }
+      );
 
-            <div class="companyInfoGrid">
+    }
 
-              <div class="infoBox">
 
-                <div class="infoLabel">
-                  COMPANY NAME
-                </div>
+    function formatTimer(
+      seconds
+    ) {
 
-                <div
-                  id="dashboardCompanyName"
-                  class="infoValue"
-                >
-                  —
-                </div>
+      const safe =
+        Math.max(
+          0,
+          Math.floor(
+            Number(seconds) || 0
+          )
+        );
 
-              </div>
 
-              <div class="infoBox">
+      const hours =
+        Math.floor(
+          safe / 3600
+        );
 
-                <div class="infoLabel">
-                  KIOSK CODE
-                </div>
 
-                <div
-                  id="dashboardCompanyCode"
-                  class="infoValue"
-                >
-                  —
-                </div>
+      const minutes =
+        Math.floor(
+          (safe % 3600) / 60
+        );
 
-              </div>
 
-            </div>
+      const secs =
+        safe % 60;
 
-          </div>
 
-        </section>
+      return (
+        String(hours)
+          .padStart(2, "0")
+        + ":"
+        + String(minutes)
+          .padStart(2, "0")
+        + ":"
+        + String(secs)
+          .padStart(2, "0")
+      );
 
+    }
 
-        <!-- WORKERS -->
 
-        <section
-          id="page-workers"
-          class="pageSection"
-        >
+    function formatHoursMinutes(
+      seconds
+    ) {
 
-          <div class="workersTop">
+      const safe =
+        Math.max(
+          0,
+          Math.floor(
+            Number(seconds) || 0
+          )
+        );
 
-            <div>
 
-              <div class="pageHeading">
-                Workers
-              </div>
+      const hours =
+        Math.floor(
+          safe / 3600
+        );
 
-              <div class="pageDescription">
-                Manage the people who can clock in for this company.
-              </div>
 
-            </div>
+      const minutes =
+        Math.floor(
+          (safe % 3600) / 60
+        );
 
-            <button
-              id="toggleInviteButton"
-              class="inviteButton"
-            >
-              + Invite worker
-            </button>
 
-          </div>
+      return (
+        String(hours)
+          .padStart(2, "0")
+        + ":"
+        + String(minutes)
+          .padStart(2, "0")
+      );
 
+    }
 
-          <div class="sectionCard">
 
-            <div
-              id="inviteForm"
-              class="inviteForm hidden"
-            >
+    function formatDateInput(
+      date
+    ) {
 
-              <div class="inviteGrid">
+      const year =
+        date.getFullYear();
 
-                <div class="field">
 
-                  <label for="workerName">
-                    Worker name
-                  </label>
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
 
-                  <input
-                    id="workerName"
-                    type="text"
-                    placeholder="John Smith"
-                  >
 
-                </div>
+      const day =
+        String(
+          date.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
 
-                <div class="field">
 
-                  <label for="workerEmail">
-                    Worker email
-                  </label>
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+      );
 
-                  <input
-                    id="workerEmail"
-                    type="email"
-                    placeholder="worker@example.com"
-                  >
+    }
 
-                </div>
 
-                <button
-                  id="sendInviteButton"
-                  class="sendInvite"
-                >
-                  Send invitation
-                </button>
+    function parseDateInput(
+      value
+    ) {
 
-              </div>
+      if (!value) {
+        return null;
+      }
 
-              <div
-                id="inviteMessage"
-                class="message"
-              ></div>
 
-            </div>
+      const parts =
+        value
+          .split("-")
+          .map(Number);
 
 
-            <div class="sectionHeader">
+      if (
+        parts.length !== 3 ||
+        parts.some(
+          part =>
+            !Number.isFinite(part)
+        )
+      ) {
 
-              <div>
+        return null;
 
-                <div class="sectionTitle">
-                  Team members
-                </div>
+      }
 
-                <div
-                  id="workerCountText"
-                  class="sectionSubtitle"
-                >
-                  Loading…
-                </div>
 
-              </div>
+      return new Date(
+        parts[0],
+        parts[1] - 1,
+        parts[2]
+      );
 
-            </div>
+    }
 
-            <div id="membersList">
 
-              <div class="emptyState">
-                Loading workers…
-              </div>
+    function escapeHtml(value) {
 
-            </div>
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
-          </div>
+    }
 
-          <div class="sectionCard pendingCard">
-            <div class="sectionHeader">
-              <div>
-                <div class="sectionTitle">Pending invitations</div>
-                <div id="invitationCountText" class="sectionSubtitle">Loading…</div>
-              </div>
-            </div>
-            <div id="pendingInvitationsList">
-              <div class="emptyState">Loading invitations…</div>
-            </div>
-            <div id="workerActionMessage" class="message actionStatus"></div>
-          </div>
 
-        </section>
 
+    /* ============================================
+       BOOTSTRAP
+    ============================================ */
 
-        <!-- TIMESHEETS -->
-
-        <section
-          id="page-timesheets"
-          class="pageSection"
-        >
-
-          <div class="workersTop">
-
-            <div>
-
-              <div class="pageHeading">
-                Timesheets
-              </div>
-
-              <div class="pageDescription">
-                Review worked hours and breaks for your team.
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="sectionCard">
-
-            <div class="timesheetFilters">
-
-              <div class="filterField">
-
-                <label for="timesheetStart">
-                  From
-                </label>
-
-                <input
-                  id="timesheetStart"
-                  type="date"
-                >
-
-              </div>
-
-
-              <div class="filterField">
-
-                <label for="timesheetEnd">
-                  To
-                </label>
-
-                <input
-                  id="timesheetEnd"
-                  type="date"
-                >
-
-              </div>
-
-
-              <button
-                id="loadTimesheetsButton"
-                class="refreshButton timesheetLoadButton"
-              >
-                Apply
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <div class="timesheetStats">
-
-            <div class="statCard">
-
-              <div class="statLabel">
-                Total worked
-              </div>
-
-              <div
-                id="timesheetTotalWorked"
-                class="timesheetStatValue"
-              >
-                00:00
-              </div>
-
-            </div>
-
-
-            <div class="statCard">
-
-              <div class="statLabel">
-                Break time
-              </div>
-
-              <div
-                id="timesheetTotalBreaks"
-                class="timesheetStatValue"
-              >
-                00:00
-              </div>
-
-            </div>
-
-
-            <div class="statCard">
-
-              <div class="statLabel">
-                Shifts
-              </div>
-
-              <div
-                id="timesheetShiftCount"
-                class="timesheetStatValue"
-              >
-                0
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="sectionCard">
-
-            <div class="sectionHeader">
-
-              <div>
-
-                <div class="sectionTitle">
-                  Shifts
-                </div>
-
-                <div
-                  id="timesheetRangeText"
-                  class="sectionSubtitle"
-                >
-                  —
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="timesheetTableWrap">
-
-              <table class="timesheetTable">
-
-                <thead>
-
-                  <tr>
-                    <th>Worker</th>
-                    <th>Date</th>
-                    <th>Clock in</th>
-                    <th>Clock out</th>
-                    <th>Breaks</th>
-                    <th>Break time</th>
-                    <th>Worked</th>
-                    <th>Status</th>
-                  </tr>
-
-                </thead>
-
-                <tbody id="timesheetRows">
-
-                  <tr>
-
-                    <td
-                      colspan="8"
-                      class="tableEmpty"
-                    >
-                      Select a date range to view timesheets.
-                    </td>
-
-                  </tr>
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- REPORTS -->
-
-        <section
-          id="page-reports"
-          class="pageSection"
-        >
-
-          <div class="placeholder">
-
-            <div class="placeholderTitle">
-              Reports
-            </div>
-
-            <div class="placeholderText">
-              Pay periods, worked hours and exports will go here.
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- SETTINGS -->
-
-        <section
-          id="page-settings"
-          class="pageSection"
-        >
-
-          <div class="placeholder">
-
-            <div class="placeholderTitle">
-              Settings
-            </div>
-
-            <div class="placeholderText">
-              Company and kiosk settings will go here.
-            </div>
-
-          </div>
-
-        </section>
-
-      </div>
-
-    </main>
-
-  </div>
-
-
-   <!-- ==========================================
-       SHIFT DETAILS MODAL
-  =========================================== -->
-
-  <div
-    id="shiftDetailsModal"
-    class="shiftModal hidden"
-  >
-
-    <div
-      class="shiftModalBackdrop"
-      onclick="closeShiftDetails()"
-    ></div>
-
-    <div class="shiftModalCard">
-
-      <div class="shiftModalHeader">
-
-        <div>
-          <div class="shiftModalTitleRow">
-            <div class="shiftModalTitle">
-              Shift details
-            </div>
-
-            <button
-              id="editShiftButton"
-              class="shiftEditButton"
-              type="button"
-            >
-              Edit shift
-            </button>
-          </div>
-
-          <div
-            id="shiftDetailsWorker"
-            class="shiftModalSubtitle"
-          >
-            —
-          </div>
-        </div>
-
-        <button
-          class="shiftModalClose"
-          onclick="closeShiftDetails()"
-          aria-label="Close"
-        >
-          ×
-        </button>
-
-      </div>
-
-
-      <div
-        id="shiftDetailsContent"
-        class="shiftModalContent"
-      >
-
-        <div class="emptyState">
-          Loading shift…
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <script src="admin.js"></script>
-  <script src="auth.js"></script>
-  <script src="dashboard.js"></script>
-  <script src="workers.js"></script>
-  <script src="js/worker-management.js"></script>
-  <script src="timesheets.js"></script>
-  <script src="reports.js"></script>
-  <script src="settings.js"></script>
-  <script src="shift-details.js"></script>
-
-</body>
-</html>
+    function initializeAdminApp() {
+      /* ============================================
+         EVENTS
+      ============================================ */
+  
+      document.getElementById(
+        "loginButton"
+      ).addEventListener(
+        "click",
+        login
+      );
+  
+  
+      document.getElementById(
+        "password"
+      ).addEventListener(
+        "keydown",
+        event => {
+  
+          if (
+            event.key === "Enter"
+          ) {
+  
+            login();
+  
+          }
+  
+        }
+      );
+  
+  
+      document.getElementById(
+        "logoutButton"
+      ).addEventListener(
+        "click",
+        logout
+      );
+  
+  
+      document.getElementById(
+        "refreshLiveButton"
+      ).addEventListener(
+        "click",
+        loadLiveWorkers
+      );
+  
+  
+      document.getElementById(
+        "toggleInviteButton"
+      ).addEventListener(
+        "click",
+        () => {
+  
+          document.getElementById(
+            "inviteForm"
+          ).classList.toggle(
+            "hidden"
+          );
+  
+        }
+      );
+  
+  
+      document.getElementById(
+        "sendInviteButton"
+      ).addEventListener(
+        "click",
+        sendInvitation
+      );
+  
+  
+      document.getElementById(
+        "loadTimesheetsButton"
+      ).addEventListener(
+        "click",
+        loadTimesheets
+      );
+  
+  
+      /* ============================================
+         AUTO REFRESH
+      ============================================ */
+  
+      setInterval(
+        () => {
+  
+          if (
+            companyId &&
+            document.getElementById(
+              "page-dashboard"
+            ).classList.contains(
+              "active"
+            )
+          ) {
+  
+            loadLiveWorkers();
+  
+          }
+  
+        },
+        30000
+      );
+  
+  
+      document.addEventListener(
+        "visibilitychange",
+        () => {
+  
+          if (
+            document.visibilityState !==
+              "visible" ||
+            !companyId
+          ) {
+  
+            return;
+  
+          }
+  
+  
+          if (
+            document.getElementById(
+              "page-dashboard"
+            ).classList.contains(
+              "active"
+            )
+          ) {
+  
+            loadLiveWorkers();
+  
+          }
+  
+        }
+      );
+  
+  
+      /* ============================================
+         START
+      ============================================ */
+  
+      checkExistingSession();
+
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initializeAdminApp);
+    } else {
+      initializeAdminApp();
+    }
